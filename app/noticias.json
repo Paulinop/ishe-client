@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.2.8: arreglos",
+    "fecha": "2026-10-06",
+    "texto": "Los gatitos ahora sí mueven las patas al caminar y correr (la animación de pasos no funcionaba). Tampoco se quedan fuera de la ventana al achicarla, y el texto no se corta detrás de ellos."
+  },
+  {
     "titulo": "Versión 1.2.7: más gatitos",
     "fecha": "2026-10-06",
     "texto": "Diez pelajes (blanco, esmoquin, carey, atigrado y tricolor son nuevos) y diez poses: ahora corren, se estiran, se agachan a cazar, se rascan, bostezan y se hacen bolita. En Ajustes eliges el tuyo y puedes pausar las animaciones si tu PC va lenta."

@@ -37,7 +37,9 @@ fs.cpSync(appDir, path.join(resources, 'app'), { recursive: true });
 fs.mkdirSync(outDir, { recursive: true });
 fs.rmSync(path.join(outDir, 'result.json'), { force: true });
 
-const steps = ['shot:inicio', 'dump:inicio', 'view:mods', 'shot:mods', 'view:ajustes', 'shot:ajustes', 'dump:ajustes', 'view:inicio'];
+// Comprueba que el ciclo de pasos de un gato avanza de verdad (una animacion que no se mueve no da ningun error).
+const pasos = "(async () => { const cat = document.querySelector('.gatitos .gato'); cat.className = 'gato negro pelo-negro st-walk'; const layer = cat.querySelector('.l-b'); const seen = new Set(); for (let k = 0; k < 10; k++) { seen.add(getComputedStyle(layer).maskPosition); await new Promise((r) => setTimeout(r, 90)); } return { unicos: seen.size }; })()";
+const steps = ['eval:pasos|' + pasos, 'shot:inicio', 'dump:inicio', 'view:mods', 'shot:mods', 'view:ajustes', 'shot:ajustes', 'dump:ajustes', 'view:inicio'];
 const run = spawnSync(path.join(engine, exeName), ['--user-data-dir=' + data], {
   env: Object.assign({}, process.env, {
     ISHE_TEST_OUT: outDir,
@@ -54,6 +56,8 @@ check(fs.existsSync(resultFile), 'la ventana arranco y termino la prueba');
 if (fs.existsSync(resultFile)) {
   const result = JSON.parse(fs.readFileSync(resultFile, 'utf8'));
   check(result.errors.length === 0, 'sin errores en la ventana' + (result.errors.length ? ': ' + result.errors.join(' | ').slice(0, 400) : ''));
+  const pasosResult = result.steps.find((step) => step.label === 'pasos');
+  check(Boolean(pasosResult) && pasosResult.value.unicos >= 3, 'los gatos mueven las patas al caminar (' + (pasosResult ? pasosResult.value.unicos : '?') + ' cuadros distintos)');
   for (const name of ['inicio', 'mods', 'ajustes']) check(fs.existsSync(path.join(outDir, name + '.png')), 'captura de ' + name);
 }
 fs.rmSync(work, { recursive: true, force: true });

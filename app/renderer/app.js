@@ -748,12 +748,18 @@ function startCats() {
     return entries[0][0];
   };
   let width = strip.clientWidth;
-  window.addEventListener('resize', () => { width = strip.clientWidth; });
   const now = performance.now();
   const cats = [...strip.querySelectorAll('.gato')].map((node) => {
     const base = ['negro', 'siames', 'naranja', 'gris'].find((n) => node.classList.contains(n)) || 'tuyo';
     return { el: node, base, p: PERSONALITY[base], x: Math.random() * Math.max(1, width - 80), dir: Math.random() < 0.5 ? 1 : -1, state: 'walk', until: now + between([2000, 9000]), fxAt: 0 };
   });
+  // Un gato nunca se queda fuera de la ventana: tambien cuando esta sentado, durmiendo y se achica la ventana.
+  const keepInside = (cat) => {
+    const catWidth = cat.el.offsetWidth || 72;
+    if (cat.x < 0) { cat.x = 0; if (cat.state === 'walk' || cat.state === 'run') { cat.dir = 1; cat.el.classList.remove('izq'); } }
+    if (cat.x > width - catWidth) { cat.x = Math.max(0, width - catWidth); if (cat.state === 'walk' || cat.state === 'run') { cat.dir = -1; cat.el.classList.add('izq'); } }
+  };
+  window.addEventListener('resize', () => { width = strip.clientWidth; for (const cat of cats) { keepInside(cat); cat.el.style.transform = 'translateX(' + Math.round(cat.x) + 'px)'; } });
   const nameOf = (cat) => (cat.base === 'tuyo' ? (catPrefs.nombre.trim() || 'Michi') : NOMBRES[cat.base]);
   function setState(cat, state, at) {
     cat.state = state;
@@ -791,14 +797,10 @@ function startCats() {
   function frame(time) {
     const dt = Math.min(100, time - last);
     last = time;
-    if (!document.body.classList.contains('quieto')) {
+    if (!document.body.classList.contains('quieto') && !document.body.classList.contains('sin-gatos')) {
       for (const cat of cats) {
-        if (cat.state === 'walk' || cat.state === 'run') {
-          const catWidth = cat.el.offsetWidth || 72;
-          cat.x += cat.dir * cat.p.speed * (cat.state === 'run' ? 2.8 : 1) * dt / 1000;
-          if (cat.x < 0) { cat.x = 0; cat.dir = 1; cat.el.classList.remove('izq'); }
-          if (cat.x > width - catWidth) { cat.x = Math.max(0, width - catWidth); cat.dir = -1; cat.el.classList.add('izq'); }
-        }
+        if (cat.state === 'walk' || cat.state === 'run') cat.x += cat.dir * cat.p.speed * (cat.state === 'run' ? 2.8 : 1) * dt / 1000;
+        keepInside(cat);
         if (time > cat.until) setState(cat, next(cat), time);
         cat.el.style.transform = 'translateX(' + Math.round(cat.x) + 'px)';
       }

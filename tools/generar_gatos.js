@@ -320,7 +320,7 @@ css += '.sprite { position: relative; }\n';
 css += '.sprite i { position: absolute; inset: 0; background-color: var(--c); mask-repeat: no-repeat; }\n';
 css += LAYERS.map(([key, color]) => `.l-${key} { --c: ${color}; }`).join(' ') + '\n';
 // una vuelta de cuadros por cantidad de cuadros
-for (const n of [2, 3, 4]) css += `@keyframes mascara${n} { to { mask-position-x: calc(var(--gato-w) * -${n}); } }\n`;
+for (const n of [2, 3, 4]) css += `@keyframes mascara${n} { to { mask-position: calc(var(--gato-w) * -${n}) 0; } }\n`;
 for (const [pose, [maker, frames, seconds]] of Object.entries(POSES)) {
   css += `.st-${pose} .sprite i { mask-size: calc(var(--gato-w) * ${frames}) 100%; animation: mascara${frames} ${seconds}s steps(${frames}) infinite; }\n`;
   const sheet = sheetFor(maker, frames);

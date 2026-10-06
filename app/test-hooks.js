@@ -124,6 +124,16 @@ exports.run = async (getWindow, TEST) => {
         await js('document.getElementById("toggle-log").click()');
       } else if (action === 'view') {
         await js('document.querySelector(\'.nav-item[data-view="' + arg + '"]\').click()');
+      } else if (action === 'eval') {
+        // eval:<etiqueta>|<codigo>  ejecuta codigo dentro de la ventana y guarda lo que devuelve
+        const bar = arg.indexOf('|');
+        summary.steps.push({ label: arg.slice(0, bar), value: await js(arg.slice(bar + 1)) });
+      } else if (action === 'size') {
+        const [width, height] = arg.split('x').map(Number);
+        win.setSize(width, height);
+        await sleep(300);
+      } else if (action === 'wait') {
+        await sleep(Number(arg));
       } else if (action === 'ram') {
         await js('(() => { const s = document.getElementById("ram"); s.value = "' + arg + '"; s.dispatchEvent(new Event("change")); })()');
         await sleep(200);

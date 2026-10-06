@@ -104,6 +104,7 @@ node tools/test_platform.js app
 node tools/test_update.js app "<ruta al .pem>"
 node tools/test_ui_ids.js app            # cada id que usa app.js existe en index.html
 node tools/test_gatos.js app             # cada pelaje y pose de los gatitos tiene su dibujo
+# test-hooks.js tambien entiende eval:<etiqueta>|<codigo>, size:<ancho>x<alto> y wait:<ms> (para cazar bugs en la ventana real)
 node tools/prueba_ventana.js "<carpeta del motor Electron>" app out-ventana   # ABRE la ventana real con datos aislados (Windows/Mac/Linux)
 ```
 
@@ -121,7 +122,7 @@ Añade una comprobación a las pruebas con cada cambio de comportamiento.
 
 ## Estado (6 de octubre de 2026)
 
-- Versión del código: ver `app/package.json` (publicadas hasta la 1.2.6 al 6 de octubre de 2026). La actualización
+- Versión del código: ver `app/package.json` (publicadas hasta la 1.2.7 al 6 de octubre de 2026). La actualización
   automática ya funciona de verdad contra GitHub Releases.
 - Azure: aplicación "Ishe Client", Application (client) ID `777b4ef5-0f7c-47c7-b03a-a9fefbfa49c2`,
   solo cuentas personales, cliente público (sin secreto).
