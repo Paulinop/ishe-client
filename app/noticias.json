@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.2.5: la mina",
+    "fecha": "2026-10-06",
+    "texto": "Todo el fondo de Ishe Client ahora es una mina animada: antorchas que parpadean, vetas de oro y diamante que brillan, gotas, polvo y una vagoneta con oro sobre rieles. El Inicio es una cueva con lava. El ícono del acceso directo se cambia solo al gato."
+  },
+  {
     "titulo": "Versión 1.2.4: nueva cara",
     "fecha": "2026-10-06",
     "texto": "Ishe Client estrena diseño: escena de Minecraft que cambia con la hora, botones de piedra, pantalla de carga con consejos y gatitos que pasean. Pasa el mouse sobre un gatito para ver su nombre y pulsa para acariciarlo. En Ajustes eliges el tuyo. También arregla un error de la 1.2.3 que impedía usar la ventana."

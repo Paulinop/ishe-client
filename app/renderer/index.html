@@ -8,6 +8,21 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Fondo de mina que se mueve detras de toda la ventana -->
+  <div class="mina piedra" aria-hidden="true">
+    <div class="mina-ores"></div>
+    <div class="mina-brillos a"></div>
+    <div class="mina-brillos b"></div>
+    <div class="mina-sombra"></div>
+    <div class="mina-luz"></div>
+    <span class="antorcha izq"></span>
+    <span class="antorcha der"></span>
+    <span class="polvo"></span><span class="polvo"></span><span class="polvo"></span><span class="polvo"></span><span class="polvo"></span><span class="polvo"></span><span class="polvo"></span><span class="polvo"></span><span class="polvo"></span><span class="polvo"></span>
+    <span class="gota"></span><span class="gota"></span><span class="gota"></span>
+    <div class="rieles"></div>
+    <div class="vagoneta"></div>
+  </div>
+
   <header class="topbar">
     <div class="brand">
       <img class="brand-logo" id="brand-logo" src="../assets/logo.png" alt="">
@@ -47,12 +62,9 @@
     <section class="view is-active" id="view-inicio" aria-labelledby="hero-title">
       <div class="hero">
         <div class="hero-sky" aria-hidden="true">
-          <div class="hero-stars a"></div>
-          <div class="hero-stars b"></div>
-          <div class="hero-astro" id="hero-astro"></div>
-          <div class="hero-clouds"></div>
-          <div class="hero-clouds dia"></div>
-          <div class="hero-hills"></div>
+          <div class="hero-piedra piedra"></div>
+          <div class="hero-estalac"></div>
+          <div class="hero-lava"></div>
           <div class="hero-orbs"><span class="orb"></span><span class="orb"></span><span class="orb"></span><span class="orb"></span><span class="orb"></span><span class="orb"></span></div>
         </div>
         <div class="hero-body">

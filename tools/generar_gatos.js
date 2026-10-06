@@ -196,7 +196,7 @@ function sheet(maker, c, frames) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${(W + 2) * frames * PX}" height="${(H + 2) * PX}" viewBox="0 0 ${(W + 2) * frames} ${H + 2}" shape-rendering="crispEdges">${paths}</svg>`;
 }
 
-const enc = (svg) => 'url("data:image/svg+xml,' + encodeURIComponent(svg).replace(/"/g, '%22').replace(/\(/g, '%28').replace(/\)/g, '%29') + '")';
+const enc = (svg) => 'url("data:image/svg+xml,' + svg.replace(/%/g, '%25').replace(/#/g, '%23').replace(/</g, '%3C').replace(/>/g, '%3E').replace(/"/g, "'").replace(/[ \t\r\n]+/g, ' ') + '")';
 
 let css = '/* GATOS-INICIO (lo escribe tools/generar_gatos.js; no lo edites a mano) */\n';
 for (const name of Object.keys(COATS)) {
@@ -226,13 +226,6 @@ css += `.gato-sentado .sprite { background-image: ${enc(sheet(sitUp, GATO_GUISHE
   let cellsSvg = '';
   for (let j = 0; j < 16; j++) for (let i = 0; i < 16; i++) cellsSvg += '<rect x="' + i + '" y="' + j + '" width="1" height="1" fill="' + tones[Math.floor(rnd() * tones.length)] + '"/>';
   css += '.tierra { background-image: ' + enc('<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 16 16" shape-rendering="crispEdges">' + cellsSvg + '</svg>') + '; background-size: 96px 96px; image-rendering: pixelated; }\n';
-}
-// Nubes de dia: mas claras que las de la noche
-{
-  const u = 12; let r = '';
-  const cloud = (x, y, w) => { r += '<rect x="' + (x + u) + '" y="' + y + '" width="' + (w - 2 * u) + '" height="' + u + '"/><rect x="' + x + '" y="' + (y + u) + '" width="' + w + '" height="' + u + '"/><rect x="' + (x + 2 * u) + '" y="' + (y - u) + '" width="' + Math.max(u * 2, w / 2 - u) + '" height="' + u + '"/>'; };
-  cloud(40, 40, 132); cloud(300, 86, 96); cloud(470, 28, 156); cloud(610, 100, 84);
-  css += '.hero-clouds.dia { background-image: ' + enc('<svg xmlns="http://www.w3.org/2000/svg" width="720" height="160" shape-rendering="crispEdges" fill="#f1ecd8" fill-opacity="0.2">' + r + '</svg>') + '; }\n';
 }
 css += `:root { --gato-w: ${(W + 2) * PX}px; --gato-h: ${(H + 2) * PX}px; }\n/* GATOS-FIN */`;
 

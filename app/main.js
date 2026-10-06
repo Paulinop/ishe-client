@@ -8,6 +8,7 @@
 
 const { app, BrowserWindow, Menu, clipboard, dialog, ipcMain, safeStorage, session, shell } = require('electron');
 const fs = require('fs');
+const { execFile } = require('child_process');
 const os = require('os');
 const path = require('path');
 const installer = require('./core/installer');
@@ -597,6 +598,34 @@ async function play() {
   }
 }
 
+// En Windows, el acceso directo que creo el instalador apunta al icono viejo y la barra de tareas lo usa.
+// Al abrir, Ishe Client deja su propio acceso directo (escritorio y menu Inicio) con el icono actual.
+function refreshShortcutIcons() {
+  if (process.platform !== 'win32' || TESTING) return;
+  try {
+    const source = path.join(APP_DIR, 'assets', 'gato.ico');
+    if (!fs.existsSync(source)) return;
+    const target = path.join(app.getPath('userData'), 'ishe-client.ico');
+    const wanted = fs.readFileSync(source);
+    let current = null;
+    try { current = fs.readFileSync(target); } catch (_) { current = null; }
+    if (!current || !current.equals(wanted)) fs.writeFileSync(target, wanted);
+    const folders = [app.getPath('desktop'), path.join(process.env.APPDATA || '', 'Microsoft', 'Windows', 'Start Menu', 'Programs')];
+    let changed = false;
+    for (const folder of folders) {
+      const link = path.join(folder, 'Ishe Client.lnk');
+      if (!fs.existsSync(link)) continue;
+      const details = shell.readShortcutLink(link);
+      // Solo se toca el acceso directo propio: el que abre este mismo programa.
+      if (path.normalize(details.target || '').toLowerCase() !== path.normalize(process.execPath).toLowerCase()) continue;
+      if (path.normalize(details.icon || '').toLowerCase() === path.normalize(target).toLowerCase()) continue;
+      shell.writeShortcutLink(link, 'update', { icon: target, iconIndex: 0 });
+      changed = true;
+    }
+    if (changed) execFile('ie4uinit.exe', ['-show'], { windowsHide: true }, () => {});
+  } catch (_) { /* un acceso directo que no se puede cambiar no es grave */ }
+}
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1000,
@@ -726,6 +755,7 @@ if (!app.requestSingleInstanceLock()) {
       return getState();
     });
 
+    refreshShortcutIcons();
     createWindow();
     if (TESTING) require(path.join(ISHE.bundledDir, 'test-hooks.js')).run(() => mainWindow, TEST);
   });
