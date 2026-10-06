@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.2.6: el cielo vuelve",
+    "fecha": "2026-10-06",
+    "texto": "El Inicio recupera su cielo con estrellas, nubes, colinas y sol o luna según la hora. La mina queda de fondo en el resto de la ventana. Y se quitó la barra de desplazamiento: sigue funcionando con la rueda del mouse."
+  },
+  {
     "titulo": "Versión 1.2.5: la mina",
     "fecha": "2026-10-06",
     "texto": "Todo el fondo de Ishe Client ahora es una mina animada: antorchas que parpadean, vetas de oro y diamante que brillan, gotas, polvo y una vagoneta con oro sobre rieles. El Inicio es una cueva con lava. El ícono del acceso directo se cambia solo al gato."

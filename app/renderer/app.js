@@ -786,6 +786,20 @@ function startCats() {
   requestAnimationFrame(frame);
 }
 
+// ---- escena segun la hora (noche, dia, ocaso) ---------------------------------------
+
+function applyMomento() {
+  const now = new Date();
+  const hour = now.getHours() + now.getMinutes() / 60;
+  let momento = 'dia';
+  if (hour < 6 || hour >= 20) momento = 'noche'; else if (hour < 8 || hour >= 17) momento = 'ocaso';
+  document.body.dataset.momento = momento;
+  const t = Math.min(1, Math.max(0, momento === 'noche' ? (hour >= 20 ? hour - 20 : hour + 4) / 10 : (hour - 6) / 14));
+  const astro = $('hero-astro');
+  astro.style.left = (6 + t * 82).toFixed(1) + '%';
+  astro.style.top = Math.round(78 - Math.sin(Math.PI * t) * 58) + 'px';
+}
+
 // ---- pantalla de carga -------------------------------------------------------------
 
 const TIPS = [
@@ -892,6 +906,8 @@ async function init() {
   $('gatitos-activos').addEventListener('change', (event) => { catPrefs.activos = event.target.checked; saveCatPrefs(); applyCatPrefs(); });
   $('gato-sentado').addEventListener('click', () => catFx($('gato-sentado'), 'prrr…', 3));
   $('loading-hide').addEventListener('click', hideLoading);
+  applyMomento();
+  setInterval(applyMomento, 5 * 60 * 1000);
   startCats();
   document.body.dataset.ready = '1';
 }

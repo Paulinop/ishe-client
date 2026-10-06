@@ -1,5 +1,5 @@
 'use strict';
-// Dibuja el fondo de mina (piedra, vetas de mineral, antorchas, vagoneta, rieles, estalactitas y lava)
+// Dibuja el fondo de mina (piedra, vetas de mineral, antorchas, vagoneta, rieles) y el cielo del Inicio (estrellas, nubes, colinas)
 // y lo escribe en app/renderer/style.css, entre las marcas MINA-INICIO y MINA-FIN. Dibujos propios.
 // Uso: node tools/generar_mina.js
 const fs = require('fs');
@@ -120,29 +120,47 @@ let css = '/* MINA-INICIO (lo escribe tools/generar_mina.js; no lo edites a mano
   css += `.rieles { background-image: ${enc(svg(24, 10, 12, 5, b))}; background-size: 24px 10px; }\n`;
 }
 
-// ---- estalactitas del techo del inicio: 800 x 64 ----
+// ---- cielo del inicio: estrellas, nubes de noche y de dia, colinas de bloques ----
 {
-  let b = '';
-  for (let x = 0; x < 800; x += 8) {
-    // altura de cada columna: varios colmillos
-    const h = Math.max(0, Math.round(5 + 4 * Math.sin(x / 70) + 3 * Math.sin(x / 23 + 1)));
-    for (let y = 0; y < h; y++) b += rect(x, y * 8, 8, 8, y === h - 1 ? '#3a3c35' : '#26281f');
-  }
-  css += `.hero-estalac { background-image: ${enc(svg(800, 64, 800, 64, b))}; background-size: 800px 64px; }\n`;
-}
-
-// ---- lava del inicio: baldosa de 320 x 48 (se repite) ----
-{
-  let b = '';
-  for (let x = 0; x < 320; x += 8) {
-    const top = 1 + Math.round(1.2 * Math.sin(x / 38) + 0.8 * Math.sin(x / 17 + 2));
-    for (let y = top; y < 6; y++) {
-      const color = y === top ? '#ffd76a' : y === top + 1 ? '#ffb02e' : y > 4 ? '#c2380a' : '#ff6a12';
-      b += rect(x, y * 8, 8, 8, color);
+  const lcg = (start) => { let s = start; return () => { s = (s * 16807) % 2147483647; return s / 2147483647; }; };
+  const stars = (n) => {
+    const r = lcg(n);
+    let s = '';
+    for (let i = 0; i < 18; i++) {
+      const x = Math.floor(r() * 98) * 6, y = Math.floor(r() * 30) * 6;
+      const big = r() < 0.3;
+      s += rect(x, y, big ? 6 : 3, big ? 6 : 3, '#f1ecd8');
     }
-    if (rnd() < 0.18) b += rect(x, (top + 2) * 8, 8, 8, '#ffd76a');
+    return s;
+  };
+  css += `.hero-stars.a { background-image: ${enc(svg(600, 190, 600, 190, stars(11)))}; }\n`;
+  css += `.hero-stars.b { background-image: ${enc(svg(600, 190, 600, 190, stars(29)))}; }\n`;
+
+  const u = 12;
+  let clouds = '';
+  const cloud = (x, y, w) => { clouds += rect(x + u, y, w - 2 * u, u, '#f1ecd8') + rect(x, y + u, w, u, '#f1ecd8') + rect(x + 2 * u, y - u, Math.max(u * 2, w / 2 - u), u, '#f1ecd8'); };
+  cloud(40, 40, 132); cloud(300, 86, 96); cloud(470, 28, 156); cloud(610, 100, 84);
+  const cloudSvg = (opacity) => `<svg xmlns="http://www.w3.org/2000/svg" width="720" height="160" viewBox="0 0 720 160" shape-rendering="crispEdges" fill-opacity="${opacity}">${compact(clouds)}</svg>`;
+  css += `.hero-clouds { background-image: ${enc(cloudSvg(0.07))}; }\n`;
+  css += `.hero-clouds.dia { background-image: ${enc(cloudSvg(0.2))}; }\n`;
+
+  const r = lcg(7);
+  const B = 16, cols = 75, H = 96;
+  const heights = [];
+  for (let i = 0; i < cols; i++) {
+    const t = i / cols;
+    const base = 3 + Math.round(1.6 * Math.sin(t * Math.PI * 4) + 1.2 * Math.sin(t * Math.PI * 9 + 1));
+    heights.push(Math.max(2, Math.min(5, base + (r() < 0.2 ? 1 : 0))));
   }
-  css += `.hero-lava { background-image: ${enc(svg(320, 48, 320, 48, b))}; background-size: 320px 48px; }\n`;
+  heights[cols - 1] = heights[0];
+  let hills = '';
+  for (let i = 0; i < cols; i++) {
+    const top = H - heights[i] * B;
+    hills += rect(i * B, top, B, B, '#33502a') + rect(i * B, top + B, B, H - top - B, '#1d2d17');
+    if ((i * 7) % 5 === 0) hills += rect(i * B + 4, top + B + 6, 6, 6, '#26391d');
+    hills += rect(i * B, top, B, 3, '#4a6e38');
+  }
+  css += `.hero-hills { background-image: ${enc(svg(cols * B, H, cols * B, H, hills))}; }\n`;
 }
 
 css += '/* MINA-FIN */';
