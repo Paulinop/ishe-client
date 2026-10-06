@@ -103,6 +103,7 @@ node tools/test_game.js app
 node tools/test_platform.js app
 node tools/test_update.js app "<ruta al .pem>"
 node tools/test_ui_ids.js app            # cada id que usa app.js existe en index.html
+node tools/test_gatos.js app             # cada pelaje y pose de los gatitos tiene su dibujo
 node tools/prueba_ventana.js "<carpeta del motor Electron>" app out-ventana   # ABRE la ventana real con datos aislados (Windows/Mac/Linux)
 ```
 
@@ -120,7 +121,7 @@ Añade una comprobación a las pruebas con cada cambio de comportamiento.
 
 ## Estado (6 de octubre de 2026)
 
-- Versión del código: ver `app/package.json` (publicadas hasta la 1.2.5 al 6 de octubre de 2026). La actualización
+- Versión del código: ver `app/package.json` (publicadas hasta la 1.2.6 al 6 de octubre de 2026). La actualización
   automática ya funciona de verdad contra GitHub Releases.
 - Azure: aplicación "Ishe Client", Application (client) ID `777b4ef5-0f7c-47c7-b03a-a9fefbfa49c2`,
   solo cuentas personales, cliente público (sin secreto).
@@ -139,7 +140,7 @@ Añade una comprobación a las pruebas con cada cambio de comportamiento.
 
 Logo del gato con gafas y un solo color de acento (`app/tema.json`, `color2` = `color1`). La apariencia NO es
 personalizable: se quitó la tarjeta de Ajustes y los IPC de tema. Para cambiarla, edita `app/tema.json` y publica.
-Diseño 1.2.4: barra superior (sin panel lateral), gato en `assets/gato.png`, acento dorado único. Pantalla de carga (`#loading`, consejos en `TIPS`), caricias a los gatos (`catFx`) y gatito propio de cada persona (`catPrefs`, en localStorage) están en `renderer/app.js`. Fondo de mina animado (1.2.5): capa `.mina` detrás de toda la ventana; el Inicio conserva su cielo (estrellas, nubes, colinas, sol/luna según la hora con `applyMomento`) porque a Guishe le gusta así y NO quiere que se quite; sus dibujos los genera `node tools/generar_mina.js` (bloque MINA-INICIO de `style.css`, no editar a mano). Al abrir, `main.js` (`refreshShortcutIcons`) pone el icono `assets/gato.ico` en el acceso directo propio de Windows (escritorio y menú Inicio). Los gatitos de píxeles (propios, no son archivos de Minecraft) los dibuja `node tools/generar_gatos.js` dentro de `style.css` (4 pelajes x 4 poses; no edites ese bloque a mano). Su comportamiento (caminar, sentarse, asearse, dormir; cada uno con su carácter) está en `startCats()` de `renderer/app.js`. Al quitar bloques del HTML corre `test_ui_ids.js`: la 1.2.3 salió rota por borrar una tarjeta que app.js necesitaba.
+Diseño 1.2.4: barra superior (sin panel lateral), gato en `assets/gato.png`, acento dorado único. Pantalla de carga (`#loading`, consejos en `TIPS`), caricias a los gatos (`catFx`) y gatito propio de cada persona (`catPrefs`, en localStorage) están en `renderer/app.js`. Fondo de mina animado (1.2.5): capa `.mina` detrás de toda la ventana; el Inicio conserva su cielo (estrellas, nubes, colinas, sol/luna según la hora con `applyMomento`) porque a Guishe le gusta así y NO quiere que se quite; sus dibujos los genera `node tools/generar_mina.js` (bloque MINA-INICIO de `style.css`, no editar a mano). Al abrir, `main.js` (`refreshShortcutIcons`) pone el icono `assets/gato.ico` en el acceso directo propio de Windows (escritorio y menú Inicio). Los gatitos de píxeles (propios, no son archivos de Minecraft) los dibuja `node tools/generar_gatos.js` dentro de `style.css` (10 pelajes x 10 poses; cada pose se dibuja una vez en capas con máscaras y el pelaje es solo una lista de colores en `COATS`: para un pelaje nuevo añade una línea en `COATS` y su nombre en `PELAJES` de `app.js`, y corre el generador; no edites el bloque a mano). Su comportamiento (caminar, sentarse, asearse, dormir; cada uno con su carácter) está en `startCats()` de `renderer/app.js`. Al quitar bloques del HTML corre `test_ui_ids.js`: la 1.2.3 salió rota por borrar una tarjeta que app.js necesitaba.
 Pendiente: las secciones s14 y s16 de `tools/test_launcher_e2e.py` (solo Linux, no se corrieron) comprueban la
 personalización antigua y hay que quitarlas o adaptarlas.
 

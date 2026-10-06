@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.2.7: más gatitos",
+    "fecha": "2026-10-06",
+    "texto": "Diez pelajes (blanco, esmoquin, carey, atigrado y tricolor son nuevos) y diez poses: ahora corren, se estiran, se agachan a cazar, se rascan, bostezan y se hacen bolita. En Ajustes eliges el tuyo y puedes pausar las animaciones si tu PC va lenta."
+  },
+  {
     "titulo": "Versión 1.2.6: el cielo vuelve",
     "fecha": "2026-10-06",
     "texto": "El Inicio recupera su cielo con estrellas, nubes, colinas y sol o luna según la hora. La mina queda de fondo en el resto de la ventana. Y se quitó la barra de desplazamiento: sigue funcionando con la rueda del mouse."

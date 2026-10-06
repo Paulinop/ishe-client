@@ -78,7 +78,7 @@
             <div class="progress-bar" id="progress-bar"></div>
           </div>
           <div class="hero-actions">
-            <div class="gato-sentado" id="gato-sentado"><div class="sprite"></div></div>
+            <div class="gato-sentado pelo-crema st-situp" id="gato-sentado"><div class="sprite"></div></div>
             <div class="play-wrap"><button class="play" id="play" type="button">JUGAR</button></div>
             <button class="link" id="toggle-log" type="button" hidden>Ver detalles</button>
             <button class="pill" id="update-pill" type="button" hidden></button>
@@ -151,6 +151,7 @@
           <input class="input" id="gato-nombre" type="text" maxlength="14" spellcheck="false" autocomplete="off" placeholder="Michi">
         </label>
         <label class="check"><input type="checkbox" id="gatitos-activos"> Mostrar gatitos paseando</label>
+        <label class="check"><input type="checkbox" id="animaciones-pausa"> Pausar las animaciones (si tu PC va lenta)</label>
         <p class="card-hint">Pasa el mouse sobre un gatito para ver su nombre y pulsa para acariciarlo.</p>
       </div>
 
@@ -217,11 +218,11 @@
 
   <!-- Gatitos que pasean por abajo, por toda la aplicación -->
   <div class="gatitos" aria-hidden="true">
-    <div class="gato negro st-walk"><div class="sprite"></div></div>
-    <div class="gato siames st-walk"><div class="sprite"></div></div>
-    <div class="gato naranja st-walk"><div class="sprite"></div></div>
-    <div class="gato gris st-walk"><div class="sprite"></div></div>
-    <div class="gato crema tuyo st-walk" id="gato-tuyo"><div class="sprite"></div></div>
+    <div class="gato negro pelo-negro st-walk"><div class="sprite"></div></div>
+    <div class="gato siames pelo-siames st-walk"><div class="sprite"></div></div>
+    <div class="gato naranja pelo-naranja st-walk"><div class="sprite"></div></div>
+    <div class="gato gris pelo-gris st-walk"><div class="sprite"></div></div>
+    <div class="gato tuyo pelo-crema st-walk" id="gato-tuyo"><div class="sprite"></div></div>
   </div>
   <div class="gatitos-fx" id="gatitos-fx" aria-hidden="true"></div>
 

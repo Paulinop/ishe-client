@@ -640,10 +640,11 @@ async function play() {
 // Cada gato tiene su caracter: el negro es tranquilo, el siames se asea mucho, el naranja corre, el gris duerme.
 // El quinto es el de cada persona: elige su pelaje y su nombre en Ajustes (se guarda en este equipo).
 
-const PELAJES = [['crema', 'Crema'], ['naranja', 'Naranja'], ['negro', 'Negro'], ['siames', 'Siamés'], ['gris', 'Gris']];
+const PELAJES = [['crema', 'Crema'], ['naranja', 'Naranja'], ['negro', 'Negro'], ['siames', 'Siamés'], ['gris', 'Gris'],
+  ['blanco', 'Blanco'], ['esmoquin', 'Esmoquin'], ['carey', 'Carey'], ['atigrado', 'Atigrado'], ['tricolor', 'Tricolor']];
 const NOMBRES = { negro: 'Sombra', siames: 'Luna', naranja: 'Tigre', gris: 'Bruma' };
 const MAULLIDOS = ['miau', '¡miau!', 'prrr…', 'mrrp', 'miau miau'];
-const catPrefs = { pelaje: 'crema', nombre: '', activos: true };
+const catPrefs = { pelaje: 'crema', nombre: '', activos: true, quieto: false };
 
 function loadCatPrefs() {
   try {
@@ -651,6 +652,7 @@ function loadCatPrefs() {
     if (PELAJES.some((p) => p[0] === saved.pelaje)) catPrefs.pelaje = saved.pelaje;
     if (typeof saved.nombre === 'string') catPrefs.nombre = saved.nombre.slice(0, 14);
     if (saved.activos === false) catPrefs.activos = false;
+    if (saved.quieto === true) catPrefs.quieto = true;
   } catch (_) { /* sin almacenamiento: se usan los valores por defecto */ }
 }
 
@@ -660,9 +662,10 @@ function saveCatPrefs() {
 
 function applyCatPrefs() {
   const mine = $('gato-tuyo');
-  for (const [id] of PELAJES) mine.classList.remove(id);
-  mine.classList.add(catPrefs.pelaje);
+  for (const [id] of PELAJES) mine.classList.remove('pelo-' + id);
+  mine.classList.add('pelo-' + catPrefs.pelaje);
   document.body.classList.toggle('sin-gatos', !catPrefs.activos);
+  document.body.classList.toggle('quieto', catPrefs.quieto);
 }
 
 function renderCatSettings() {
@@ -673,9 +676,10 @@ function renderCatSettings() {
     button.type = 'button';
     button.setAttribute('role', 'radio');
     button.setAttribute('aria-checked', String(id === catPrefs.pelaje));
-    const cat = el('span', 'gato ' + id + ' st-sit');
+    const cat = el('span', 'gato pelo-' + id + ' st-sit');
     cat.appendChild(el('span', 'sprite'));
     button.appendChild(cat);
+    buildSprites(button);
     button.appendChild(el('span', '', label));
     button.addEventListener('click', () => {
       catPrefs.pelaje = id;
@@ -687,6 +691,7 @@ function renderCatSettings() {
   }
   $('gato-nombre').value = catPrefs.nombre;
   $('gatitos-activos').checked = catPrefs.activos;
+  $('animaciones-pausa').checked = catPrefs.quieto;
 }
 
 /** Globito con un texto y corazones sobre un gatito (para caricias y nombres). */
@@ -712,16 +717,29 @@ function catFx(target, text, hearts) {
   }
 }
 
+// Poses de los gatitos que caminan (las dibuja tools/generar_gatos.js).
+const POSES = ['walk', 'run', 'sit', 'groom', 'sleep', 'ovillo', 'stretch', 'crouch', 'scratch', 'yawn'];
+
+/** Pone las capas de color dentro de cada dibujo de gatito (cuerpo, rayas, manchas, ojos...). */
+function buildSprites(root) {
+  for (const sprite of root.querySelectorAll('.sprite')) {
+    if (sprite.childElementCount) continue;
+    for (const layer of ['o', 'b', 's', 't', 'm', '1', '2', 'd', 'l', 'e', 'n', 'i', 'u']) sprite.appendChild(el('i', 'l-' + layer));
+  }
+}
+
 function startCats() {
   const strip = document.querySelector('.gatitos');
   if (!strip || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const PERSONALITY = {
-    negro: { speed: 24, rest: { sit: 4, sleep: 2, groom: 2 }, pause: [5000, 12000], walk: [6000, 14000] },
-    siames: { speed: 38, rest: { sit: 2, sleep: 1, groom: 5 }, pause: [3000, 8000], walk: [4000, 10000] },
-    naranja: { speed: 52, rest: { sit: 2, sleep: 0, groom: 1 }, pause: [1500, 4000], walk: [5000, 12000], runs: true },
-    gris: { speed: 30, rest: { sit: 1, sleep: 6, groom: 1 }, pause: [9000, 20000], walk: [3000, 8000] },
-    tuyo: { speed: 34, rest: { sit: 3, sleep: 1, groom: 2 }, pause: [3000, 9000], walk: [4000, 10000] },
+    negro: { speed: 24, rest: { sit: 3, sleep: 2, ovillo: 2, groom: 2, yawn: 1, stretch: 1 }, pause: [5000, 12000], walk: [6000, 14000] },
+    siames: { speed: 38, rest: { groom: 4, sit: 2, scratch: 2, stretch: 1, yawn: 1, sleep: 1 }, pause: [3000, 8000], walk: [4000, 10000] },
+    naranja: { speed: 52, rest: { crouch: 3, run: 2, sit: 1, groom: 1, stretch: 1 }, pause: [1500, 4000], walk: [5000, 12000] },
+    gris: { speed: 30, rest: { sleep: 4, ovillo: 4, yawn: 2, stretch: 1, sit: 1 }, pause: [9000, 20000], walk: [3000, 8000] },
+    tuyo: { speed: 34, rest: { sit: 3, groom: 2, stretch: 1, yawn: 1, sleep: 1, ovillo: 1, scratch: 1, crouch: 1 }, pause: [3000, 9000], walk: [4000, 10000] },
   };
+  // Cuanto dura cada pose (ms); las que no estan aqui usan el descanso o el paseo del gato.
+  const DURATION = { crouch: [1100, 2000], run: [1400, 2600], yawn: [1600, 2600], stretch: [2000, 3200], scratch: [2000, 4000] };
   const between = (range) => range[0] + Math.random() * (range[1] - range[0]);
   const pick = (weights) => {
     const entries = Object.entries(weights);
@@ -734,20 +752,23 @@ function startCats() {
   const now = performance.now();
   const cats = [...strip.querySelectorAll('.gato')].map((node) => {
     const base = ['negro', 'siames', 'naranja', 'gris'].find((n) => node.classList.contains(n)) || 'tuyo';
-    return { el: node, base, p: PERSONALITY[base], x: Math.random() * Math.max(1, width - 80), dir: Math.random() < 0.5 ? 1 : -1, state: 'walk', until: now + between([2000, 9000]), run: 0, fxAt: 0 };
+    return { el: node, base, p: PERSONALITY[base], x: Math.random() * Math.max(1, width - 80), dir: Math.random() < 0.5 ? 1 : -1, state: 'walk', until: now + between([2000, 9000]), fxAt: 0 };
   });
   const nameOf = (cat) => (cat.base === 'tuyo' ? (catPrefs.nombre.trim() || 'Michi') : NOMBRES[cat.base]);
   function setState(cat, state, at) {
     cat.state = state;
-    cat.until = at + between(state === 'walk' ? cat.p.walk : cat.p.pause);
-    cat.el.classList.remove('st-walk', 'st-sit', 'st-groom', 'st-sleep', 'corre');
+    cat.until = at + between(DURATION[state] || (state === 'walk' ? cat.p.walk : cat.p.pause));
+    cat.el.classList.remove(...POSES.map((pose) => 'st-' + pose));
     cat.el.classList.add('st-' + state);
-    if (state === 'walk') {
-      if (Math.random() < 0.5) cat.dir = -cat.dir;
-      cat.run = cat.p.runs && Math.random() < 0.6 ? at + between([1500, 3500]) : 0;
-      cat.el.classList.toggle('corre', cat.run > 0);
-    }
+    if (state === 'walk' && Math.random() < 0.5) cat.dir = -cat.dir;
     cat.el.classList.toggle('izq', cat.dir < 0);
+  }
+  // Que hace cada gato cuando termina una pose: agacharse acaba en un salto corriendo, bostezar en una siesta.
+  function next(cat) {
+    if (cat.state === 'crouch') return 'run';
+    if (cat.state === 'yawn') return Math.random() < 0.6 ? (Math.random() < 0.5 ? 'sleep' : 'ovillo') : 'sit';
+    if (cat.state === 'walk') return pick(cat.p.rest);
+    return 'walk';
   }
   for (const cat of cats) {
     setState(cat, 'walk', now);
@@ -770,16 +791,17 @@ function startCats() {
   function frame(time) {
     const dt = Math.min(100, time - last);
     last = time;
-    for (const cat of cats) {
-      if (cat.state === 'walk') {
-        if (cat.run && time > cat.run) { cat.run = 0; cat.el.classList.remove('corre'); }
-        const catWidth = cat.el.offsetWidth || 72;
-        cat.x += cat.dir * cat.p.speed * (cat.run ? 2.4 : 1) * dt / 1000;
-        if (cat.x < 0) { cat.x = 0; cat.dir = 1; cat.el.classList.remove('izq'); }
-        if (cat.x > width - catWidth) { cat.x = Math.max(0, width - catWidth); cat.dir = -1; cat.el.classList.add('izq'); }
+    if (!document.body.classList.contains('quieto')) {
+      for (const cat of cats) {
+        if (cat.state === 'walk' || cat.state === 'run') {
+          const catWidth = cat.el.offsetWidth || 72;
+          cat.x += cat.dir * cat.p.speed * (cat.state === 'run' ? 2.8 : 1) * dt / 1000;
+          if (cat.x < 0) { cat.x = 0; cat.dir = 1; cat.el.classList.remove('izq'); }
+          if (cat.x > width - catWidth) { cat.x = Math.max(0, width - catWidth); cat.dir = -1; cat.el.classList.add('izq'); }
+        }
+        if (time > cat.until) setState(cat, next(cat), time);
+        cat.el.style.transform = 'translateX(' + Math.round(cat.x) + 'px)';
       }
-      if (time > cat.until) setState(cat, cat.state === 'walk' ? pick(cat.p.rest) : 'walk', time);
-      cat.el.style.transform = 'translateX(' + Math.round(cat.x) + 'px)';
     }
     requestAnimationFrame(frame);
   }
@@ -899,9 +921,11 @@ async function init() {
     if (event.key === 'Escape' && loginOpen) cancelLogin();
     else if (event.key === 'Escape' && !$('loading').hidden) hideLoading();
   });
+  buildSprites(document);
   loadCatPrefs();
   applyCatPrefs();
   renderCatSettings();
+  $('animaciones-pausa').addEventListener('change', (event) => { catPrefs.quieto = event.target.checked; saveCatPrefs(); applyCatPrefs(); });
   $('gato-nombre').addEventListener('input', (event) => { catPrefs.nombre = event.target.value.slice(0, 14); saveCatPrefs(); });
   $('gatitos-activos').addEventListener('change', (event) => { catPrefs.activos = event.target.checked; saveCatPrefs(); applyCatPrefs(); });
   $('gato-sentado').addEventListener('click', () => catFx($('gato-sentado'), 'prrr…', 3));
