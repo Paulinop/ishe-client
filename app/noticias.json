@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.2.4: nueva cara",
+    "fecha": "2026-10-06",
+    "texto": "Ishe Client estrena diseño: escena de Minecraft que cambia con la hora, botones de piedra, pantalla de carga con consejos y gatitos que pasean. Pasa el mouse sobre un gatito para ver su nombre y pulsa para acariciarlo. En Ajustes eliges el tuyo. También arregla un error de la 1.2.3 que impedía usar la ventana."
+  },
+  {
     "titulo": "Versión 1.2.3: nuevo look",
     "fecha": "2026-10-06",
     "texto": "Ishe Client estrena logo (el gato con gafas) y un solo color naranja en toda la aplicación. La apariencia ya no se cambia desde Ajustes."

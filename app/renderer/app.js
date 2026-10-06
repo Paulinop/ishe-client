@@ -45,7 +45,7 @@ function bump(key) {
 
 // ---- apariencia ----------------------------------------------------------------
 
-const DEFAULT_BACKGROUND = '#0d0f16';
+const DEFAULT_BACKGROUND = '#0b110a';
 
 function rgbOf(hex) {
   return [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
@@ -216,6 +216,7 @@ function describeMod(file) {
 function setStatus(text, tone) {
   const status = $('status');
   status.textContent = text;
+  $('loading-status').textContent = text;
   status.className = 'hero-status' + (tone ? ' is-' + tone : '');
 }
 
@@ -286,7 +287,7 @@ function renderSettings() {
   }
   $('game-dir').textContent = state.gameDir;
   $('session-hint').textContent = state.sessionSaved
-    ? 'Tu sesión se guarda cifrada en este equipo. Puedes cerrarla cuando quieras desde el panel de la izquierda.'
+    ? 'Tu sesión se guarda cifrada en este equipo. Puedes cerrarla cuando quieras desde tu cuenta, arriba a la derecha.'
     : 'En este equipo la sesión no se puede guardar cifrada, así que se pedirá iniciar sesión cada vez que abras Ishe Client.';
 }
 
@@ -397,7 +398,9 @@ function showView(name) {
 
 function setProgress(done, total) {
   const ratio = total > 0 ? Math.min(1, done / total) : 0;
-  $('progress-bar').style.width = Math.max(4, Math.round(ratio * 100)) + '%';
+  const percent = Math.max(4, Math.round(ratio * 100)) + '%';
+  $('progress-bar').style.width = percent;
+  $('loading-bar').style.width = percent;
 }
 
 function handleEvent(event) {
@@ -618,6 +621,7 @@ async function play() {
   $('progress').hidden = false;
   setProgress(0, 1);
   setStatus('Preparando el juego…');
+  showLoading();
   try {
     showResult(await window.ishe.play());
   } catch (error) {
@@ -625,10 +629,209 @@ async function play() {
     showNotice('bad', 'Error inesperado', String(error && error.message ? error.message : error), []);
   } finally {
     running = false;
+    hideLoading();
     refreshPlayButton();
     $('progress').hidden = true;
     bump('playDone');
   }
+}
+
+// ---- gatitos que pasean por abajo -----------------------------------------------
+// Cada gato tiene su caracter: el negro es tranquilo, el siames se asea mucho, el naranja corre, el gris duerme.
+// El quinto es el de cada persona: elige su pelaje y su nombre en Ajustes (se guarda en este equipo).
+
+const PELAJES = [['crema', 'Crema'], ['naranja', 'Naranja'], ['negro', 'Negro'], ['siames', 'Siamés'], ['gris', 'Gris']];
+const NOMBRES = { negro: 'Sombra', siames: 'Luna', naranja: 'Tigre', gris: 'Bruma' };
+const MAULLIDOS = ['miau', '¡miau!', 'prrr…', 'mrrp', 'miau miau'];
+const catPrefs = { pelaje: 'crema', nombre: '', activos: true };
+
+function loadCatPrefs() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('ishe.gatito') || '{}');
+    if (PELAJES.some((p) => p[0] === saved.pelaje)) catPrefs.pelaje = saved.pelaje;
+    if (typeof saved.nombre === 'string') catPrefs.nombre = saved.nombre.slice(0, 14);
+    if (saved.activos === false) catPrefs.activos = false;
+  } catch (_) { /* sin almacenamiento: se usan los valores por defecto */ }
+}
+
+function saveCatPrefs() {
+  try { localStorage.setItem('ishe.gatito', JSON.stringify(catPrefs)); } catch (_) { /* no pasa nada */ }
+}
+
+function applyCatPrefs() {
+  const mine = $('gato-tuyo');
+  for (const [id] of PELAJES) mine.classList.remove(id);
+  mine.classList.add(catPrefs.pelaje);
+  document.body.classList.toggle('sin-gatos', !catPrefs.activos);
+}
+
+function renderCatSettings() {
+  const box = $('pelajes');
+  box.replaceChildren();
+  for (const [id, label] of PELAJES) {
+    const button = el('button', 'pelaje');
+    button.type = 'button';
+    button.setAttribute('role', 'radio');
+    button.setAttribute('aria-checked', String(id === catPrefs.pelaje));
+    const cat = el('span', 'gato ' + id + ' st-sit');
+    cat.appendChild(el('span', 'sprite'));
+    button.appendChild(cat);
+    button.appendChild(el('span', '', label));
+    button.addEventListener('click', () => {
+      catPrefs.pelaje = id;
+      saveCatPrefs();
+      applyCatPrefs();
+      renderCatSettings();
+    });
+    box.appendChild(button);
+  }
+  $('gato-nombre').value = catPrefs.nombre;
+  $('gatitos-activos').checked = catPrefs.activos;
+}
+
+/** Globito con un texto y corazones sobre un gatito (para caricias y nombres). */
+function catFx(target, text, hearts) {
+  const layer = $('gatitos-fx');
+  if (layer.children.length > 16) return;
+  const rect = target.getBoundingClientRect();
+  const center = rect.left + rect.width / 2;
+  if (text) {
+    const bubble = el('div', 'burbuja', text);
+    bubble.style.left = Math.round(center) + 'px';
+    bubble.style.top = Math.max(4, Math.round(rect.top - 24)) + 'px';
+    layer.appendChild(bubble);
+    setTimeout(() => bubble.remove(), 1900);
+  }
+  for (let i = 0; i < hearts; i++) {
+    const heart = el('span', 'corazon');
+    heart.style.left = Math.round(center - 13 + (i - 1) * 20) + 'px';
+    heart.style.top = Math.max(4, Math.round(rect.top - 30)) + 'px';
+    heart.style.animationDelay = (i * 0.18) + 's';
+    layer.appendChild(heart);
+    setTimeout(() => heart.remove(), 1700 + i * 180);
+  }
+}
+
+function startCats() {
+  const strip = document.querySelector('.gatitos');
+  if (!strip || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const PERSONALITY = {
+    negro: { speed: 24, rest: { sit: 4, sleep: 2, groom: 2 }, pause: [5000, 12000], walk: [6000, 14000] },
+    siames: { speed: 38, rest: { sit: 2, sleep: 1, groom: 5 }, pause: [3000, 8000], walk: [4000, 10000] },
+    naranja: { speed: 52, rest: { sit: 2, sleep: 0, groom: 1 }, pause: [1500, 4000], walk: [5000, 12000], runs: true },
+    gris: { speed: 30, rest: { sit: 1, sleep: 6, groom: 1 }, pause: [9000, 20000], walk: [3000, 8000] },
+    tuyo: { speed: 34, rest: { sit: 3, sleep: 1, groom: 2 }, pause: [3000, 9000], walk: [4000, 10000] },
+  };
+  const between = (range) => range[0] + Math.random() * (range[1] - range[0]);
+  const pick = (weights) => {
+    const entries = Object.entries(weights);
+    let roll = Math.random() * entries.reduce((sum, entry) => sum + entry[1], 0);
+    for (const [name, weight] of entries) { roll -= weight; if (roll < 0) return name; }
+    return entries[0][0];
+  };
+  let width = strip.clientWidth;
+  window.addEventListener('resize', () => { width = strip.clientWidth; });
+  const now = performance.now();
+  const cats = [...strip.querySelectorAll('.gato')].map((node) => {
+    const base = ['negro', 'siames', 'naranja', 'gris'].find((n) => node.classList.contains(n)) || 'tuyo';
+    return { el: node, base, p: PERSONALITY[base], x: Math.random() * Math.max(1, width - 80), dir: Math.random() < 0.5 ? 1 : -1, state: 'walk', until: now + between([2000, 9000]), run: 0, fxAt: 0 };
+  });
+  const nameOf = (cat) => (cat.base === 'tuyo' ? (catPrefs.nombre.trim() || 'Michi') : NOMBRES[cat.base]);
+  function setState(cat, state, at) {
+    cat.state = state;
+    cat.until = at + between(state === 'walk' ? cat.p.walk : cat.p.pause);
+    cat.el.classList.remove('st-walk', 'st-sit', 'st-groom', 'st-sleep', 'corre');
+    cat.el.classList.add('st-' + state);
+    if (state === 'walk') {
+      if (Math.random() < 0.5) cat.dir = -cat.dir;
+      cat.run = cat.p.runs && Math.random() < 0.6 ? at + between([1500, 3500]) : 0;
+      cat.el.classList.toggle('corre', cat.run > 0);
+    }
+    cat.el.classList.toggle('izq', cat.dir < 0);
+  }
+  for (const cat of cats) {
+    setState(cat, 'walk', now);
+    // Pasar el mouse: se sienta a mirarte y dice su nombre. Pulsar: ronronea y salen corazones.
+    cat.el.addEventListener('mouseenter', () => {
+      const t = performance.now();
+      if (cat.state !== 'sit') setState(cat, 'sit', t);
+      cat.until = t + 2600;
+      if (t - cat.fxAt > 1500) { cat.fxAt = t; catFx(cat.el, nameOf(cat), 0); }
+    });
+    cat.el.addEventListener('click', () => {
+      const t = performance.now();
+      if (cat.state !== 'sit') setState(cat, 'sit', t);
+      cat.until = t + 3800;
+      cat.fxAt = t;
+      catFx(cat.el, MAULLIDOS[Math.floor(Math.random() * MAULLIDOS.length)], 3);
+    });
+  }
+  let last = now;
+  function frame(time) {
+    const dt = Math.min(100, time - last);
+    last = time;
+    for (const cat of cats) {
+      if (cat.state === 'walk') {
+        if (cat.run && time > cat.run) { cat.run = 0; cat.el.classList.remove('corre'); }
+        const catWidth = cat.el.offsetWidth || 72;
+        cat.x += cat.dir * cat.p.speed * (cat.run ? 2.4 : 1) * dt / 1000;
+        if (cat.x < 0) { cat.x = 0; cat.dir = 1; cat.el.classList.remove('izq'); }
+        if (cat.x > width - catWidth) { cat.x = Math.max(0, width - catWidth); cat.dir = -1; cat.el.classList.add('izq'); }
+      }
+      if (time > cat.until) setState(cat, cat.state === 'walk' ? pick(cat.p.rest) : 'walk', time);
+      cat.el.style.transform = 'translateX(' + Math.round(cat.x) + 'px)';
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+// ---- escena segun la hora (noche, dia, ocaso) ---------------------------------------
+
+function applyMomento() {
+  const now = new Date();
+  const hour = now.getHours() + now.getMinutes() / 60;
+  let momento = 'dia';
+  if (hour < 6 || hour >= 20) momento = 'noche'; else if (hour < 8 || hour >= 17) momento = 'ocaso';
+  document.body.dataset.momento = momento;
+  const t = Math.min(1, Math.max(0, momento === 'noche' ? (hour >= 20 ? hour - 20 : hour + 4) / 10 : (hour - 6) / 14));
+  const astro = $('hero-astro');
+  astro.style.left = (6 + t * 82).toFixed(1) + '%';
+  astro.style.top = Math.round(78 - Math.sin(Math.PI * t) * 58) + 'px';
+}
+
+// ---- pantalla de carga -------------------------------------------------------------
+
+const TIPS = [
+  'Pulsa sobre un gatito para acariciarlo.',
+  'Los creepers huyen de los gatos. Por eso aquí no hay ninguno.',
+  'Más memoria ayuda con muchos mods, pero no uses más de la mitad de la de tu PC.',
+  'Para jugar con amigos, abre tu mundo a LAN y elige la opción de Steam.',
+  'Con FancyMenu puedes cambiar el fondo, el logo y los botones del menú del juego.',
+  'La primera vez tarda más: se descargan el juego y los mods. Las siguientes son rápidas.',
+  'A los gatos les encanta dormir en una cama. En Ajustes eliges cómo es el tuyo.',
+  'Ishe Client busca versiones nuevas cada vez que lo abres.',
+];
+let tipTimer = 0;
+let tipIndex = 0;
+
+function showLoading() {
+  tipIndex = Math.floor(Math.random() * TIPS.length);
+  $('loading-tip').textContent = TIPS[tipIndex];
+  clearInterval(tipTimer);
+  tipTimer = setInterval(() => {
+    tipIndex = (tipIndex + 1) % TIPS.length;
+    $('loading-tip').textContent = TIPS[tipIndex];
+  }, 5000);
+  $('loading').hidden = false;
+  document.body.classList.add('cargando');
+  $('loading-hide').focus();
+}
+
+function hideLoading() {
+  clearInterval(tipTimer);
+  $('loading').hidden = true;
+  document.body.classList.remove('cargando');
 }
 
 async function init() {
@@ -642,7 +845,7 @@ async function init() {
     showNotice('', 'Falta la aprobación de Mojang', PENDING_TEXT, []);
   } else if (!state.signedIn && !state.minecraftFound) {
     showNotice('', 'Inicia sesión para jugar',
-      'Pulsa Iniciar sesión (abajo a la izquierda) y entra con la cuenta de Microsoft que tiene Minecraft: Java Edition. Si prefieres usar el launcher oficial de Minecraft, instálalo, ábrelo una vez con tu cuenta y ciérralo.', []);
+      'Pulsa Iniciar sesión (arriba a la derecha) y entra con la cuenta de Microsoft que tiene Minecraft: Java Edition. Si prefieres usar el launcher oficial de Minecraft, instálalo, ábrelo una vez con tu cuenta y ciérralo.', []);
   }
 
   for (const item of document.querySelectorAll('.nav-item')) {
@@ -694,7 +897,18 @@ async function init() {
   });
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && loginOpen) cancelLogin();
+    else if (event.key === 'Escape' && !$('loading').hidden) hideLoading();
   });
+  loadCatPrefs();
+  applyCatPrefs();
+  renderCatSettings();
+  $('gato-nombre').addEventListener('input', (event) => { catPrefs.nombre = event.target.value.slice(0, 14); saveCatPrefs(); });
+  $('gatitos-activos').addEventListener('change', (event) => { catPrefs.activos = event.target.checked; saveCatPrefs(); applyCatPrefs(); });
+  $('gato-sentado').addEventListener('click', () => catFx($('gato-sentado'), 'prrr…', 3));
+  $('loading-hide').addEventListener('click', hideLoading);
+  applyMomento();
+  setInterval(applyMomento, 5 * 60 * 1000);
+  startCats();
   document.body.dataset.ready = '1';
 }
 

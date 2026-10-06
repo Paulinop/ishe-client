@@ -604,7 +604,7 @@ function createWindow() {
     minWidth: 900,
     minHeight: 600,
     show: false,
-    backgroundColor: '#0d0f16',
+    backgroundColor: '#0b110a',
     title: 'Ishe Client',
     icon: path.join(APP_DIR, 'assets', 'logo.png'),
     autoHideMenuBar: true,

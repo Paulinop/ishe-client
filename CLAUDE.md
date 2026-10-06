@@ -102,6 +102,8 @@ node tools/test_auth.js app
 node tools/test_game.js app
 node tools/test_platform.js app
 node tools/test_update.js app "<ruta al .pem>"
+node tools/test_ui_ids.js app            # cada id que usa app.js existe en index.html
+node tools/prueba_ventana.js "<carpeta del motor Electron>" app out-ventana   # ABRE la ventana real con datos aislados (Windows/Mac/Linux)
 ```
 
 Solo en Linux (necesitan `xvfb-run`, Python 3 con Pillow y el binario de Electron 44.5.1 para Linux):
@@ -137,6 +139,7 @@ Añade una comprobación a las pruebas con cada cambio de comportamiento.
 
 Logo del gato con gafas y un solo color de acento (`app/tema.json`, `color2` = `color1`). La apariencia NO es
 personalizable: se quitó la tarjeta de Ajustes y los IPC de tema. Para cambiarla, edita `app/tema.json` y publica.
+Diseño 1.2.4: barra superior (sin panel lateral), gato en `assets/gato.png`, acento dorado único. Pantalla de carga (`#loading`, consejos en `TIPS`), escena según la hora (`applyMomento`), caricias a los gatos (`catFx`) y gatito propio de cada persona (`catPrefs`, en localStorage) están en `renderer/app.js`. Los gatitos de píxeles (propios, no son archivos de Minecraft) los dibuja `node tools/generar_gatos.js` dentro de `style.css` (4 pelajes x 4 poses; no edites ese bloque a mano). Su comportamiento (caminar, sentarse, asearse, dormir; cada uno con su carácter) está en `startCats()` de `renderer/app.js`. Al quitar bloques del HTML corre `test_ui_ids.js`: la 1.2.3 salió rota por borrar una tarjeta que app.js necesitaba.
 Pendiente: las secciones s14 y s16 de `tools/test_launcher_e2e.py` (solo Linux, no se corrieron) comprueban la
 personalización antigua y hay que quitarlas o adaptarlas.
 

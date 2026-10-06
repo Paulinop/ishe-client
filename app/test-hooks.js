@@ -158,8 +158,6 @@ exports.run = async (getWindow, TEST) => {
           bodyBackground: getComputedStyle(document.body).backgroundColor,
           logoSrc: document.getElementById('brand-logo').getAttribute('src'),
           logoSize: [document.getElementById('brand-logo').naturalWidth, document.getElementById('brand-logo').naturalHeight],
-          themeHint: document.getElementById('theme-hint').textContent,
-          themeResetDisabled: document.getElementById('theme-reset').disabled,
           face: document.body.dataset.face || '',
           faceHidden: document.getElementById('account-face').hidden,
           avatarHidden: document.getElementById('account-avatar').hidden,
