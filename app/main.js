@@ -6,7 +6,7 @@
 // aplicacion) deja el juego preparado y abre el launcher oficial.
 // No existe ningun modo de juego sin cuenta.
 
-const { app, BrowserWindow, Menu, clipboard, dialog, ipcMain, nativeImage, safeStorage, session, shell } = require('electron');
+const { app, BrowserWindow, Menu, clipboard, dialog, ipcMain, safeStorage, session, shell } = require('electron');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -232,8 +232,7 @@ function getState() {
   return {
     appVersion: ISHE.version,
     engine: process.versions.electron || '',
-    theme: tema.effective(APP_DIR, config.tema),
-    themeCustom: Object.keys(config.tema).length > 0,
+    theme: tema.effective(APP_DIR),
     playerSkin: player ? skinDataUrl : '',
     playerNameProvisional: Boolean(player && player.provisional),
     update,
@@ -253,60 +252,6 @@ function getState() {
     sessionSaved: Boolean(store && store.canPersist()),
     gameRunning,
   };
-}
-
-// ---- apariencia ------------------------------------------------------------
-
-function themeReply(extra) {
-  const config = readConfig();
-  return Object.assign({ ok: true, theme: tema.effective(APP_DIR, config.tema), themeCustom: Object.keys(config.tema).length > 0 }, extra || {});
-}
-
-function setTheme(changes) {
-  if (!changes || typeof changes !== 'object') return { ok: false, reason: 'invalid' };
-  const next = Object.assign({}, readConfig().tema);
-  for (const key of ['color1', 'color2', 'fondo']) {
-    if (changes[key] === undefined) continue;
-    if (!tema.color(changes[key])) return { ok: false, reason: 'invalid' };
-    if (key === 'fondo' && !tema.validBackground(changes[key])) return { ok: false, reason: 'light-background' };
-    next[key] = tema.color(changes[key]);
-  }
-  writeConfig({ tema: next });
-  return themeReply();
-}
-
-async function pickLogo() {
-  let file = TESTING ? TEST.logoFile : '';
-  if (!TESTING) {
-    const chosen = await dialog.showOpenDialog(mainWindow, {
-      title: 'Elige el logo', properties: ['openFile'], filters: [{ name: 'Imágenes', extensions: ['png', 'jpg', 'jpeg'] }],
-    });
-    file = chosen.canceled || !chosen.filePaths[0] ? '' : chosen.filePaths[0];
-  }
-  if (!file) return { ok: false, reason: 'cancelled' };
-  let image;
-  try {
-    if (fs.statSync(file).size > 20 * 1024 * 1024) return { ok: false, reason: 'too-big' };
-    image = nativeImage.createFromBuffer(fs.readFileSync(file));
-  } catch (_) {
-    return { ok: false, reason: 'unreadable' };
-  }
-  if (!image || image.isEmpty()) return { ok: false, reason: 'unreadable' };
-  // Se guarda una copia reducida (256 px como mucho): asi cabe en una actualizacion.
-  const size = image.getSize();
-  const scale = Math.min(1, 256 / Math.max(size.width, size.height));
-  const small = scale < 1 ? image.resize({ width: Math.max(1, Math.round(size.width * scale)), height: Math.max(1, Math.round(size.height * scale)), quality: 'best' }) : image;
-  const logo = 'data:image/png;base64,' + small.toPNG().toString('base64');
-  if (!tema.validLogo(logo)) return { ok: false, reason: 'too-big' };
-  writeConfig({ tema: Object.assign({}, readConfig().tema, { logo }) });
-  return themeReply();
-}
-
-function clearLogo() {
-  const next = Object.assign({}, readConfig().tema);
-  delete next.logo;
-  writeConfig({ tema: next });
-  return themeReply();
 }
 
 // ---- actualizaciones ---------------------------------------------------------
@@ -407,7 +352,7 @@ async function creatorBuild(input) {
       extrasDir: extrasDir(),
       version,
       notes,
-      theme: tema.effective(APP_DIR, readConfig().tema),
+      theme: tema.effective(APP_DIR),
       privateKeyPem: creatorKey,
       publicKeyPem: ISHE.publicKey,
       today: new Date().toISOString().slice(0, 10),
@@ -732,14 +677,6 @@ if (!app.requestSingleInstanceLock()) {
     });
     ipcMain.handle('ishe:set-display-name', (event, name) => (fromOurWindow(event) ? setDisplayName(typeof name === 'string' ? name.slice(0, 40) : '') : null));
     ipcMain.handle('ishe:clear-display-name', (event) => (fromOurWindow(event) ? clearDisplayName() : null));
-    ipcMain.handle('ishe:set-theme', (event, changes) => (fromOurWindow(event) ? setTheme(changes) : null));
-    ipcMain.handle('ishe:pick-logo', (event) => (fromOurWindow(event) ? pickLogo() : null));
-    ipcMain.handle('ishe:clear-logo', (event) => (fromOurWindow(event) ? clearLogo() : null));
-    ipcMain.handle('ishe:reset-theme', (event) => {
-      if (!fromOurWindow(event)) return null;
-      writeConfig({ tema: {} });
-      return themeReply();
-    });
     ipcMain.handle('ishe:update-check', (event) => (fromOurWindow(event) ? checkForUpdates() : null));
     ipcMain.handle('ishe:update-restart', (event) => {
       if (!fromOurWindow(event) || update.status !== 'ready' || busy || gameRunning) return false;

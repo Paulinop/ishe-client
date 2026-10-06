@@ -54,9 +54,10 @@ function defaults(appDir) {
   }
 }
 
-/** Apariencia en uso: la del client mas lo que esta persona cambio. */
-function effective(appDir, overrides) {
-  return Object.assign(defaults(appDir), pick(overrides));
+/** Apariencia en uso: siempre la del client, con un solo color (nadie la cambia). */
+function effective(appDir) {
+  const base = defaults(appDir);
+  return Object.assign(base, { color2: base.color1 });
 }
 
 module.exports = { DEFAULT, color, luminance, validBackground, validLogo, pick, defaults, effective };

@@ -34,7 +34,7 @@ app/                  el client (lo que se instala), sin dependencias
   inicio.js           arranque FIJO: elige entre la copia instalada y una actualización descargada
                       y verificada. Nunca viaja en una actualización.
   main.js             proceso principal: IPC, sesión, jugar, apariencia, actualizaciones, creador
-  preload.js          puente mínimo hacia la ventana (22 funciones)
+  preload.js          puente mínimo hacia la ventana (18 funciones)
   renderer/           la ventana (index.html, style.css, app.js); CSP estricta, sin innerHTML
   core/
     auth.js           Microsoft (código de dispositivo) -> Xbox -> XSTS -> Minecraft; skin; búsqueda por nombre
@@ -133,8 +133,15 @@ Añade una comprobación a las pruebas con cada cambio de comportamiento.
 - Cuentas con Game Pass: la comprobación de propiedad usa `/entitlements/mcstore` y, si viene vacía,
   `/entitlements/license`; no se pudo verificar con una cuenta real.
 
+## Apariencia fija (decisión de Guishe, versión 1.2.3)
+
+Logo del gato con gafas y un solo color de acento (`app/tema.json`, `color2` = `color1`). La apariencia NO es
+personalizable: se quitó la tarjeta de Ajustes y los IPC de tema. Para cambiarla, edita `app/tema.json` y publica.
+Pendiente: las secciones s14 y s16 de `tools/test_launcher_e2e.py` (solo Linux, no se corrieron) comprueban la
+personalización antigua y hay que quitarlas o adaptarlas.
+
 ## Ideas pendientes que pidió Guishe
 
-- Poder "modificar todo" con facilidad: imagen de fondo en Inicio, textos y novedades editables
-  desde Ajustes, elegir mods desde la aplicación.
+- Imagen de fondo en Inicio, textos y novedades editables, elegir mods desde la aplicación.
+- Cuando Mojang apruebe el ID: quitar la casilla del nombre provisional y mostrar el perfil real.
 - Probar en Mac.

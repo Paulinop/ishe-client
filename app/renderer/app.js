@@ -89,37 +89,6 @@ function applyTheme(theme) {
   document.body.dataset.theme = [theme.color1, theme.color2, theme.fondo, theme.logo ? 'logo' : ''].join(',');
 }
 
-function renderAppearance() {
-  $('theme-color1').value = state.theme.color1;
-  $('theme-color2').value = state.theme.color2;
-  $('theme-fondo').value = state.theme.fondo;
-  $('theme-reset').disabled = !state.themeCustom;
-}
-
-function themeHint(text) {
-  $('theme-hint').textContent = text;
-}
-
-function themeResult(result, okText) {
-  if (!result) return;
-  if (result.ok) {
-    state.theme = result.theme;
-    state.themeCustom = result.themeCustom;
-    themeHint(okText);
-  } else if (result.reason === 'light-background') {
-    themeHint('Ese fondo es demasiado claro: el texto no se leería. Elige uno más oscuro.');
-  } else if (result.reason === 'unreadable') {
-    themeHint('No pude leer esa imagen. Prueba con un PNG o un JPG.');
-  } else if (result.reason === 'too-big') {
-    themeHint('Esa imagen es demasiado grande.');
-  } else if (result.reason !== 'cancelled') {
-    themeHint('No se pudo guardar el cambio.');
-  }
-  applyTheme(state.theme);
-  renderAppearance();
-  bump('themeDone');
-}
-
 // ---- version y actualizaciones --------------------------------------------------
 
 function renderUpdate() {
@@ -409,7 +378,6 @@ function applyState(next) {
   renderMods(state.installed);
   renderSettings();
   applyTheme(state.theme);
-  renderAppearance();
   renderUpdate();
   renderCreator();
   renderAccount();
@@ -706,15 +674,6 @@ async function init() {
   $('provisional-name').addEventListener('keydown', (event) => {
     if (event.key === 'Enter') saveDisplayName();
   });
-  for (const key of ['color1', 'color2', 'fondo']) {
-    const input = $('theme-' + key);
-    // Mientras se mueve el selector se ve al momento; al soltar se guarda.
-    input.addEventListener('input', () => applyTheme(Object.assign({}, state.theme, { [key]: input.value })));
-    input.addEventListener('change', async () => themeResult(await window.ishe.setTheme({ [key]: input.value }), 'Guardado.'));
-  }
-  $('theme-logo').addEventListener('click', async () => themeResult(await window.ishe.pickLogo(), 'Logo cambiado.'));
-  $('theme-logo-clear').addEventListener('click', async () => themeResult(await window.ishe.clearLogo(), 'Se usa el logo original.'));
-  $('theme-reset').addEventListener('click', async () => themeResult(await window.ishe.resetTheme(), 'Colores y logo originales.'));
   $('update-check').addEventListener('click', () => window.ishe.updateCheck());
   $('update-restart').addEventListener('click', restartForUpdate);
   $('update-pill').addEventListener('click', restartForUpdate);
