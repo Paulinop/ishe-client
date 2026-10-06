@@ -1,0 +1,38 @@
+UNOFFICIAL MODIFIED BUILD OF e4steam 0.3.2
+==========================================
+
+This jar is NOT an official e4steam release. It is the official 0.3.2 release
+jar from https://github.com/Kamilhik/e4steam/releases/tag/v0.3.2 with the
+changes listed below, made on 2026-10-06 for private use. e4steam is licensed
+under the Apache License 2.0; the original LICENSE and NOTICE files are kept
+unchanged in this jar. Do not report problems with this build to the e4steam
+authors without first reproducing them on the official jar.
+
+Changed file
+------------
+link/e4steam/mixin/PlayerListMixin.class
+    allowOwnerLogin(...) now ends with one extra call:
+    link.e4steam.steam.E4steamGuestGuard.check(this, address, profile,
+    callback, authenticatedSteamId, vanillaOwnerMatch)
+
+Added files
+-----------
+link/e4steam/steam/E4steamGuestGuard.class
+link/e4steam/steam/E4steamGuestGuard$1.class
+META-INF/E4STEAM-UNOFFICIAL-PATCH.txt (this file)
+
+What the added check does (integrated "Open to LAN" worlds only)
+----------------------------------------------------------------
+1. A guest who joins through Steam is refused if their Minecraft nickname is
+   the world owner's nickname. Minecraft recognises the owner by name, so such
+   a guest could otherwise act as the owner.
+2. On Minecraft versions where e4steam 0.3.2 does not bind the guest's UUID to
+   the SteamID (before 1.20.2 with the "modern" jars), a nickname is pinned to
+   the first Steam account that uses it. A different Steam account using that
+   nickname is refused. Pins are stored in
+   <config>/e4steam/guest-nicknames.properties; delete a line to free a name.
+
+The check can only refuse a login. It never admits a player the official
+build would refuse, and it does nothing for non-Steam (LAN/direct) logins.
+
+Everything else in the jar is byte-for-byte the content of the official jar.

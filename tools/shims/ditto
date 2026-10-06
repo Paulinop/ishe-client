@@ -1,0 +1,4 @@
+#!/bin/bash
+# stand-in for: ditto -x -k <zip> <dest>
+echo "ditto $*" >> "$SHIM_LOG"
+exec unzip -q "$3" -d "$4"

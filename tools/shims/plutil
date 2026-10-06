@@ -1,0 +1,9 @@
+#!/usr/bin/python3 -I
+# stand-in for: plutil -replace KEY -string VALUE file
+import os, plistlib, sys
+open(os.environ["SHIM_LOG"], "a").write("plutil " + " ".join(sys.argv[1:4]) + "\n")
+_, op, key, kind, value, path = sys.argv
+assert op == "-replace" and kind == "-string"
+data = plistlib.load(open(path, "rb"))
+data[key] = value
+plistlib.dump(data, open(path, "wb"))

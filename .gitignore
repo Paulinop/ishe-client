@@ -1,0 +1,15 @@
+# Lo que se genera
+dist/
+node_modules/
+e2e-out/
+*.log
+
+# Claves: la clave privada de actualizaciones NUNCA va en el repositorio
+*.pem
+*.key
+clave*/
+keys/
+
+# Sistema
+.DS_Store
+Thumbs.db

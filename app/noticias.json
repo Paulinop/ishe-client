@@ -1,0 +1,17 @@
+[
+  {
+    "titulo": "Versión 1.2.1: tu personaje",
+    "fecha": "2026-10-06",
+    "texto": "Mientras Mojang aprueba Ishe Client, escribe tu nombre de Minecraft en Ajustes > Tu cuenta y verás tu cabeza y tu nombre. También: colores y logo a tu gusto, y actualizaciones automáticas."
+  },
+  {
+    "titulo": "Cómo jugar con amigos",
+    "fecha": "2026-10-06",
+    "texto": "Todos abren Steam e instalan Ishe Client. Quien tenga el mundo usa «Abrir en LAN» y elige la opción de Steam para invitar."
+  },
+  {
+    "titulo": "Tu menú, a tu manera",
+    "fecha": "2026-10-06",
+    "texto": "Dentro del juego, FancyMenu te deja cambiar el fondo, el logo y los botones del menú principal."
+  }
+]

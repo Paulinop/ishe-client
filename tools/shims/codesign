@@ -1,0 +1,3 @@
+#!/bin/bash
+echo "codesign $*" >> "$SHIM_LOG"
+exit "${FAKE_CODESIGN_EXIT:-0}"

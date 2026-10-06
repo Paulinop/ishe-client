@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ishe Client</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <img class="brand-logo" id="brand-logo" src="../assets/logo.png" alt="">
+      <div class="brand-text">
+        <span class="brand-name">ISHE</span>
+        <span class="brand-sub">CLIENT</span>
+      </div>
+    </div>
+    <nav class="nav" aria-label="Secciones">
+      <button class="nav-item is-active" data-view="inicio" type="button">Inicio</button>
+      <button class="nav-item" data-view="mods" type="button">Mods</button>
+      <button class="nav-item" data-view="ajustes" type="button">Ajustes</button>
+    </nav>
+    <div class="account" id="account">
+      <div class="account-row">
+        <span class="account-avatar" id="account-avatar" aria-hidden="true">?</span>
+        <canvas class="account-face" id="account-face" width="8" height="8" aria-hidden="true" hidden></canvas>
+        <div class="account-text">
+          <span class="account-name" id="account-name">Sin sesión</span>
+          <span class="account-sub" id="account-sub">Cuenta de Microsoft</span>
+        </div>
+      </div>
+      <button class="button account-button" id="account-button" type="button">Iniciar sesión</button>
+      <button class="link account-link" id="account-name-link" type="button" hidden>Mostrar mi personaje</button>
+    </div>
+    <div class="sidebar-foot">
+      <span id="foot-version">Ishe Client</span>
+      <span id="foot-mc"></span>
+      <span class="legal" id="legal">NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.</span>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- ============================ INICIO ============================ -->
+    <section class="view is-active" id="view-inicio" aria-labelledby="hero-title">
+      <div class="hero">
+        <div class="hero-grid" aria-hidden="true"></div>
+        <div class="hero-body">
+          <p class="hero-kicker" id="hero-kicker">Minecraft 26.2 · Fabric · e4steam</p>
+          <h1 class="hero-title" id="hero-title">Ishe Client</h1>
+          <p class="hero-status" id="status" role="status" aria-live="polite">Listo para preparar el juego.</p>
+          <div class="progress" id="progress" hidden>
+            <div class="progress-bar" id="progress-bar"></div>
+          </div>
+          <div class="hero-actions">
+            <button class="play" id="play" type="button">JUGAR</button>
+            <button class="link" id="toggle-log" type="button" hidden>Ver detalles</button>
+            <button class="pill" id="update-pill" type="button" hidden></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="notice" id="notice" hidden>
+        <strong class="notice-title" id="notice-title"></strong>
+        <p class="notice-text" id="notice-text"></p>
+        <ul class="notice-list" id="notice-list"></ul>
+      </div>
+
+      <pre class="log" id="log" hidden tabindex="0" aria-label="Detalles de la preparación"></pre>
+
+      <h2 class="section-title">Novedades</h2>
+      <div class="news" id="news"></div>
+    </section>
+
+    <!-- ============================= MODS ============================= -->
+    <section class="view" id="view-mods" aria-labelledby="mods-title">
+      <h1 class="page-title" id="mods-title">Mods instalados</h1>
+      <p class="page-lead" id="mods-lead"></p>
+      <div class="mods" id="mods"></div>
+    </section>
+
+    <!-- ============================ AJUSTES ============================ -->
+    <section class="view" id="view-ajustes" aria-labelledby="settings-title">
+      <h1 class="page-title" id="settings-title">Ajustes</h1>
+
+      <div class="card">
+        <label class="card-title" for="ram">Memoria para el juego</label>
+        <p class="card-text">Más memoria ayuda con muchos mods. No pongas más de la mitad de la que tiene tu PC.</p>
+        <select class="select" id="ram"></select>
+        <p class="card-hint" id="ram-hint">El cambio se aplica la próxima vez que pulses Jugar.</p>
+      </div>
+
+      <div class="card">
+        <span class="card-title">Apariencia</span>
+        <p class="card-text">Elige los colores y el logo. Se ven al momento y se guardan en este equipo.</p>
+        <div class="swatches">
+          <label class="swatch"><input type="color" id="theme-color1"><span>Color 1</span></label>
+          <label class="swatch"><input type="color" id="theme-color2"><span>Color 2</span></label>
+          <label class="swatch"><input type="color" id="theme-fondo"><span>Fondo</span></label>
+        </div>
+        <div class="row">
+          <button class="button" id="theme-logo" type="button">Cambiar logo…</button>
+          <button class="button" id="theme-logo-clear" type="button">Quitar mi logo</button>
+          <button class="button" id="theme-reset" type="button">Volver a lo original</button>
+        </div>
+        <p class="card-hint" id="theme-hint" role="status" aria-live="polite">El logo puede ser un PNG o JPG; se reduce solo.</p>
+      </div>
+
+      <div class="card">
+        <span class="card-title">Versión y actualizaciones</span>
+        <p class="card-text" id="version-line"></p>
+        <p class="card-text" id="update-status" role="status" aria-live="polite"></p>
+        <div class="row">
+          <button class="button" id="update-check" type="button">Buscar actualizaciones</button>
+          <button class="button is-primary" id="update-restart" type="button" hidden>Reiniciar para actualizar</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="card-title">Carpeta de Ishe Client</span>
+        <p class="card-text">Aquí están tus mods, mundos y ajustes del client. Es independiente de tu Minecraft normal.</p>
+        <code class="path" id="game-dir"></code>
+        <button class="button" id="open-folder" type="button">Abrir carpeta</button>
+      </div>
+
+      <div class="card">
+        <span class="card-title">Tus mundos</span>
+        <p class="card-text">Ishe Client empieza sin mundos. Para usar uno que ya tienes, copia su carpeta desde <code>saves</code> de tu Minecraft normal a <code>saves</code> dentro de la carpeta de Ishe Client. Copia, no muevas.</p>
+      </div>
+
+      <div class="card">
+        <span class="card-title">Tu cuenta</span>
+        <p class="card-text">Con tu cuenta de Microsoft iniciada, Ishe Client descarga Minecraft de los servidores oficiales de Mojang y lo abre directamente. Solo funciona con cuentas que tienen Minecraft: Java Edition; no hay modo sin cuenta. Tu contraseña se escribe únicamente en la página de Microsoft, nunca aquí.</p>
+        <p class="card-text">Sin sesión iniciada, Ishe Client deja el juego preparado y abre el launcher oficial de Minecraft; ahí eliges el perfil «Ishe Client» y pulsas Jugar.</p>
+        <p class="card-hint" id="session-hint"></p>
+        <div class="provisional" id="provisional" hidden>
+          <label class="field" for="provisional-name">Tu nombre de Minecraft (para ver tu personaje mientras Mojang aprueba)
+            <input class="input" id="provisional-name" type="text" maxlength="16" spellcheck="false" autocomplete="off">
+          </label>
+          <div class="row">
+            <button class="button" id="provisional-save" type="button">Mostrar mi personaje</button>
+            <button class="button" id="provisional-clear" type="button" hidden>Quitar</button>
+          </div>
+          <p class="card-hint" id="provisional-hint" role="status" aria-live="polite">Es solo para verlo aquí: no sirve para abrir el juego, y se cambia por el de tu cuenta cuando Mojang apruebe.</p>
+        </div>
+      </div>
+
+      <details class="card" id="creator">
+        <summary class="card-title">Para el creador de Ishe Client</summary>
+        <p class="card-text">Aquí se prepara una versión nueva para todos: lleva los colores y el logo que tienes puestos ahora, y lo que escribas sale en Novedades. Hace falta la clave de actualizaciones, que solo tiene el creador.</p>
+        <p class="card-text" id="creator-key-status"></p>
+        <div class="row">
+          <button class="button" id="creator-key" type="button">Cargar mi clave…</button>
+        </div>
+        <div class="fields">
+          <label class="field" for="creator-version">Número de versión
+            <input class="input" id="creator-version" type="text" inputmode="decimal" maxlength="14" spellcheck="false" autocomplete="off">
+          </label>
+          <label class="field" for="creator-notes">Qué cambió (sale en Novedades)
+            <textarea class="input" id="creator-notes" rows="3" maxlength="400"></textarea>
+          </label>
+        </div>
+        <div class="row">
+          <button class="button is-primary" id="creator-build" type="button">Crear actualización</button>
+          <button class="button" id="creator-open" type="button" hidden>Abrir la carpeta</button>
+        </div>
+        <p class="card-hint" id="creator-result" role="status" aria-live="polite"></p>
+        <ol class="steps" id="creator-steps" hidden>
+          <li>Entra en <strong>github.com/Paulinop/ishe-client/releases/new</strong></li>
+          <li>En «Choose a tag» escribe <strong id="creator-tag"></strong> y pulsa «Create new tag».</li>
+          <li>Arrastra a la zona de archivos estos: <span id="creator-files"></span></li>
+          <li>Pulsa «Publish release». Al abrir Ishe Client, todos la reciben.</li>
+        </ol>
+      </details>
+
+      <div class="card">
+        <span class="card-title">Acerca de</span>
+        <p class="card-text">Ishe Client es un proyecto personal, gratuito y sin fines comerciales. No incluye ni redistribuye archivos de Minecraft.</p>
+        <p class="card-text legal-block">NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.</p>
+        <p class="card-text legal-block">NO ES UN PRODUCTO OFICIAL DE MINECRAFT. NO ESTÁ APROBADO POR MOJANG NI MICROSOFT, NI ASOCIADO CON ELLOS.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== INICIO DE SESIÓN (Microsoft) ===================== -->
+  <div class="overlay" id="login" hidden>
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="login-title">
+      <h2 class="dialog-title" id="login-title">Inicia sesión con Microsoft</h2>
+      <p class="dialog-lead">Usa la cuenta de Microsoft que tiene Minecraft: Java Edition. La contraseña se escribe solo en la página de Microsoft, nunca en Ishe Client.</p>
+      <ol class="dialog-steps">
+        <li>Abre la página de Microsoft: <strong id="login-page">www.microsoft.com/link</strong></li>
+        <li>Escribe este código y entra con tu cuenta:</li>
+      </ol>
+      <div class="code" id="login-code">········</div>
+      <p class="dialog-status" id="login-status" role="status" aria-live="polite">Pidiendo un código a Microsoft…</p>
+      <div class="dialog-actions">
+        <button class="button is-primary" id="login-open" type="button" disabled>Abrir la página de Microsoft</button>
+        <button class="button" id="login-copy" type="button" disabled>Copiar código</button>
+        <button class="link" id="login-cancel" type="button">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
