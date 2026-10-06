@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.2.2: aviso de actualización",
+    "fecha": "2026-10-06",
+    "texto": "Ahora, cada vez que sale una versión nueva, aparece un aviso grande arriba con lo que cambió y el botón Reiniciar ahora."
+  },
+  {
     "titulo": "Versión 1.2.1: tu personaje",
     "fecha": "2026-10-06",
     "texto": "Mientras Mojang aprueba Ishe Client, escribe tu nombre de Minecraft en Ajustes > Tu cuenta y verás tu cabeza y tu nombre. También: colores y logo a tu gusto, y actualizaciones automáticas."

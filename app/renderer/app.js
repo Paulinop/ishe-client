@@ -143,6 +143,25 @@ function renderUpdate() {
   pill.hidden = update.status !== 'ready';
   pill.textContent = 'Versión ' + update.version + ' lista · Reiniciar';
   document.body.dataset.updateStatus = update.status;
+  renderUpdateBanner(update);
+}
+
+// Aviso grande arriba de todo cuando sale una version nueva; "Despues" lo oculta hasta el proximo arranque.
+let bannerDismissed = '';
+
+function renderUpdateBanner(update) {
+  const showing = ['downloading', 'ready', 'needs-installer'].includes(update.status)
+    && bannerDismissed !== update.status + ':' + update.version;
+  $('update-banner').hidden = !showing;
+  if (!showing) return;
+  const ready = update.status === 'ready';
+  $('update-banner-title').textContent = 'Hay una actualización: versión ' + update.version;
+  $('update-banner-detail').textContent = ready
+    ? (update.notes || 'Reinicia Ishe Client para usarla.')
+    : update.status === 'downloading'
+      ? 'Se está descargando, te avisamos cuando esté lista.'
+      : 'Hay que instalar Ishe Client de nuevo con el instalador más reciente.';
+  $('update-banner-restart').hidden = !ready;
 }
 
 async function restartForUpdate() {
@@ -699,6 +718,12 @@ async function init() {
   $('update-check').addEventListener('click', () => window.ishe.updateCheck());
   $('update-restart').addEventListener('click', restartForUpdate);
   $('update-pill').addEventListener('click', restartForUpdate);
+  $('update-banner-restart').addEventListener('click', restartForUpdate);
+  $('update-banner-later').addEventListener('click', () => {
+    const update = state.update || {};
+    bannerDismissed = update.status + ':' + update.version;
+    $('update-banner').hidden = true;
+  });
   $('creator-key').addEventListener('click', creatorKeyAction);
   $('creator-build').addEventListener('click', creatorBuild);
   $('creator-open').addEventListener('click', () => window.ishe.creatorOpenFolder());
