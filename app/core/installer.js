@@ -4,6 +4,7 @@
 // de pruebas (cli.js).
 
 const crypto = require('crypto');
+const modishe = require('./modishe');
 const fs = require('fs');
 const path = require('path');
 
@@ -14,7 +15,8 @@ const USER_AGENT = 'IsheClient-Launcher/1.0';
 
 // Mods que forman Ishe Client (nombres de proyecto en Modrinth).
 // Las dependencias obligatorias de cada uno se anaden solas.
-const MOD_PROJECTS = ['fabric-api', 'sodium', 'lithium', 'ferrite-core', 'fancymenu', 'modmenu'];
+// simple-voice-chat: lo necesitan Nublado y Haku para oir y hablar.
+const MOD_PROJECTS = ['fabric-api', 'sodium', 'lithium', 'ferrite-core', 'fancymenu', 'modmenu', 'simple-voice-chat'];
 
 // e4steam 0.3.2 con la correccion del apodo (archivo incluido en "extras").
 const E4STEAM_FILE = 'e4steam-fabric-quilt-mc26.1-26.2-v0.3.2-guard.jar';
@@ -305,6 +307,22 @@ async function install(options, onEvent) {
       const dependencyProject = text(dependency.project_id);
       if (dependency.dependency_type === 'required' && dependencyProject !== '') queue.push(dependencyProject);
     }
+  }
+
+  // El mod Ishe (Nublado, Haku, cajero...): se actualiza solo desde la release "mods" del proyecto.
+  try {
+    const publicKey = options.publicKey || require('./clave-publica');
+    const result = await modishe.sync({
+      source: options.isheModSource, publicKey, modsDir, minecraft: MC_VERSION,
+      allowLoopback: Boolean(options.isheModAllowLoopback),
+    });
+    if (result.status === 'actualizado') info('descargado  ' + result.file + ' (mod Ishe ' + result.version + ')');
+    else if (result.status === 'al-dia') info('ya estaba   ' + result.file);
+    else if (result.status === 'otra-version') info('el mod Ishe publicado es para Minecraft ' + result.minecraft + ': se deja el que tienes');
+    else info('todavía no hay ningún mod Ishe publicado');
+    if (result.file) currentMods.set(modishe.PROJECT_KEY, result.file);
+  } catch (error) {
+    problem('No pude actualizar el mod Ishe (se conserva el que ya tenías): ' + error.message);
   }
 
   // e4steam (incluido en el paquete)

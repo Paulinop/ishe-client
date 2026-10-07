@@ -40,7 +40,8 @@ app/                  el client (lo que se instala), sin dependencias
     auth.js           Microsoft (código de dispositivo) -> Xbox -> XSTS -> Minecraft; skin; búsqueda por nombre
     session.js        guarda el refresh token cifrado (safeStorage)
     game.js           descarga y arranque del juego (versión, bibliotecas, recursos, Java de Mojang)
-    installer.js      Fabric + mods de Modrinth + perfil en el launcher oficial
+    installer.js      Fabric + mods de Modrinth + mod Ishe + perfil en el launcher oficial
+    modishe.js        actualiza el mod Ishe desde la release fija "mods" (aviso firmado + SHA-256)
     platform.js       detectar/abrir el launcher oficial
     paquete.js        formato de las actualizaciones: firma Ed25519 + SHA-256 por archivo
     versiones.js      registro de la versión en uso (estado.json)
@@ -75,6 +76,17 @@ e4steam-guard/        código de la corrección de e4steam (ver su LEEME.md)
   (`main.js`, `preload.js`, `package.json`, `noticias.json`, `tema.json`, `core/*.js`,
   `renderer/*.html|css|js`, `assets/*.png|ico|icns`).
 
+## Publicar el mod Ishe (sin tocar el launcher)
+
+El mod Ishe vive en `../ishemod-template-26.2` (Minecraft 26.2). Al pulsar Jugar, el client mira la release
+fija `mods` de GitHub (`ishe-mod.json` firmado + `ishe-<versión>-mc26.2.jar`) y baja el .jar si cambió.
+
+1. En `ishemod-template-26.2`: `./gradlew build` (sube `version` en gradle.properties si cambió algo).
+2. `node tools/publicar_mod.js --jar <ruta a build/libs/ishe-X.Y.Z.jar> --clave "<ruta al .pem>"` crea y comprueba el aviso
+   en `dist/mod/` sin publicar nada.
+3. **Pide permiso a Guishe** y repite con `--subir` (necesita `gh auth login`): sube/reemplaza los archivos de la release `mods`.
+4. Prueba: `node tools/test_mod.js app` (servidor simulado, sin la clave real).
+
 ## Publicar una versión nueva
 
 1. Haz los cambios en `app/`.
@@ -102,6 +114,7 @@ node tools/test_auth.js app
 node tools/test_game.js app
 node tools/test_platform.js app
 node tools/test_update.js app "<ruta al .pem>"
+node tools/test_mod.js app
 node tools/test_ui_ids.js app            # cada id que usa app.js existe en index.html
 node tools/test_gatos.js app             # cada pelaje y pose de los gatitos tiene su dibujo
 # test-hooks.js tambien entiende eval:<etiqueta>|<codigo>, size:<ancho>x<alto> y wait:<ms> (para cazar bugs en la ventana real)
@@ -126,9 +139,10 @@ Añade una comprobación a las pruebas con cada cambio de comportamiento.
   automática ya funciona de verdad contra GitHub Releases.
 - Azure: aplicación "Ishe Client", Application (client) ID `777b4ef5-0f7c-47c7-b03a-a9fefbfa49c2`,
   solo cuentas personales, cliente público (sin secreto).
-- **Mojang aún no ha aprobado ese ID** (formulario enviado el 6 de octubre de 2026, sin plazo).
-  Hasta entonces `login_with_xbox` responde 403, la aplicación muestra "Esperando a Mojang" y Jugar
-  abre el launcher oficial. Al aprobarlo, todo lo demás debería funcionar sin cambios.
+- **Mojang aprobó ese ID el 7 de octubre de 2026** (correo de Mojang Enforcement: la app quedó en su lista de
+  permitidos). Todavía NO se ha probado un inicio de sesión real después de la aprobación; puede tardar en
+  aplicarse. Si `login_with_xbox` aún da 403, la aplicación muestra "Esperando a Mojang".
+- 1.3.0 añade el mod Ishe (release fija `mods`) y Simple Voice Chat a lo que instala Jugar.
 - Comprobado de verdad en el Windows de Guishe: instalación, ventana, colores y logo, e inicio de
   sesión real con Microsoft hasta el rechazo esperado de Mojang.
 - Solo simulado, nunca real: arranque directo del juego, descarga del juego y de Java, skin y nombre

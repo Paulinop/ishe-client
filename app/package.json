@@ -1,8 +1,8 @@
 {
   "name": "ishe-client",
   "productName": "Ishe Client",
-  "version": "1.2.8",
-  "description": "Launcher de Ishe Client: prepara Minecraft 26.2 con Fabric, mods y e4steam, y abre el juego con tu cuenta de Microsoft.",
+  "version": "1.3.0",
+  "description": "Launcher de Ishe Client: prepara Minecraft 26.2 con Fabric, mods, el mod Ishe y e4steam, y abre el juego con tu cuenta de Microsoft.",
   "author": "Guishe",
   "license": "UNLICENSED",
   "private": true,
