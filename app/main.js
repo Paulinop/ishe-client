@@ -19,6 +19,7 @@ const sessionStore = require('./core/session');
 const tema = require('./core/tema');
 const paquete = require('./core/paquete');
 const updater = require('./core/updater');
+const amigos = require('./core/amigos');
 const creator = require('./core/creator');
 
 const APP_DIR = __dirname;
@@ -180,9 +181,9 @@ function readConfig() {
     const typed = data.provisional;
     const provisional = typed && /^[A-Za-z0-9_]{1,16}$/.test(String(typed.name)) && /^[0-9a-f]{32}$/.test(String(typed.uuid))
       ? { name: typed.name, uuid: typed.uuid } : null;
-    return { ramGb: RAM_CHOICES.includes(data.ramGb) ? data.ramGb : 0, tema: tema.pick(data.tema), provisional };
+    return { ramGb: RAM_CHOICES.includes(data.ramGb) ? data.ramGb : 0, tema: tema.pick(data.tema), provisional, servidor: game.serverAddress(data.servidor), entrar: data.entrar !== false };
   } catch (_) {
-    return { ramGb: 0, tema: {}, provisional: null };
+    return { ramGb: 0, tema: {}, provisional: null, servidor: '', entrar: true };
   }
 }
 
@@ -246,6 +247,9 @@ function getState() {
     installed: readInstalled(),
     ramGb: config.ramGb,
     ramChoices: RAM_CHOICES,
+    friendCode: amigos.active(gameDir),
+    server: config.servidor,
+    joinServer: config.entrar,
     news: readNews(),
     signedIn: signedIn(),
     playerName: player ? player.name : '',
@@ -551,6 +555,7 @@ async function play() {
           env: { platform: process.platform, arch: process.arch, osVersion: os.release() },
           sources: GAME_SOURCES,
           ramGb: config.ramGb,
+          joinServer: config.entrar ? config.servidor : '',
         };
         let running;
         try {
@@ -703,6 +708,28 @@ if (!app.requestSingleInstanceLock()) {
       if (!fromOurWindow(event) || !RAM_CHOICES.includes(gigabytes)) return false;
       writeConfig({ ramGb: gigabytes });
       return true;
+    });
+    ipcMain.handle('ishe:friend-code-set', (event, code) => {
+      if (!fromOurWindow(event) || typeof code !== 'string') return { ok: false };
+      try {
+        const applied = amigos.apply(gameDir, code);
+        if (!applied) return { ok: false };
+        if (applied.server) writeConfig({ servidor: applied.server, entrar: true });
+        return { ok: true, server: applied.server || '' };
+      } catch (_) {
+        return { ok: false, reason: 'disk' };
+      }
+    });
+    ipcMain.handle('ishe:friend-code-clear', (event) => {
+      if (!fromOurWindow(event)) return false;
+      try { amigos.clear(gameDir); return true; } catch (_) { return false; }
+    });
+    ipcMain.handle('ishe:set-server', (event, address, join) => {
+      if (!fromOurWindow(event)) return { ok: false };
+      const text = typeof address === 'string' ? address.trim() : '';
+      if (text !== '' && !game.serverAddress(text)) return { ok: false, reason: 'invalid' };
+      writeConfig({ servidor: text, entrar: join !== false });
+      return { ok: true };
     });
     ipcMain.handle('ishe:set-display-name', (event, name) => (fromOurWindow(event) ? setDisplayName(typeof name === 'string' ? name.slice(0, 40) : '') : null));
     ipcMain.handle('ishe:clear-display-name', (event) => (fromOurWindow(event) ? clearDisplayName() : null));

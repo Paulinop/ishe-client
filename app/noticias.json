@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.4.0: Ishe server y entrar directo",
+    "fecha": "2026-10-07",
+    "texto": "Nuevo en Ajustes: «Mi servidor». Pon la dirección y, al pulsar Jugar, Minecraft abre y entra directo a Ishe server, sin menú ni «crear mundo». También hay «Código de amigos» para la IA de Nublado y Haku sin tener tu propia clave."
+  },
+  {
     "titulo": "Versión 1.3.0: el mod Ishe y la voz",
     "fecha": "2026-10-07",
     "texto": "Al pulsar Jugar, Ishe Client ahora también instala y actualiza solo el mod Ishe (Nublado, Haku, el cajero y la arena movediza) y Simple Voice Chat para que puedan oírte y hablarte. Mojang ya aprobó el inicio de sesión."

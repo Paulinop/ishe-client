@@ -34,7 +34,7 @@ app/                  el client (lo que se instala), sin dependencias
   inicio.js           arranque FIJO: elige entre la copia instalada y una actualización descargada
                       y verificada. Nunca viaja en una actualización.
   main.js             proceso principal: IPC, sesión, jugar, apariencia, actualizaciones, creador
-  preload.js          puente mínimo hacia la ventana (18 funciones)
+  preload.js          puente mínimo hacia la ventana (20 funciones)
   renderer/           la ventana (index.html, style.css, app.js); CSP estricta, sin innerHTML
   core/
     auth.js           Microsoft (código de dispositivo) -> Xbox -> XSTS -> Minecraft; skin; búsqueda por nombre
@@ -42,6 +42,7 @@ app/                  el client (lo que se instala), sin dependencias
     game.js           descarga y arranque del juego (versión, bibliotecas, recursos, Java de Mojang)
     installer.js      Fabric + mods de Modrinth + mod Ishe + perfil en el launcher oficial
     modishe.js        actualiza el mod Ishe desde la release fija "mods" (aviso firmado + SHA-256)
+    amigos.js         "código de amigos": escribe en <juego>/config/ishe.json la dirección del servidor de amigos (gemini_url_base) y el token (gemini_api_key)
     platform.js       detectar/abrir el launcher oficial
     paquete.js        formato de las actualizaciones: firma Ed25519 + SHA-256 por archivo
     versiones.js      registro de la versión en uso (estado.json)
@@ -75,6 +76,18 @@ e4steam-guard/        código de la corrección de e4steam (ver su LEEME.md)
 - Un archivo nuevo en `app/` solo viaja si encaja en `FILE_PATTERN` de `core/paquete.js`
   (`main.js`, `preload.js`, `package.json`, `noticias.json`, `tema.json`, `core/*.js`,
   `renderer/*.html|css|js`, `assets/*.png|ico|icns`).
+
+## IA para los amigos sin que usen la clave de Guishe
+
+La clave de Gemini de Guishe NUNCA va en el mod, el launcher ni GitHub (el repositorio es público). Los amigos usan un servidor
+propio de Guishe en Cloudflare Workers (carpeta `../ishe-proxy`: `worker.js`, `LEEME.md`, `crear-codigo.mjs`) que guarda la clave
+y acepta solo códigos de amigo (tokens, revocables uno a uno, con límite diario). El mod usa `gemini_url_base` + `gemini_api_key`
+(= token) de `config/ishe.json`, y lo mismo para la voz (`fish_url_base` = servidor + `/fish/v1/tts`, `fish_api_key` = token; la clave de Fish también vive solo en Cloudflare); el launcher los escribe al pegar el "código de amigos" en Ajustes. Estado: el código está hecho y
+probado con un Google simulado; el servidor todavía lo tiene que desplegar Guishe (pasos en `ishe-proxy/LEEME.md`).
+
+## Servidor propio y "entrar directo"
+
+Ajustes > "Mi servidor" guarda `servidor` y `entrar` en `config.json`. Con `entrar` activo, Jugar arranca con `--quickPlayMultiplayer <dirección>` (`game.serverAddress` valida la dirección; sigue sin existir modo sin cuenta). El código de amigos puede traer la dirección (`s`). El servidor de Guishe vive en `../ishe-servidor` (Fabric 26.2 + mod Ishe + Simple Voice Chat, `online-mode=true`, lista blanca; la IA y la voz las hace el servidor con la clave de Guishe en `ishe-servidor/config/ishe.json`, solo en su PC). Probado: el servidor arranca con los mods y el juego real entra solo con `--quickPlayMultiplayer`. Sin probar: abrir puertos / túnel para amigos de fuera.
 
 ## Publicar el mod Ishe (sin tocar el launcher)
 
@@ -115,6 +128,8 @@ node tools/test_game.js app
 node tools/test_platform.js app
 node tools/test_update.js app "<ruta al .pem>"
 node tools/test_mod.js app
+node tools/test_amigos.js app
+node tools/test_servidor.js app
 node tools/test_ui_ids.js app            # cada id que usa app.js existe en index.html
 node tools/test_gatos.js app             # cada pelaje y pose de los gatitos tiene su dibujo
 # test-hooks.js tambien entiende eval:<etiqueta>|<codigo>, size:<ancho>x<alto> y wait:<ms> (para cazar bugs en la ventana real)

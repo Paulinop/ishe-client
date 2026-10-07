@@ -276,7 +276,21 @@ function renderMods(installed) {
   }
 }
 
+function renderServer() {
+  $('server-address').value = state.server || '';
+  $('server-join').checked = state.joinServer !== false;
+}
+
+function renderFriend() {
+  $('friend-status').textContent = state.friendCode
+    ? 'Código puesto: Nublado y Haku usan el servidor de Guishe, no necesitas clave de Google.'
+    : 'Sin código. Pégalo aquí si Guishe te dio uno; si no, Nublado y Haku solo usan sus frases de siempre.';
+  $('friend-clear').hidden = !state.friendCode;
+}
+
 function renderSettings() {
+  renderFriend();
+  renderServer();
   const select = $('ram');
   select.replaceChildren();
   for (const gigabytes of state.ramChoices) {
@@ -888,6 +902,38 @@ async function init() {
     $('ram-hint').textContent = saved
       ? 'Guardado. Se aplica la próxima vez que pulses Jugar.'
       : 'No se pudo guardar el cambio.';
+  });
+  $('server-save').addEventListener('click', async () => {
+    const result = await window.ishe.setServer($('server-address').value, $('server-join').checked);
+    if (result && result.ok) {
+      state.server = $('server-address').value.trim();
+      state.joinServer = $('server-join').checked;
+      $('server-hint').textContent = state.server ? 'Guardado. La próxima vez que pulses Jugar entrarás directo a ' + state.server + '.' : 'Guardado. Jugar abre el juego normal.';
+    } else {
+      $('server-hint').textContent = 'Esa dirección no es válida. Ejemplo: mi.servidor.com o mi.servidor.com:25566';
+    }
+  });
+  $('friend-save').addEventListener('click', async () => {
+    const result = await window.ishe.friendCodeSet($('friend-code').value);
+    if (result && result.ok) {
+      if (result.server) {
+        state.server = result.server;
+        state.joinServer = true;
+        renderServer();
+      }
+      $('friend-code').value = '';
+      state.friendCode = true;
+      $('friend-hint').textContent = 'Guardado. Nublado y Haku lo usan la próxima vez que entres al juego.';
+    } else {
+      $('friend-hint').textContent = result && result.reason === 'disk' ? 'No se pudo guardar el código.' : 'Ese código no es válido. Cópialo completo, empieza con ISHE-.';
+    }
+    renderFriend();
+  });
+  $('friend-clear').addEventListener('click', async () => {
+    await window.ishe.friendCodeClear();
+    state.friendCode = false;
+    $('friend-hint').textContent = 'Código quitado.';
+    renderFriend();
   });
   $('open-folder').addEventListener('click', () => window.ishe.openFolder());
   $('account-button').addEventListener('click', accountAction);

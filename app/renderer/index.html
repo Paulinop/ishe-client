@@ -122,6 +122,28 @@
       </div>
 
       <div class="card">
+        <label class="card-title" for="server-address">Mi servidor</label>
+        <p class="card-text">Si pones la dirección de tu servidor, al pulsar Jugar el juego abre y entra directo, sin menú ni «crear mundo».</p>
+        <input class="input" id="server-address" type="text" autocomplete="off" spellcheck="false" placeholder="mi.servidor.com" />
+        <label class="card-text"><input type="checkbox" id="server-join" checked /> Entrar directo al servidor al pulsar Jugar</label>
+        <div class="row">
+          <button class="button is-primary" id="server-save" type="button">Guardar servidor</button>
+        </div>
+        <p class="card-hint" id="server-hint">Déjalo vacío para abrir el juego normal.</p>
+      </div>
+
+      <div class="card">
+        <label class="card-title" for="friend-code">Código de amigos (la voz y la IA de Nublado y Haku)</label>
+        <p class="card-text" id="friend-status"></p>
+        <input class="input" id="friend-code" type="password" autocomplete="off" spellcheck="false" placeholder="ISHE-…" />
+        <div class="row">
+          <button class="button is-primary" id="friend-save" type="button">Guardar código</button>
+          <button class="button" id="friend-clear" type="button">Quitar código</button>
+        </div>
+        <p class="card-hint" id="friend-hint">Guishe te lo manda en privado. No lo compartas.</p>
+      </div>
+
+      <div class="card">
         <span class="card-title">Versión y actualizaciones</span>
         <p class="card-text" id="version-line"></p>
         <p class="card-text" id="update-status" role="status" aria-live="polite"></p>

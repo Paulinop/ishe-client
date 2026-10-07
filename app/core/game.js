@@ -424,14 +424,24 @@ function memoryArguments(version, env, ramGb) {
   return defaults.some((argument) => /^-Xmx/.test(argument)) ? defaults : defaults.concat(['-Xmx2G']);
 }
 
+/** Direccion de servidor valida: nombre o IP, con puerto opcional ("mi.servidor.com" o "mi.servidor.com:25566"). Devuelve '' si no vale. */
+function serverAddress(text) {
+  const value = String(text || '').trim();
+  if (!/^[A-Za-z0-9]([A-Za-z0-9.-]{0,251}[A-Za-z0-9])?(:\d{1,5})?$/.test(value)) return '';
+  const port = value.includes(':') ? Number(value.split(':')[1]) : 25565;
+  return port >= 1 && port <= 65535 ? value : '';
+}
+
 /** Argumentos completos de Java. `account` = { name, uuid, accessToken }. */
 function buildArguments(prepared, options, account) {
   const { version } = prepared;
   if (!account || !account.accessToken || !account.uuid || !account.name) {
     throw new GameError('Hace falta una sesión de Minecraft para abrir el juego.');
   }
-  const env = Object.assign({}, options.env, { features: {} });
+  const join = serverAddress(options.joinServer);
+  const env = Object.assign({}, options.env, { features: join ? { is_quick_play_multiplayer: true } : {} });
   const values = {
+    quickPlayMultiplayer: join,
     natives_directory: prepared.nativesDir,
     launcher_name: LAUNCHER_NAME,
     launcher_version: LAUNCHER_VERSION,
@@ -509,7 +519,7 @@ function launch(prepared, options, account) {
 
 module.exports = {
   SOURCES, GameError,
-  prepare, buildArguments, launch,
+  prepare, buildArguments, launch, serverAddress,
   rulesAllow, mavenPath, collectLibraries, mergeVersions, expandArguments, javaPlatformKey, javaExecutable, checkUrl,
   compareVersions, memoryArguments,
 };
