@@ -15,7 +15,6 @@ const KNOWN_MODS = [
   [/^konkrete/i, 'Konkrete', 'Biblioteca'],
   [/^melody/i, 'Melody', 'Biblioteca'],
   [/^placeholder-api/i, 'Text Placeholder API', 'Biblioteca'],
-  [/^e4steam/i, 'e4steam (corregido)', 'Amigos'],
 ];
 const CATEGORY_ORDER = ['Rendimiento', 'Menú', 'Amigos', 'Base', 'Biblioteca', 'Otro'];
 

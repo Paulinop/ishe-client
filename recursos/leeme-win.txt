@@ -2,7 +2,7 @@ ISHE CLIENT - launcher para Windows
 ===================================
 
 Ishe Client es una aplicación con tu diseño que prepara Minecraft 26.2 con
-Fabric, mods de rendimiento, menú personalizable y e4steam, y abre el juego
+Fabric, mods de rendimiento, menú personalizable y el mod Ishe, y abre el juego
 con tu cuenta de Microsoft (versión 1.2).
 
 
@@ -131,6 +131,5 @@ NO ES UN PRODUCTO OFICIAL DE MINECRAFT. NO ESTÁ APROBADO POR MOJANG NI
 MICROSOFT, NI ASOCIADO CON ELLOS.
 Ishe Client no incluye ni redistribuye archivos de Minecraft: el juego se
 descarga de los servidores de Mojang en el equipo de cada jugador.
-Los mods se descargan de Modrinth y pertenecen a sus autores. e4steam es de
-Kamilchik (Apache License 2.0); se incluye una versión modificada. El motor
+Los mods se descargan de Modrinth y pertenecen a sus autores. El motor
 de la aplicación es Electron (licencia MIT), descargado de su página oficial.

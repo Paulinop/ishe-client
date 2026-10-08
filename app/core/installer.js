@@ -18,9 +18,8 @@ const USER_AGENT = 'IsheClient-Launcher/1.0';
 // simple-voice-chat: lo necesitan Nublado y Haku para oir y hablar.
 const MOD_PROJECTS = ['fabric-api', 'sodium', 'lithium', 'ferrite-core', 'fancymenu', 'modmenu', 'simple-voice-chat'];
 
-// e4steam 0.3.2 con la correccion del apodo (archivo incluido en "extras").
+// e4steam ya no forma parte de Ishe Client (desde 1.5.0). Solo se guarda su nombre para retirarlo si quedo de una version anterior.
 const E4STEAM_FILE = 'e4steam-fabric-quilt-mc26.1-26.2-v0.3.2-guard.jar';
-const E4STEAM_SHA256 = 'f760cee39f3194e71282420e1a62e5234bd0f0948918b0b9f4caaeb44c039fd0';
 
 const DEFAULTS = {
   modrinthApi: 'https://api.modrinth.com/v2',
@@ -186,13 +185,6 @@ async function install(options, onEvent) {
   if (!isDir(minecraftDir)) {
     throw new StopError('No encuentro la carpeta de Minecraft (' + minecraftDir + '). Instala el launcher oficial de Minecraft, ábrelo una vez con tu cuenta y vuelve a intentarlo.');
   }
-  const bundled = path.join(options.bundledDir, E4STEAM_FILE);
-  if (!isFile(bundled)) {
-    throw new StopError('Falta el archivo extras/' + E4STEAM_FILE + '. Extrae el .zip completo en una carpeta y vuelve a abrir Ishe Client desde ahi.');
-  }
-  if (sha(bundled, 'sha256') !== E4STEAM_SHA256) {
-    throw new StopError('El archivo extras/' + E4STEAM_FILE + ' está dañado o fue cambiado. Vuelve a descargar Ishe Client.');
-  }
 
   // ---- Fabric -------------------------------------------------------------
   step('Instalando Fabric para Minecraft ' + MC_VERSION);
@@ -325,10 +317,13 @@ async function install(options, onEvent) {
     problem('No pude actualizar el mod Ishe (se conserva el que ya tenías): ' + error.message);
   }
 
-  // e4steam (incluido en el paquete)
-  fs.copyFileSync(bundled, path.join(modsDir, E4STEAM_FILE));
-  currentMods.set('e4steam', E4STEAM_FILE);
-  info('copiado     ' + E4STEAM_FILE);
+  // e4steam ya no se instala: si quedo de una version anterior, se retira (y se olvida de la lista de mods instalados).
+  const oldE4steam = path.join(modsDir, E4STEAM_FILE);
+  if (isFile(oldE4steam)) {
+    fs.rmSync(oldE4steam, { force: true });
+    info('retirado    ' + E4STEAM_FILE + ' (ya no forma parte de Ishe Client)');
+  }
+  previousMods.delete('e4steam');
 
   // Versiones anteriores: solo se retira el archivo viejo de un mod que ESTA
   // ejecucion instalo bien con otro nombre. Si un mod fallo hoy, se conserva el

@@ -52,12 +52,11 @@ app/                  el client (lo que se instala), sin dependencias
     clave-publica.js  clave pública con la que se verifican las actualizaciones
     cli.js            SOLO pruebas (no se reparte)
   test-hooks.js       SOLO pruebas (no se reparte); con él presente existe el "modo de pruebas"
-  extras/             e4steam modificado (SHA-256 fijado en installer.js)
+  (extras/ ya no existe: e4steam se quitó en la 1.5.0; el mecanismo de "extras" del actualizador sigue, pero sin archivos)
   tema.json           apariencia por defecto; noticias.json: tarjetas de Novedades
 instalador/           scripts que instalan el motor (Electron 44.5.1, SHA-256 fijados) + app/
 recursos/             iconos, logo reducido, textos LEEME, guía del creador
 tools/                construir.js, publicar.js y las pruebas
-e4steam-guard/        código de la corrección de e4steam (ver su LEEME.md)
 ```
 
 ## Cómo funcionan las actualizaciones
@@ -109,7 +108,7 @@ fija `mods` de GitHub (`ishe-mod.json` firmado + `ishe-<versión>-mc26.2.jar`) y
 5. `node tools/publicar.js --clave "<ruta al .pem>"` crea y comprueba la actualización en
    `dist/actualizacion/` sin publicar nada. Revísalo.
 6. **Pide permiso a Guishe** y entonces repite con `--subir`: crea la release `vX.Y.Z` en GitHub con
-   el aviso, el paquete, e4steam y los dos instaladores. Necesita `gh auth login` hecho por él.
+   el aviso, el paquete y los dos instaladores. Necesita `gh auth login` hecho por él.
 7. Haz commit y push del código de esa versión.
 
 `node tools/construir.js` solo arma los instaladores (`dist/*.zip`), sin firmar ni publicar.
@@ -162,9 +161,16 @@ Añade una comprobación a las pruebas con cada cambio de comportamiento.
   sesión real con Microsoft hasta el rechazo esperado de Mojang.
 - Solo simulado, nunca real: arranque directo del juego, descarga del juego y de Java, skin y nombre
   desde Mojang, búsqueda de jugador por nombre, actualización contra GitHub, todo en Mac, y los mods
-  dentro del juego (incluido e4steam modificado).
+  dentro del juego.
 - Cuentas con Game Pass: la comprobación de propiedad usa `/entitlements/mcstore` y, si viene vacía,
   `/entitlements/license`; no se pudo verificar con una cuenta real.
+
+## e4steam (quitado en la 1.5.0)
+
+Guishe pidió quitarlo porque ahora juegan en su servidor propio (Ishe server). `installer.js` ya no lo instala y, si quedó un
+`e4steam-…guard.jar` en la carpeta de mods de una versión anterior, lo borra al pulsar Jugar (y lo olvida de la lista de mods
+instalados). Se borraron `app/extras/` y `e4steam-guard/`. PENDIENTE: `tools/test_installer.py` y `tools/test_launcher_e2e.py`
+(solo Linux, no se corrieron) todavía esperan e4steam y hay que adaptarlos.
 
 ## Apariencia fija (decisión de Guishe, versión 1.2.3)
 

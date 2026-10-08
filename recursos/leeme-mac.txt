@@ -2,7 +2,7 @@ ISHE CLIENT - launcher para Mac
 ===============================
 
 Ishe Client es una aplicación con tu diseño que prepara Minecraft 26.2 con
-Fabric, mods de rendimiento, menú personalizable y e4steam, y abre el juego
+Fabric, mods de rendimiento, menú personalizable y el mod Ishe, y abre el juego
 con tu cuenta de Microsoft (versión 1.2).
 Necesita macOS 13 o más reciente. Sirve para Mac con chip Apple y con Intel.
 
@@ -111,12 +111,6 @@ Si ya usaste el instalador anterior (el que solo preparaba los mods), este
 launcher usa la misma carpeta de juego y continúa donde lo dejaste.
 
 
-E4STEAM EN MAC
---------------
-El autor de e4steam marca macOS como experimental: jugar con amigos por Steam
-desde un Mac puede fallar aunque el resto funcione.
-
-
 ACTUALIZAR Y DESINSTALAR
 ------------------------
 Actualizar: ejecuta el instalador de una versión nueva. No vuelve a descargar
@@ -158,6 +152,5 @@ NO ES UN PRODUCTO OFICIAL DE MINECRAFT. NO ESTÁ APROBADO POR MOJANG NI
 MICROSOFT, NI ASOCIADO CON ELLOS.
 Ishe Client no incluye ni redistribuye archivos de Minecraft: el juego se
 descarga de los servidores de Mojang en el equipo de cada jugador.
-Los mods se descargan de Modrinth y pertenecen a sus autores. e4steam es de
-Kamilchik (Apache License 2.0); se incluye una versión modificada. El motor
+Los mods se descargan de Modrinth y pertenecen a sus autores. El motor
 de la aplicación es Electron (licencia MIT), descargado de su página oficial.

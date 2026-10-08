@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.5.0: sin e4steam",
+    "fecha": "2026-10-07",
+    "texto": "Se quitó e4steam: para jugar con amigos ahora está Ishe server (Ajustes > Mi servidor). Al pulsar Jugar se retira solo de tu carpeta de mods."
+  },
+  {
     "titulo": "Versión 1.4.0: Ishe server y entrar directo",
     "fecha": "2026-10-07",
     "texto": "Nuevo en Ajustes: «Mi servidor». Pon la dirección y, al pulsar Jugar, Minecraft abre y entra directo a Ishe server, sin menú ni «crear mundo». También hay «Código de amigos» para la IA de Nublado y Haku sin tener tu propia clave."
@@ -48,11 +53,6 @@
     "titulo": "Versión 1.2.1: tu personaje",
     "fecha": "2026-10-06",
     "texto": "Mientras Mojang aprueba Ishe Client, escribe tu nombre de Minecraft en Ajustes > Tu cuenta y verás tu cabeza y tu nombre. También: colores y logo a tu gusto, y actualizaciones automáticas."
-  },
-  {
-    "titulo": "Cómo jugar con amigos",
-    "fecha": "2026-10-06",
-    "texto": "Todos abren Steam e instalan Ishe Client. Quien tenga el mundo usa «Abrir en LAN» y elige la opción de Steam para invitar."
   },
   {
     "titulo": "Tu menú, a tu manera",

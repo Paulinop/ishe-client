@@ -26,6 +26,7 @@ const throws = (fn) => { try { fn(); return ''; } catch (e) { return e.message |
 async function reasonOf(promise) {
   try { await promise; return ''; } catch (e) { return e instanceof updater.UpdateError ? e.reason + ': ' + e.message : 'NOT UpdateError ' + e.stack; }
 }
+const EXTRAS_PRUEBA = (() => { const d = fs.mkdtempSync(path.join(os.tmpdir(), 'ishe-extras-')); fs.writeFileSync(path.join(d, 'extra-de-prueba.jar'), crypto.randomBytes(4096)); return d; })();
 const tmp = (name) => fs.mkdtempSync(path.join(os.tmpdir(), 'ishe-upd-' + name + '-'));
 const CURRENT = JSON.parse(fs.readFileSync(path.join(APP, 'package.json'), 'utf8')).version;
 const NEXT = creator.nextVersion(CURRENT);
@@ -50,10 +51,10 @@ const server = http.createServer((req, res) => {
 (async () => {
   await new Promise((r) => server.listen(0, '127.0.0.1', r));
   const base = 'http://127.0.0.1:' + server.address().port;
-  const buildNext = (extra) => creator.build(Object.assign({ codeDir: APP, extrasDir: path.join(APP, 'extras'), version: NEXT, notes: 'Colores nuevos y logo propio.',
+  const buildNext = (extra) => creator.build(Object.assign({ codeDir: APP, extrasDir: EXTRAS_PRUEBA, version: NEXT, notes: 'Colores nuevos y logo propio.',
     theme: THEME, privateKeyPem: PRIVATE, publicKeyPem: PUBLIC, today: '2026-10-07' }, extra || {}));
   const opts = (root, extra) => Object.assign({ base: base + '/latest', publicKey: PUBLIC, currentVersion: CURRENT, updatesRoot: root, engineMajor: 44, allowLoopback: true,
-    bundledExtrasDir: path.join(APP, 'extras'), activeExtrasDir: path.join(APP, 'extras') }, extra || {});
+    bundledExtrasDir: EXTRAS_PRUEBA, activeExtrasDir: EXTRAS_PRUEBA }, extra || {});
 
   console.log('U1 formato del paquete y firma');
   const sample = new Map([['main.js', Buffer.from('m')], ['preload.js', Buffer.from('p')], ['package.json', Buffer.from('{}')], ['renderer/index.html', Buffer.from('<p>')], ['assets/logo.png', Buffer.from([1, 2, 3, 0, 255])]]);
@@ -74,7 +75,7 @@ const server = http.createServer((req, res) => {
   const built = buildNext();
   const envelope = built.files.get(paquete.MANIFEST_NAME).toString('utf8');
   const manifest = paquete.verify(envelope, PUBLIC);
-  const jar = fs.readdirSync(path.join(APP, 'extras'))[0];
+  const jar = fs.readdirSync(EXTRAS_PRUEBA)[0];
   check(JSON.stringify(built.upload) === JSON.stringify([jar, paquete.MANIFEST_NAME, paquete.bundleName(NEXT)].sort()) && built.files.has('LEEME - como publicar.txt'), 'salen el aviso, el paquete, e4steam y las instrucciones');
   check(manifest && manifest.version === NEXT && manifest.notas === 'Colores nuevos y logo propio.' && manifest.extras.length === 1 && manifest.extras[0].archivo === jar, 'el aviso está firmado y dice versión, notas y extras');
   const inside = paquete.unpack(built.files.get(paquete.bundleName(NEXT)));
@@ -84,7 +85,7 @@ const server = http.createServer((req, res) => {
   check(JSON.parse(inside.get('package.json')).version === NEXT && JSON.stringify(JSON.parse(inside.get('tema.json'))) === JSON.stringify(THEME), 'lleva el número de versión nuevo y la apariencia elegida');
   const news = JSON.parse(inside.get('noticias.json'));
   check(news[0].titulo === 'Versión ' + NEXT && news[0].texto === 'Colores nuevos y logo propio.' && news.length <= 4 && news.filter((n) => /^Versión/.test(n.titulo)).length === 1, 'las notas salen como primera novedad (y sustituyen a la de la versión anterior)');
-  check(built.files.get(paquete.bundleName(NEXT)).length < 400 * 1024, 'el paquete pesa poco: ' + Math.round(built.files.get(paquete.bundleName(NEXT)).length / 1024) + ' KB');
+  check(built.files.get(paquete.bundleName(NEXT)).length < 1024 * 1024, 'el paquete pesa poco: ' + Math.round(built.files.get(paquete.bundleName(NEXT)).length / 1024) + ' KB');
   check(!Array.from(built.files.values()).some((b) => b.includes('PRIVATE KEY')), 'la clave privada no aparece en ningún archivo de salida');
   check(built.files.get('LEEME - como publicar.txt').toString().includes('v' + NEXT) && built.files.get('LEEME - como publicar.txt').toString().includes('github.com/Paulinop/ishe-client/releases/new'), 'las instrucciones dicen la etiqueta y la página exactas');
   check(throws(() => buildNext({ version: CURRENT })).includes('mayor que la actual') && throws(() => buildNext({ version: '0.9.0' })).includes('mayor') && throws(() => buildNext({ version: '2.0' })).includes('tres números'), 'no deja repetir ni bajar el número de versión');

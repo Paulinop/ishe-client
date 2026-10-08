@@ -50,10 +50,8 @@ All mods belong to their authors and are downloaded from their official pages.
 | FancyMenu (with Konkrete and Melody) | Main menu customization | [Modrinth](https://modrinth.com/mod/fancymenu) |
 | Mod Menu (with Text Placeholder API) | In-game mod list | [Modrinth](https://modrinth.com/mod/modmenu) |
 | Simple Voice Chat | Voice for the in-game characters | [Modrinth](https://modrinth.com/mod/simple-voice-chat) |
-| e4steam | Play with friends over Steam peer-to-peer | [GitHub](https://github.com/Kamilhik/e4steam) |
 | Ishe (mod) | The Ishe characters and items (made by Guishe) | This project (GitHub release "mods", signed) |
 
-e4steam is by Kamilchik and licensed under the Apache License 2.0. Ishe Client bundles a modified build of e4steam 0.3.2 with one extra login check; the change is described inside the bundled file.
 
 ## Built with
 

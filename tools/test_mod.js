@@ -161,6 +161,11 @@ function publish(text, jars) {
   publish(modishe.sign(n1, OTHER_PRIVATE), [[n1.archivo, JAR1]]);
   result = await installer.install(installOptions(), () => {});
   check(result.exitCode === 2 && result.problems.some((p) => p.includes('mod Ishe')) && fs.existsSync(path.join(modsDir, n2.archivo)), 'con un aviso mal firmado se avisa y se conserva el mod que funcionaba');
+  const oldE4 = path.join(modsDir, installer.E4STEAM_FILE);
+  fs.writeFileSync(oldE4, 'e4steam de una version anterior');
+  fs.writeFileSync(path.join(gameDir, 'ishe-client-instalado.json'), JSON.stringify({ client: 'x', minecraft: installer.MC_VERSION, fabric: 'f', mods: [{ project: 'e4steam', file: installer.E4STEAM_FILE }] }));
+  result = await installer.install(installOptions(), () => {});
+  check(!fs.existsSync(oldE4) && !result.mods.some((m) => m.project === 'e4steam'), 'el e4steam que quedo de una version anterior se borra y se olvida');
   const manual = path.join(modsDir, 'otro-mod-mio.jar');
   fs.writeFileSync(manual, 'mio');
   publish(modishe.sign(n2, PRIVATE), [[n2.archivo, JAR2]]);
