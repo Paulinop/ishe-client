@@ -473,7 +473,36 @@ function buildArguments(prepared, options, account) {
  * Arranca el juego. Devuelve una promesa que se resuelve cuando Java ha arrancado
  * (o falla si no arranca), con { child, exited: Promise<{code, tail}> }.
  */
+// Ajustes que Reshem deja siempre iguales en options.txt antes de abrir el juego: el narrador apagado (sin pantalla de "activar narrador"
+// al entrar y sin Ctrl+B). El resto de las opciones de la persona no se toca.
+const OPCIONES_FIJAS = [['narrator', '0'], ['narratorHotkey', 'false'], ['onboardAccessibility', 'false']];
+
+function fixOptions(gameDir) {
+  const file = path.join(gameDir, 'options.txt');
+  let lines = [];
+  try { lines = fs.readFileSync(file, 'utf8').split(/\r?\n/); } catch (_) { lines = []; }
+  if (lines.length && lines[lines.length - 1] === '') lines.pop();
+  let changed = false;
+  for (const [key, value] of OPCIONES_FIJAS) {
+    const wanted = key + ':' + value;
+    let seen = false;
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].startsWith(key + ':')) {
+        seen = true;
+        if (lines[i] !== wanted) { lines[i] = wanted; changed = true; }
+      }
+    }
+    if (!seen) { lines.push(wanted); changed = true; }
+  }
+  if (changed) {
+    fs.mkdirSync(gameDir, { recursive: true });
+    fs.writeFileSync(file, lines.join('\n') + '\n');
+  }
+  return changed;
+}
+
 function launch(prepared, options, account) {
+  try { fixOptions(options.gameDir); } catch (_) { /* si no se puede escribir, el juego abre igual */ }
   const args = buildArguments(prepared, options, account);
   return new Promise((resolve, reject) => {
     let child;
@@ -521,5 +550,5 @@ module.exports = {
   SOURCES, GameError,
   prepare, buildArguments, launch, serverAddress,
   rulesAllow, mavenPath, collectLibraries, mergeVersions, expandArguments, javaPlatformKey, javaExecutable, checkUrl,
-  compareVersions, memoryArguments,
+  compareVersions, memoryArguments, fixOptions,
 };

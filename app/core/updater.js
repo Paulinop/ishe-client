@@ -1,5 +1,5 @@
 'use strict';
-// Actualizador de Ishe Client.
+// Actualizador de Reshem Client.
 //
 // Busca en la pagina de versiones del proyecto en GitHub un aviso firmado; si
 // anuncia una version mas nueva, descarga solo los archivos del client (no el
@@ -94,7 +94,7 @@ async function check(options) {
   if (reply.status !== 200) throw new UpdateError(REASONS.NETWORK, 'el servidor respondió ' + reply.status);
   const envelope = reply.body.toString('utf8');
   const manifest = paquete.verify(envelope, options.publicKey);
-  if (!manifest) throw new UpdateError(REASONS.INVALID, 'el aviso de actualización no está firmado por el creador de Ishe Client');
+  if (!manifest) throw new UpdateError(REASONS.INVALID, 'el aviso de actualización no está firmado por el creador de Reshem Client');
   if (paquete.compareVersions(manifest.version, options.currentVersion) <= 0) return { status: 'none' };
   const state = versiones.readState(options.updatesRoot);
   if (state.malas.includes(manifest.version)) return { status: 'none' };

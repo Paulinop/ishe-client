@@ -1,6 +1,6 @@
 'use strict';
 // Crea el aviso firmado del mod Ishe y, con --subir, lo publica en la release fija "mods" del proyecto en
-// GitHub. Los Ishe Client instalados lo encuentran solos la proxima vez que se pulsa Jugar.
+// GitHub. Los Reshem Client instalados lo encuentran solos la proxima vez que se pulsa Jugar.
 //
 // uso:
 //   node tools/publicar_mod.js --jar <ruta al .jar del mod> --clave <ruta a la clave .pem> [--subir]
@@ -83,14 +83,14 @@ function main() {
   const minecraft = found[1];
   const installer = require(path.join(APP, 'core', 'installer.js'));
   if (minecraft !== installer.MC_VERSION) {
-    fail('el mod es para Minecraft ' + minecraft + ' pero Ishe Client usa ' + installer.MC_VERSION + '. Compila el mod para ' + installer.MC_VERSION + ' o cambia la version del client.');
+    fail('el mod es para Minecraft ' + minecraft + ' pero Reshem Client usa ' + installer.MC_VERSION + '. Compila el mod para ' + installer.MC_VERSION + ' o cambia la version del client.');
   }
 
   const archivo = 'ishe-' + version + '-mc' + minecraft + '.jar';
   const notice = { formato: modishe.FORMAT, tipo: 'mod', mod: 'ishe', version, minecraft, archivo, sha256: modishe.sha256(jar), tamano: jar.length };
   const text = modishe.sign(notice, privateKeyPem);
 
-  // Comprobacion final con el mismo codigo que usan los Ishe Client instalados.
+  // Comprobacion final con el mismo codigo que usan los Reshem Client instalados.
   let checked;
   try {
     checked = modishe.verify(text, PUBLIC, minecraft);
@@ -121,10 +121,10 @@ function main() {
     exists = false;
   }
   if (!exists) {
-    execFileSync('gh', ['release', 'create', TAG, '--repo', REPO, '--title', 'Mods de Ishe Client', '--notes', 'Mod Ishe para Ishe Client. No es una version del launcher: se actualiza solo.', '--latest=false'], { stdio: 'inherit' });
+    execFileSync('gh', ['release', 'create', TAG, '--repo', REPO, '--title', 'Mods de Reshem Client', '--notes', 'Mod Ishe para Reshem Client. No es una version del launcher: se actualiza solo.', '--latest=false'], { stdio: 'inherit' });
   }
   execFileSync('gh', ['release', 'upload', TAG].concat(files, ['--repo', REPO, '--clobber']), { stdio: 'inherit' });
-  console.log('Publicado. La proxima vez que alguien pulse Jugar en Ishe Client, se baja el mod ' + version + '.');
+  console.log('Publicado. La proxima vez que alguien pulse Jugar en Reshem Client, se baja el mod ' + version + '.');
 }
 
 main();

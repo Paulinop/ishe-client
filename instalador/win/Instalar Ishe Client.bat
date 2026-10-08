@@ -1,5 +1,5 @@
 @echo off
-title Instalador de Ishe Client
+title Instalador de Reshem Client
 if not exist "%~dp0instalar-launcher.ps1" (
   echo.
   echo  No encuentro los archivos del instalador.

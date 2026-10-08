@@ -48,20 +48,20 @@ function withNews(newsText, version, notes, today) {
 
 function instructions(version, names) {
   return [
-    'ISHE CLIENT - cómo publicar la versión ' + version,
+    'RESHEM CLIENT - cómo publicar la versión ' + version,
     '==========================================',
     '',
     '1. Entra en https://github.com/Paulinop/ishe-client/releases/new',
     '   (con tu cuenta de GitHub).',
     '2. En "Choose a tag" escribe  v' + version + '  y pulsa "Create new tag".',
-    '3. En "Release title" escribe  Ishe Client ' + version,
+    '3. En "Release title" escribe  Reshem Client ' + version,
     '4. Arrastra a la zona de archivos TODOS estos archivos de esta carpeta:',
   ].concat(names.map((name) => '      ' + name)).concat([
     '   (este LEEME no hace falta subirlo).',
     '5. Deja marcada la casilla "Set as the latest release".',
     '6. Pulsa "Publish release".',
     '',
-    'Listo. La próxima vez que tú o tus amigos abran Ishe Client, se descargará',
+    'Listo. La próxima vez que tú o tus amigos abran Reshem Client, se descargará',
     'sola y pedirá reiniciar. No hay que reinstalar nada.',
     '',
     'Si te equivocaste: borra esa versión en GitHub (Delete release) y crea otra',
@@ -84,7 +84,7 @@ function build(options) {
   }
   const notes = String(options.notes || '').trim().slice(0, 400);
   if (!paquete.sameKey(paquete.publicKeyOf(options.privateKeyPem), options.publicKeyPem)) {
-    throw new Error('Esa no es la clave de actualizaciones de Ishe Client.');
+    throw new Error('Esa no es la clave de actualizaciones de Reshem Client.');
   }
 
   const files = collect(codeDir);

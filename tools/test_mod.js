@@ -122,7 +122,7 @@ function publish(text, jars) {
     if (m) {
       const project = decodeURIComponent(m[1]);
       const body = fakeMod(project);
-      const filename = project + '-1.0.jar';
+      const filename = project + (project === 'complementary-reimagined' ? '-1.0.zip' : '-1.0.jar');
       served.set('/jar/' + filename, body);
       const version = { project_id: project, version_type: 'release', dependencies: [],
         files: [{ primary: true, filename, url: 'http://127.0.0.1:' + modrinth.address().port + '/jar/' + filename, hashes: { sha512: crypto.createHash('sha512').update(body).digest('hex') } }] };

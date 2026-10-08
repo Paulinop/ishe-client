@@ -1,4 +1,6 @@
-# Ishe Client
+# Reshem Client (antes Ishe Client)
+
+> 8 oct 2026: Guishe renombró todo lo visible a **Reshem** (launcher, servidor, mod, menú). Se dejaron con el nombre viejo los identificadores técnicos para no romper instalaciones: repo `Paulinop/ishe-client`, carpeta `IsheClient`/`.ishe-client`, `Ishe Client.exe`, `productName` (cambiarlo movería los datos de sesión), id del mod `ishe` (paquete `ishe.mod`), registro de Azure "Ishe Client". El acceso directo nuevo se llama "Reshem Client.lnk".
 
 Launcher propio de **Minecraft: Java Edition** hecho para Guishe (Guillermo) y un grupo pequeño de
 amigos. Aplicación Electron sin dependencias de npm: prepara Minecraft 26.2 + Fabric + mods, inicia
@@ -185,3 +187,19 @@ personalización antigua y hay que quitarlas o adaptarlas.
 - Imagen de fondo en Inicio, textos y novedades editables, elegir mods desde la aplicación.
 - Cuando Mojang apruebe el ID: quitar la casilla del nombre provisional y mostrar el perfil real.
 - Probar en Mac.
+
+
+## 1.6.0: servidor por defecto, estado, skin, menu
+- La tarjeta "Mi servidor" y "Tus mundos" se quitaron de Ajustes (todos entran siempre a Ishe server); rediseño de Ajustes/Mods en el bloque REDISEÑO 1.6 al final de `style.css`.
+- `main.js` `DEFAULT_SERVER` ('fried-recently.tun.ply.gg', tunel playit) es la direccion por defecto; la tarjeta de "codigo de amigos" se quito de la ventana (la IA corre en el servidor con las claves del dueño). `amigos.js` y sus IPC siguen en el codigo sin usarse.
+- `core/estado-servidor.js`: ping de estado (handshake+status, SRV). `play()` devuelve `server-closed` y la ventana pone JUGAR gris "CERRADO" (sondea cada 8 s).
+- `core/skin.js` + IPC `ishe:skin-change`: cambiar skin (PNG 64x64 o copiar de un jugador). Sin probar contra Mojang real.
+- CSS: las animaciones ya no se apagan por el ajuste de Windows (`@media not all`); el ajuste propio "Pausar las animaciones" sigue.
+- El menu principal (FancyMenu) lo instala el mod Ishe 1.3.0 (`FancyMenuPaquete`, entrypoint preLaunch).
+- Shaders (1.6.0): `installer.js` instala Iris (en `MOD_PROJECTS`) y `installShaders` baja Complementary Reimagined (Modrinth, cargador `iris`) a `shaderpacks/` y lo activa SOLO la primera vez escribiendo `config/iris.properties` (despues la eleccion es de cada quien). Probado con Modrinth simulado (`tools/test_shaders.js`) y dentro del juego real (Iris 1.11.4 + el paquete r5.9.3 en MC 26.2, panorama capturado con shaders). Sin probar: rendimiento en PCs flojas de los amigos.
+- Menu principal (mod 1.3.0): panorama propio de Ishe (Nublado + Haku en su puesto, capturado con shaders con `src/gametest/.../IsheFondoTest`, que hay que registrar a mano en el fabric.mod.json de gametest) + logo/botones dibujados por `tools/disenar_menu.js` (Electron del Ishe Client instalado; disenos HTML en `tools/diseno/`).
+- Menu 8 oct: titulo RESHEM y botones JUGAR/OPCIONES/SALIR hechos en Blockbench (plugin Minecraft Title Generator; los PNG originales estan en `ishemod-template-26.2/tools/diseno/bb/`, se recomponen con `node tools/disenar_menu.js`). Usan texturas de Mojang: no subir a un repo publico sin pensarlo.
+- Reto del servidor (mod 1.4.0, 8 oct): ruleta estilo Dedsafio (`reto/RuletaReto`), misiones diarias (`reto/MisionesDiarias`), avisos a la izquierda y HUD de intis (`client/RetoCliente`), aviso al gastar un totem (`mixin/LivingEntityMixin`). Intis: ya no hay inti de bronce; plata vale 1 y oro 10. Probado en el juego real con `IsheRetoTest` y arrancando el servidor dedicado; sin probar: varias horas de juego con amigos y el equilibrio de dificultad.
+- Narrador apagado SIEMPRE (8 oct): el launcher lo fija en `options.txt` antes de abrir el juego (`game.fixOptions`, `tools/test_opciones.js`) y el mod tambien (`OpcionesFijas`, en el preLaunch, antes de que Minecraft lea las opciones): `narrator:0`, `narratorHotkey:false`, `onboardAccessibility:false`.
+- Balance del reto: los eventos de la ruleta escalan con `Director.nivelDe(jugador)` (incluye el bono de la ruleta, max `ruleta_nivel_maximo`=12); premios en `RuletaReto`, `MisionesDiarias` y `Director` (emboscada 15+6*nivel). Sin probar con amigos: puede pedir ajustes.
+- Mods extra (8 oct): Xaero's World Map, TrashSlot (+Balm), Immersive Paintings (+Fzzy Config, Fabric Language Kotlin), Customizable Player Models y LambDynamicLights, en `MOD_PROJECTS`. Se probaron ARRANCANDO el juego real con todos juntos. LECCION: Modrinth dice que Sparkle's Morpher, Emotecraft (y su Player Animation Library) sirven para 26.2 pero NO arrancan (mixins viejos / dependen de 1.21.1): hay que probar cada mod nuevo en el juego, no fiarse de la etiqueta. No salen para 26.2: Souper Secret Settings, Immersive Damage Indicators, WaterFrames, Pehkui, Morpher; Immersive Portals no existe para 26.2 y choca con Sodium/Iris. Los de contenido (TrashSlot, Immersive Paintings, CPM + sus dependencias) tambien estan en `ishe-servidor/mods`.

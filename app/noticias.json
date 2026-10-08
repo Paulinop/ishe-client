@@ -1,18 +1,23 @@
 [
   {
-    "titulo": "Versión 1.5.0: sin e4steam",
-    "fecha": "2026-10-07",
-    "texto": "Se quitó e4steam: para jugar con amigos ahora está Ishe server (Ajustes > Mi servidor). Al pulsar Jugar se retira solo de tu carpeta de mods."
+    "titulo": "Versión 1.6.0: ahora se llama Reshem",
+    "fecha": "2026-10-08",
+    "texto": "Ishe Client pasa a llamarse Reshem Client (y el servidor, Reshem server). Jugar entra directo al servidor y, si está cerrado, el botón se pone gris y dice CERRADO. Nuevo: shaders ya activados (si tu PC va lenta, apágalos en Opciones > Ajustes de video > Paquetes de shaders), el narrador siempre apagado, mapa de Xaero, papelera (TrashSlot), cuadros (Immersive Paintings), modelos de jugador (CPM) y luz dinámica. Ajustes y Mods rediseñados y cambio de skin desde Ajustes."
   },
   {
-    "titulo": "Versión 1.4.0: Ishe server y entrar directo",
+    "titulo": "Versión 1.5.0: sin e4steam",
     "fecha": "2026-10-07",
-    "texto": "Nuevo en Ajustes: «Mi servidor». Pon la dirección y, al pulsar Jugar, Minecraft abre y entra directo a Ishe server, sin menú ni «crear mundo». También hay «Código de amigos» para la IA de Nublado y Haku sin tener tu propia clave."
+    "texto": "Se quitó e4steam: para jugar con amigos ahora está Reshem server (Ajustes > Mi servidor). Al pulsar Jugar se retira solo de tu carpeta de mods."
+  },
+  {
+    "titulo": "Versión 1.4.0: Reshem server y entrar directo",
+    "fecha": "2026-10-07",
+    "texto": "Nuevo en Ajustes: «Mi servidor». Pon la dirección y, al pulsar Jugar, Minecraft abre y entra directo a Reshem server, sin menú ni «crear mundo». También hay «Código de amigos» para la IA de Nublado y Haku sin tener tu propia clave."
   },
   {
     "titulo": "Versión 1.3.0: el mod Ishe y la voz",
     "fecha": "2026-10-07",
-    "texto": "Al pulsar Jugar, Ishe Client ahora también instala y actualiza solo el mod Ishe (Nublado, Haku, el cajero y la arena movediza) y Simple Voice Chat para que puedan oírte y hablarte. Mojang ya aprobó el inicio de sesión."
+    "texto": "Al pulsar Jugar, Reshem Client ahora también instala y actualiza solo el mod Ishe (Nublado, Haku, el cajero y la arena movediza) y Simple Voice Chat para que puedan oírte y hablarte. Mojang ya aprobó el inicio de sesión."
   },
   {
     "titulo": "Versión 1.2.8: arreglos",
@@ -32,17 +37,17 @@
   {
     "titulo": "Versión 1.2.5: la mina",
     "fecha": "2026-10-06",
-    "texto": "Todo el fondo de Ishe Client ahora es una mina animada: antorchas que parpadean, vetas de oro y diamante que brillan, gotas, polvo y una vagoneta con oro sobre rieles. El Inicio es una cueva con lava. El ícono del acceso directo se cambia solo al gato."
+    "texto": "Todo el fondo de Reshem Client ahora es una mina animada: antorchas que parpadean, vetas de oro y diamante que brillan, gotas, polvo y una vagoneta con oro sobre rieles. El Inicio es una cueva con lava. El ícono del acceso directo se cambia solo al gato."
   },
   {
     "titulo": "Versión 1.2.4: nueva cara",
     "fecha": "2026-10-06",
-    "texto": "Ishe Client estrena diseño: escena de Minecraft que cambia con la hora, botones de piedra, pantalla de carga con consejos y gatitos que pasean. Pasa el mouse sobre un gatito para ver su nombre y pulsa para acariciarlo. En Ajustes eliges el tuyo. También arregla un error de la 1.2.3 que impedía usar la ventana."
+    "texto": "Reshem Client estrena diseño: escena de Minecraft que cambia con la hora, botones de piedra, pantalla de carga con consejos y gatitos que pasean. Pasa el mouse sobre un gatito para ver su nombre y pulsa para acariciarlo. En Ajustes eliges el tuyo. También arregla un error de la 1.2.3 que impedía usar la ventana."
   },
   {
     "titulo": "Versión 1.2.3: nuevo look",
     "fecha": "2026-10-06",
-    "texto": "Ishe Client estrena logo (el gato con gafas) y un solo color naranja en toda la aplicación. La apariencia ya no se cambia desde Ajustes."
+    "texto": "Reshem Client estrena logo (el gato con gafas) y un solo color naranja en toda la aplicación. La apariencia ya no se cambia desde Ajustes."
   },
   {
     "titulo": "Versión 1.2.2: aviso de actualización",
@@ -52,7 +57,7 @@
   {
     "titulo": "Versión 1.2.1: tu personaje",
     "fecha": "2026-10-06",
-    "texto": "Mientras Mojang aprueba Ishe Client, escribe tu nombre de Minecraft en Ajustes > Tu cuenta y verás tu cabeza y tu nombre. También: colores y logo a tu gusto, y actualizaciones automáticas."
+    "texto": "Mientras Mojang aprueba Reshem Client, escribe tu nombre de Minecraft en Ajustes > Tu cuenta y verás tu cabeza y tu nombre. También: colores y logo a tu gusto, y actualizaciones automáticas."
   },
   {
     "titulo": "Tu menú, a tu manera",

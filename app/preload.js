@@ -10,6 +10,8 @@ contextBridge.exposeInMainWorld('ishe', {
   setRam: (gigabytes) => ipcRenderer.invoke('ishe:set-ram', gigabytes),
   openFolder: () => ipcRenderer.invoke('ishe:open-folder'),
   setServer: (address, join) => ipcRenderer.invoke('ishe:set-server', address, join),
+  serverStatus: () => ipcRenderer.invoke('ishe:server-status'),
+  skinChange: (mode, value, variant) => ipcRenderer.invoke('ishe:skin-change', mode, value, variant),
   friendCodeSet: (code) => ipcRenderer.invoke('ishe:friend-code-set', code),
   friendCodeClear: () => ipcRenderer.invoke('ishe:friend-code-clear'),
   loginStart: () => ipcRenderer.invoke('ishe:login-start'),

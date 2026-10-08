@@ -1,10 +1,10 @@
-ISHE CLIENT - GUÍA DEL CREADOR (solo para ti, Guishe)
+RESHEM CLIENT - GUÍA DEL CREADOR (solo para ti, Guishe)
 ====================================================
 
 TU CLAVE DE ACTUALIZACIONES
 ---------------------------
 Junto a esta guía va el archivo  ishe-client-clave-de-actualizaciones.pem
-Es lo que demuestra que una versión nueva la publicaste tú. Ishe Client solo
+Es lo que demuestra que una versión nueva la publicaste tú. Reshem Client solo
 acepta actualizaciones firmadas con esa clave.
 
   - Guárdala en un sitio seguro (y una copia en un USB o en tu gestor de
@@ -17,25 +17,25 @@ acepta actualizaciones firmadas con esa clave.
 
 LA PRIMERA VEZ
 --------------
-1. Instala Ishe Client 1.2 con el instalador (tú y tus amigos, una vez).
-2. Abre Ishe Client > Ajustes > "Para el creador de Ishe Client".
+1. Instala Reshem Client 1.2 con el instalador (tú y tus amigos, una vez).
+2. Abre Reshem Client > Ajustes > "Para el creador de Reshem Client".
 3. Pulsa "Cargar mi clave…" y elige el archivo .pem. Queda guardada cifrada
    en tu equipo; no hay que volver a cargarla.
 
 
 SACAR UNA VERSIÓN NUEVA
 -----------------------
-1. Deja Ishe Client como lo quieres: colores y logo en Ajustes > Apariencia.
+1. Deja Reshem Client como lo quieres: colores y logo en Ajustes > Apariencia.
 2. En "Para el creador" pon el número de versión (te propone el siguiente:
    1.2.1, 1.2.2…; para cambios grandes usa 1.3.0, 2.0.0) y escribe qué
    cambió. Ese texto sale en Novedades.
 3. Pulsa "Crear actualización" y elige dónde guardarla (el Escritorio vale).
-   Se crea una carpeta "Ishe Client X.Y.Z - actualizacion".
+   Se crea una carpeta "Reshem Client X.Y.Z - actualizacion".
 4. Entra en  https://github.com/Paulinop/ishe-client/releases/new
    - En "Choose a tag" escribe  vX.Y.Z  y pulsa "Create new tag".
    - Arrastra los archivos de la carpeta (todos menos el LEEME).
    - Deja marcado "Set as the latest release" y pulsa "Publish release".
-5. Listo. Al abrir Ishe Client, tú y tus amigos la recibís: aparece el botón
+5. Listo. Al abrir Reshem Client, tú y tus amigos la recibís: aparece el botón
    "Versión X.Y.Z lista · Reiniciar".
 
 Dentro de la carpeta hay un LEEME con estos mismos pasos y los nombres
@@ -62,10 +62,10 @@ SI ALGO SALE MAL
   - Publicaste algo que no querías: en GitHub borra esa versión ("Delete
     release") y saca otra con un número mayor. No reutilices un número.
     Quien ya la haya recibido la conserva hasta que le llegue la siguiente.
-  - Una versión que no llega a abrirse no rompe nada: cada Ishe Client
+  - Una versión que no llega a abrirse no rompe nada: cada Reshem Client
     vuelve solo a la versión anterior y no la descarga más.
   - Cuentas con Game Pass (sin el juego comprado): no pude comprobar con una
-    cuenta real cómo las ve Mojang; puede que Ishe Client las rechace.
+    cuenta real cómo las ve Mojang; puede que Reshem Client las rechace.
   - "No pude actualizar: … no está firmado por el creador": los archivos de
     GitHub no se crearon con tu clave. Vuelve a crear la actualización.
 
@@ -73,7 +73,7 @@ SI ALGO SALE MAL
 QUÉ SE PROBÓ Y QUÉ NO
 ---------------------
 Probado en un entorno de pruebas, con una página que imita a GitHub: crear
-una versión, que otro Ishe Client la descargue y la use, rechazo de
+una versión, que otro Reshem Client la descargue y la use, rechazo de
 versiones falsas o alteradas, y vuelta atrás cuando una versión no arranca.
 NO probado: contra GitHub de verdad ni en un Windows o Mac reales. La primera
 versión que publiques es la prueba real: hazla con un cambio pequeño (por

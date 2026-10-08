@@ -35,7 +35,7 @@ async function main() {
       else if (event.type === 'info') console.log('   ' + event.text);
       else if (event.type === 'problem') console.log('   AVISO: ' + event.text);
     });
-    console.log(result.exitCode === 0 ? '\n  Ishe Client quedo instalado.' : '\n  Ishe Client se instalo con avisos.');
+    console.log(result.exitCode === 0 ? '\n  Reshem Client quedo instalado.' : '\n  Reshem Client se instalo con avisos.');
     process.exitCode = result.exitCode;
   } catch (error) {
     console.log('\n  La instalacion se detuvo:\n   ' + error.message);

@@ -1,6 +1,6 @@
 'use strict';
 // Crea la actualizacion firmada de la version que hay en app/package.json y, con --subir,
-// la publica en la pagina de versiones del proyecto en GitHub. Los Ishe Client instalados
+// la publica en la pagina de versiones del proyecto en GitHub. Los Reshem Client instalados
 // la encuentran solos al abrirse.
 //
 // uso:
@@ -91,7 +91,7 @@ function main() {
   fs.mkdirSync(out, { recursive: true });
   for (const name of result.upload) fs.writeFileSync(path.join(out, name), result.files.get(name));
 
-  // Comprobacion final con el mismo codigo que usan los Ishe Client instalados.
+  // Comprobacion final con el mismo codigo que usan los Reshem Client instalados.
   const manifest = paquete.verify(fs.readFileSync(path.join(out, paquete.MANIFEST_NAME), 'utf8'), publicKeyPem);
   const bundle = fs.readFileSync(path.join(out, paquete.bundleName(version)));
   if (!manifest || manifest.version !== version || paquete.sha256(bundle) !== manifest.paquete.sha256) fail('la actualizacion creada no pasa su propia comprobacion.');
@@ -111,9 +111,9 @@ function main() {
   }
   const assets = result.upload.map((name) => path.join(out, name)).concat([built.winZip, built.macZip]);
   execFileSync('gh', ['release', 'create', 'v' + version].concat(assets, [
-    '--repo', REPO, '--title', 'Ishe Client ' + version, '--notes', notes, '--latest',
+    '--repo', REPO, '--title', 'Reshem Client ' + version, '--notes', notes, '--latest',
   ]), { stdio: 'inherit' });
-  console.log('Publicada. Al abrir Ishe Client, la version ' + version + ' se descarga sola.');
+  console.log('Publicada. Al abrir Reshem Client, la version ' + version + ' se descarga sola.');
 }
 
 main();

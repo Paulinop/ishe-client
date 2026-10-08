@@ -1,7 +1,7 @@
-ISHE CLIENT - launcher para Windows
+RESHEM CLIENT - launcher para Windows
 ===================================
 
-Ishe Client es una aplicación con tu diseño que prepara Minecraft 26.2 con
+Reshem Client es una aplicación con tu diseño que prepara Minecraft 26.2 con
 Fabric, mods de rendimiento, menú personalizable y el mod Ishe, y abre el juego
 con tu cuenta de Microsoft (versión 1.2).
 
@@ -10,32 +10,32 @@ CÓMO INSTALARLO
 ---------------
 1. Extrae este .zip completo (clic derecho > Extraer todo). No lo abras
    desde dentro del .zip.
-2. Haz doble clic en "Instalar Ishe Client".
+2. Haz doble clic en "Instalar Reshem Client".
    Si Windows muestra un aviso azul de "Windows protegió su PC", pulsa
    "Más información" y luego "Ejecutar de todas formas".
 3. El instalador descarga el motor de la aplicación (unos 150 MB, solo la
-   primera vez), crea el acceso directo "Ishe Client" en el escritorio y en el
+   primera vez), crea el acceso directo "Reshem Client" en el escritorio y en el
    menú Inicio, y abre la aplicación.
 
-Después ya no necesitas esta carpeta: abre Ishe Client con su acceso directo.
+Después ya no necesitas esta carpeta: abre Reshem Client con su acceso directo.
 
 
 CÓMO JUGAR
 ----------
-Ishe Client tiene dos formas de abrir el juego y elige sola:
+Reshem Client tiene dos formas de abrir el juego y elige sola:
 
-A) Con tu sesión iniciada en Ishe Client: el juego se abre desde aquí
+A) Con tu sesión iniciada en Reshem Client: el juego se abre desde aquí
    1. Pulsa "Iniciar sesión" (abajo a la izquierda). Aparece un código.
    2. Pulsa "Abrir la página de Microsoft", escribe ahí el código y entra con
       la cuenta de Microsoft que tiene Minecraft: Java Edition. La contraseña
-      se escribe solo en la página de Microsoft, nunca en Ishe Client.
+      se escribe solo en la página de Microsoft, nunca en Reshem Client.
    3. Pulsa JUGAR. La primera vez descarga los mods, el juego y Java desde
       sus servidores oficiales (alrededor de 1 GB; tarda varios minutos) y
       abre Minecraft. Las siguientes veces solo comprueba y abre.
    Para esta forma no hace falta tener el launcher oficial.
 
    IMPORTANTE: esta forma solo funciona cuando Mojang haya aprobado
-   Ishe Client (la solicitud se envió el 6 de octubre de 2026 y no tiene
+   Reshem Client (la solicitud se envió el 6 de octubre de 2026 y no tiene
    plazo fijo). Hasta entonces verás "Falta la aprobación de Mojang" y se
    usa la forma B. Cuando la aprueben no hay que reinstalar ni volver a
    iniciar sesión: JUGAR empezará a abrir el juego directamente.
@@ -43,9 +43,9 @@ A) Con tu sesión iniciada en Ishe Client: el juego se abre desde aquí
 B) Sin sesión iniciada, o mientras falte la aprobación: launcher oficial
    1. Ten instalado el launcher oficial de Minecraft, ábrelo una vez con tu
       cuenta y ciérralo.
-   2. Pulsa JUGAR. Descarga los mods y crea el perfil "Ishe Client" en el
+   2. Pulsa JUGAR. Descarga los mods y crea el perfil "Reshem Client" en el
       launcher oficial.
-   3. Se abre el launcher oficial: elige el perfil "Ishe Client" y pulsa
+   3. Se abre el launcher oficial: elige el perfil "Reshem Client" y pulsa
       Jugar. Si no se abre solo, ábrelo tú.
 
 Pantallas: Inicio (Jugar, estado y novedades), Mods (lo instalado) y Ajustes
@@ -57,18 +57,18 @@ PERSONALIZAR Y ACTUALIZAR
 Colores y logo: Ajustes > Apariencia. Se ven al momento y se guardan en tu
 equipo. "Volver a lo original" deshace todo.
 Tu personaje: al iniciar sesión aparecen tu nombre y la cabeza de tu skin
-(cuando Mojang haya aprobado Ishe Client; antes no hay nombre que mostrar).
-Versiones nuevas: cada vez que abres Ishe Client busca una versión nueva en
+(cuando Mojang haya aprobado Reshem Client; antes no hay nombre que mostrar).
+Versiones nuevas: cada vez que abres Reshem Client busca una versión nueva en
 la página del proyecto (github.com/Paulinop/ishe-client). Si la hay, baja
 solo los archivos del client (menos de 1 MB), comprueba que está firmada por
 el creador y te ofrece reiniciar. No hay que reinstalar. Si una versión nueva
-no llega a abrirse, Ishe Client vuelve sola a la anterior.
+no llega a abrirse, Reshem Client vuelve sola a la anterior.
 La versión que tienes se ve abajo a la izquierda y en Ajustes.
 
 
 SOLO CUENTAS QUE TIENEN EL JUEGO
 --------------------------------
-Ishe Client no tiene modo sin cuenta. Solo abre Minecraft con una cuenta de
+Reshem Client no tiene modo sin cuenta. Solo abre Minecraft con una cuenta de
 Microsoft que tiene Minecraft: Java Edition, y lo comprueba al iniciar
 sesión y cada vez que renueva la sesión. Cada amigo inicia sesión con su
 propia cuenta en su propio equipo.
@@ -81,12 +81,12 @@ DÓNDE GUARDA LAS COSAS
 ----------------------
 La aplicación:                       %LOCALAPPDATA%\IsheClient
 Mods, mundos y ajustes del client:   %APPDATA%\.ishe-client
-Sesión guardada (cifrada):           %APPDATA%\Ishe Client\sesion.json
+Sesión guardada (cifrada):           %APPDATA%\Reshem Client\sesion.json
 Java para el juego:                  %APPDATA%\.ishe-client\runtime
 El juego, sus bibliotecas y recursos se guardan en la carpeta normal de
 Minecraft, compartidos con el launcher oficial para no bajarlos dos veces.
 Del launcher oficial solo se cambia la lista de perfiles (se añade
-"Ishe Client"); antes de cambiarla se guarda una copia (archivo
+"Reshem Client"); antes de cambiarla se guarda una copia (archivo
 ".antes-de-ishe-FECHA").
 
 Si ya usaste el instalador anterior (el que solo preparaba los mods), este
@@ -98,10 +98,10 @@ Para cambiar las novedades, edita con el Bloc de notas:
 
 ACTUALIZAR Y DESINSTALAR
 ------------------------
-Actualizar: ejecuta "Instalar Ishe Client" de una versión nueva. No vuelve a
+Actualizar: ejecuta "Instalar Reshem Client" de una versión nueva. No vuelve a
 descargar el motor.
 Desinstalar: borra %LOCALAPPDATA%\IsheClient, los accesos directos y el perfil
-"Ishe Client" del launcher oficial. Para borrar también mods y mundos del
+"Reshem Client" del launcher oficial. Para borrar también mods y mundos del
 client, borra %APPDATA%\.ishe-client (copia antes tus mundos si los quieres).
 
 
@@ -129,7 +129,7 @@ NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG
 OR MICROSOFT.
 NO ES UN PRODUCTO OFICIAL DE MINECRAFT. NO ESTÁ APROBADO POR MOJANG NI
 MICROSOFT, NI ASOCIADO CON ELLOS.
-Ishe Client no incluye ni redistribuye archivos de Minecraft: el juego se
+Reshem Client no incluye ni redistribuye archivos de Minecraft: el juego se
 descarga de los servidores de Mojang en el equipo de cada jugador.
 Los mods se descargan de Modrinth y pertenecen a sus autores. El motor
 de la aplicación es Electron (licencia MIT), descargado de su página oficial.

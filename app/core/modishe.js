@@ -52,7 +52,7 @@ function verify(text, publicKeyPem, minecraft) {
     if (!crypto.verify(null, body, crypto.createPublicKey(publicKeyPem), signature)) throw new Error('firma');
     notice = JSON.parse(body.toString('utf8'));
   } catch (_) {
-    throw new ModError('el aviso del mod no está firmado por el creador de Ishe Client');
+    throw new ModError('el aviso del mod no está firmado por el creador de Reshem Client');
   }
   const problem = checkNotice(notice, minecraft);
   if (problem === 'MC') return { otraVersion: true, minecraft: notice.minecraft };

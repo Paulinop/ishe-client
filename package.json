@@ -3,7 +3,7 @@
   "private": true,
   "description": "Proyecto de Ishe Client: el launcher (app/), sus instaladores y sus herramientas.",
   "scripts": {
-    "probar": "node tools/test_auth.js app && node tools/test_game.js app && node tools/test_platform.js app && node tools/test_mod.js app && node tools/test_amigos.js app && node tools/test_servidor.js app",
+    "probar": "node tools/test_auth.js app && node tools/test_game.js app && node tools/test_platform.js app && node tools/test_mod.js app && node tools/test_amigos.js app && node tools/test_servidor.js app && node tools/test_estado_y_skin.js app && node tools/test_shaders.js app && node tools/test_opciones.js app",
     "construir": "node tools/construir.js"
   }
 }

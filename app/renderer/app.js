@@ -1,12 +1,23 @@
 'use strict';
-// Interfaz de Ishe Client. Solo habla con el proceso principal a traves de
+// Interfaz de Reshem Client. Solo habla con el proceso principal a traves de
 // window.ishe (ver preload.js); no tiene acceso al sistema.
 
 const $ = (id) => document.getElementById(id);
 
 // Nombre y categoria que se muestran para cada archivo de mod conocido.
 const KNOWN_MODS = [
+  [/^ishe-/i, 'Ishe (Nublado, Haku y más)', 'Ishe'],
+  [/^voicechat/i, 'Simple Voice Chat', 'Amigos'],
   [/^fabric-api/i, 'Fabric API', 'Base'],
+  [/^iris/i, 'Iris Shaders', 'Rendimiento'],
+  [/^xaero/i, "Xaero's World Map", 'Extras'],
+  [/^trashslot/i, 'TrashSlot', 'Extras'],
+  [/^immersive_paintings|^immersive-paintings/i, 'Immersive Paintings', 'Extras'],
+  [/^customplayermodels|^custom-player-models/i, 'Customizable Player Models', 'Extras'],
+  [/^lambdynamiclights/i, 'LambDynamicLights', 'Extras'],
+  [/^balm/i, 'Balm', 'Biblioteca'],
+  [/^fzzy_config|^fzzy-config/i, 'Fzzy Config', 'Biblioteca'],
+  [/^fabric-language-kotlin/i, 'Fabric Language Kotlin', 'Biblioteca'],
   [/^sodium/i, 'Sodium', 'Rendimiento'],
   [/^lithium/i, 'Lithium', 'Rendimiento'],
   [/^ferritecore/i, 'FerriteCore', 'Rendimiento'],
@@ -16,7 +27,7 @@ const KNOWN_MODS = [
   [/^melody/i, 'Melody', 'Biblioteca'],
   [/^placeholder-api/i, 'Text Placeholder API', 'Biblioteca'],
 ];
-const CATEGORY_ORDER = ['Rendimiento', 'Menú', 'Amigos', 'Base', 'Biblioteca', 'Otro'];
+const CATEGORY_ORDER = ['Ishe', 'Amigos', 'Extras', 'Rendimiento', 'Menú', 'Base', 'Biblioteca', 'Otro'];
 
 // Explicacion de cada motivo por el que puede fallar el inicio de sesion.
 const REASON_TEXT = {
@@ -27,11 +38,11 @@ const REASON_TEXT = {
   'xbox-region': ['Xbox Live no está disponible', 'Xbox Live no funciona en el país o región de esta cuenta.'],
   'xbox-adult-check': ['Falta verificar la edad', 'Esta cuenta necesita verificar la edad en xbox.com antes de poder jugar.'],
   'xbox-child': ['Cuenta de un menor', 'Un adulto tiene que añadir esta cuenta a su grupo familiar de Microsoft para que pueda jugar.'],
-  'not-owned': ['Esta cuenta no tiene Minecraft', 'Ishe Client solo abre el juego con cuentas de Microsoft que tienen Minecraft: Java Edition. Se cerró la sesión.'],
+  'not-owned': ['Esta cuenta no tiene Minecraft', 'Reshem Client solo abre el juego con cuentas de Microsoft que tienen Minecraft: Java Edition. Se cerró la sesión.'],
   'session-expired': ['Tu sesión caducó', 'Pulsa Iniciar sesión para entrar otra vez con tu cuenta de Microsoft.'],
   unexpected: ['Algo no salió como se esperaba', 'Vuelve a intentarlo en unos minutos.'],
 };
-const PENDING_TEXT = 'Mojang todavía no ha aprobado Ishe Client para abrir el juego directamente. Hasta entonces, Jugar deja todo preparado y abre el launcher oficial.';
+const PENDING_TEXT = 'Mojang todavía no ha aprobado Reshem Client para abrir el juego directamente. Hasta entonces, Jugar deja todo preparado y abre el launcher oficial.';
 
 let state = null;
 let running = false;
@@ -93,17 +104,17 @@ function applyTheme(theme) {
 function renderUpdate() {
   const update = state.update || { status: 'idle' };
   const texts = {
-    idle: 'Se busca una versión nueva cada vez que abres Ishe Client.',
+    idle: 'Se busca una versión nueva cada vez que abres Reshem Client.',
     checking: 'Buscando una versión nueva…',
     none: 'Tienes la última versión.',
     downloading: 'Descargando la versión ' + update.version + '…',
-    ready: 'La versión ' + update.version + ' ya está descargada. Reinicia Ishe Client para usarla.' + (update.notes ? ' Novedades: ' + update.notes : ''),
-    'needs-installer': 'La versión ' + update.version + ' necesita instalar Ishe Client de nuevo con el instalador más reciente.',
+    ready: 'La versión ' + update.version + ' ya está descargada. Reinicia Reshem Client para usarla.' + (update.notes ? ' Novedades: ' + update.notes : ''),
+    'needs-installer': 'La versión ' + update.version + ' necesita instalar Reshem Client de nuevo con el instalador más reciente.',
     error: update.detail === 'network'
       ? 'No pude buscar versiones nuevas: no hubo conexión con GitHub.'
       : 'No pude actualizar: ' + (update.detail || 'error desconocido') + '.',
   };
-  $('version-line').textContent = 'Ishe Client ' + state.appVersion + ' · motor Electron ' + state.engine;
+  $('version-line').textContent = 'Reshem Client ' + state.appVersion + ' · motor Electron ' + state.engine;
   $('update-status').textContent = texts[update.status] || texts.idle;
   $('update-check').disabled = update.status === 'checking' || update.status === 'downloading';
   $('update-restart').hidden = update.status !== 'ready';
@@ -125,10 +136,10 @@ function renderUpdateBanner(update) {
   const ready = update.status === 'ready';
   $('update-banner-title').textContent = 'Hay una actualización: versión ' + update.version;
   $('update-banner-detail').textContent = ready
-    ? (update.notes || 'Reinicia Ishe Client para usarla.')
+    ? (update.notes || 'Reinicia Reshem Client para usarla.')
     : update.status === 'downloading'
       ? 'Se está descargando, te avisamos cuando esté lista.'
-      : 'Hay que instalar Ishe Client de nuevo con el instalador más reciente.';
+      : 'Hay que instalar Reshem Client de nuevo con el instalador más reciente.';
   $('update-banner-restart').hidden = !ready;
 }
 
@@ -164,7 +175,7 @@ async function creatorKeyAction() {
         ? 'Clave cargada y guardada cifrada en este equipo.'
         : 'Clave cargada. En este equipo no se puede guardar cifrada: habrá que cargarla cada vez.';
     } else if (result && result.reason === 'wrong-key') {
-      $('creator-result').textContent = 'Ese archivo no es la clave de actualizaciones de Ishe Client.';
+      $('creator-result').textContent = 'Ese archivo no es la clave de actualizaciones de Reshem Client.';
     } else if (result && result.reason === 'unreadable') {
       $('creator-result').textContent = 'No pude leer ese archivo.';
     }
@@ -261,35 +272,26 @@ function renderMods(installed) {
     $('mods-lead').textContent = 'Todavía no hay nada instalado. Pulsa Jugar en Inicio y aparecerán aquí.';
     return;
   }
-  $('mods-lead').textContent = installed.mods.length + ' mods · ' + installed.fabric;
+  $('mods-lead').textContent = installed.mods.length + ' mods instalados · ' + installed.fabric + '. Se actualizan solos cada vez que pulsas Jugar.';
   const mods = installed.mods.map(describeMod).sort((a, b) =>
     CATEGORY_ORDER.indexOf(a.category) - CATEGORY_ORDER.indexOf(b.category) || a.name.localeCompare(b.name));
   for (const mod of mods) {
     const row = el('div', 'mod');
-    row.appendChild(el('span', 'mod-name', mod.name));
-    row.appendChild(el('span', 'mod-tag', mod.category));
+    const icon = el('span', 'mod-icon cat-' + CATEGORY_ORDER.indexOf(mod.category), mod.name[0].toUpperCase());
+    icon.setAttribute('aria-hidden', 'true');
+    row.appendChild(icon);
+    const text = el('div', 'mod-text');
+    text.appendChild(el('span', 'mod-name', mod.name));
     const file = el('span', 'mod-file', mod.file);
     file.title = mod.file;
-    row.appendChild(file);
+    text.appendChild(file);
+    row.appendChild(text);
+    row.appendChild(el('span', 'mod-tag cat-' + CATEGORY_ORDER.indexOf(mod.category), mod.category));
     box.appendChild(row);
   }
 }
 
-function renderServer() {
-  $('server-address').value = state.server || '';
-  $('server-join').checked = state.joinServer !== false;
-}
-
-function renderFriend() {
-  $('friend-status').textContent = state.friendCode
-    ? 'Código puesto: Nublado y Haku usan el servidor de Guishe, no necesitas clave de Google.'
-    : 'Sin código. Pégalo aquí si Guishe te dio uno; si no, Nublado y Haku solo usan sus frases de siempre.';
-  $('friend-clear').hidden = !state.friendCode;
-}
-
 function renderSettings() {
-  renderFriend();
-  renderServer();
   const select = $('ram');
   select.replaceChildren();
   for (const gigabytes of state.ramChoices) {
@@ -301,7 +303,7 @@ function renderSettings() {
   $('game-dir').textContent = state.gameDir;
   $('session-hint').textContent = state.sessionSaved
     ? 'Tu sesión se guarda cifrada en este equipo. Puedes cerrarla cuando quieras desde tu cuenta, arriba a la derecha.'
-    : 'En este equipo la sesión no se puede guardar cifrada, así que se pedirá iniciar sesión cada vez que abras Ishe Client.';
+    : 'En este equipo la sesión no se puede guardar cifrada, así que se pedirá iniciar sesión cada vez que abras Reshem Client.';
 }
 
 function renderAccount() {
@@ -328,6 +330,61 @@ function renderAccount() {
   avatar.textContent = state.signedIn && name ? name[0].toUpperCase() : '?';
   avatar.classList.toggle('is-empty', !(state.signedIn && name));
   drawFace(state.playerSkin);
+  drawBody(state.playerSkin);
+  $('skin-title').textContent = state.signedIn && name ? 'Skin de ' + name : 'Tu skin';
+}
+
+/** Dibuja el personaje entero (de frente, con sus capas) en la tarjeta de la skin. */
+function drawBody(skin) {
+  const canvas = $('skin-canvas');
+  if (!skin) {
+    // Sin sesion: una silueta apagada, para que la tarjeta no se vea vacia.
+    const context = canvas.getContext('2d');
+    context.clearRect(0, 0, 16, 32);
+    context.fillStyle = '#34452f';
+    for (const [x, y, w, h] of [[4, 0, 8, 8], [4, 8, 8, 12], [0, 8, 4, 12], [12, 8, 4, 12], [4, 20, 4, 12], [8, 20, 4, 12]]) context.fillRect(x, y, w, h);
+    canvas.classList.add('is-empty');
+    delete canvas.dataset.source;
+    return;
+  }
+  if (canvas.dataset.source === skin) return;
+  const image = new Image();
+  image.onload = () => {
+    if (state.playerSkin !== skin || image.width < 64 || image.width % 64 !== 0) return;
+    const unit = image.width / 64;
+    const modern = image.height >= image.width;
+    const context = canvas.getContext('2d');
+    context.imageSmoothingEnabled = false;
+    context.clearRect(0, 0, 16, 32);
+    const part = (sx, sy, w, h, dx, dy, flip) => {
+      if (!flip) {
+        context.drawImage(image, sx * unit, sy * unit, w * unit, h * unit, dx, dy, w, h);
+        return;
+      }
+      context.save();
+      context.translate(dx + w, dy);
+      context.scale(-1, 1);
+      context.drawImage(image, sx * unit, sy * unit, w * unit, h * unit, 0, 0, w, h);
+      context.restore();
+    };
+    part(8, 8, 8, 8, 4, 0);
+    part(20, 20, 8, 12, 4, 8);
+    part(44, 20, 4, 12, 0, 8);
+    part(modern ? 36 : 44, modern ? 52 : 20, 4, 12, 12, 8, !modern);
+    part(4, 20, 4, 12, 4, 20);
+    part(modern ? 20 : 4, modern ? 52 : 20, 4, 12, 8, 20, !modern);
+    part(40, 8, 8, 8, 4, 0);
+    if (modern) {
+      part(20, 36, 8, 12, 4, 8);
+      part(44, 36, 4, 12, 0, 8);
+      part(52, 52, 4, 12, 12, 8);
+      part(4, 36, 4, 12, 4, 20);
+      part(4, 52, 4, 12, 8, 20);
+    }
+    canvas.dataset.source = skin;
+    canvas.classList.remove('is-empty');
+  };
+  image.src = skin;
 }
 
 /** Dibuja la cara del personaje (con su segunda capa) a partir de la imagen de la skin. */
@@ -361,16 +418,43 @@ function drawFace(skin) {
   image.src = skin;
 }
 
+// Estado del servidor de Ishe (se pregunta cada pocos segundos). Con el juego directo, si esta cerrado JUGAR se pone gris.
+let serverState = { watching: false, online: true, players: 0, max: 0 };
+
+function directToServer() {
+  return Boolean(state && state.signedIn && !state.pendingApproval && state.joinServer && state.server);
+}
+
+function serverClosed() {
+  return directToServer() && serverState.watching && !serverState.online;
+}
+
+async function pollServer() {
+  let next = null;
+  try { next = await window.ishe.serverStatus(); } catch (_) { next = null; }
+  if (!next) return;
+  const before = serverClosed();
+  serverState = next;
+  refreshPlayButton();
+  if (!running && !(state && state.gameRunning) && document.getElementById('notice').hidden && before !== serverClosed()) idleStatus();
+}
+
 function refreshPlayButton() {
   const button = $('play');
-  button.disabled = running || Boolean(state && state.gameRunning);
-  button.textContent = running ? 'PREPARANDO…' : (state && state.gameRunning ? 'JUGANDO' : 'JUGAR');
+  const closed = serverClosed();
+  button.disabled = running || Boolean(state && state.gameRunning) || closed;
+  button.title = closed ? 'El servidor no está abierto: el dueño lo tiene apagado ahora mismo.' : '';
+  button.textContent = running ? 'PREPARANDO…' : (state && state.gameRunning ? 'JUGANDO' : (closed ? 'CERRADO' : 'JUGAR'));
   $('account-button').disabled = running;
 }
 
 function idleStatus() {
   if (state.gameRunning) {
     setStatus('Minecraft está abierto.', 'good');
+  } else if (serverClosed()) {
+    setStatus('Reshem server está cerrado ahora mismo. Cuando el dueño lo abra, JUGAR se enciende solo.', 'warn');
+  } else if (directToServer() && serverState.watching && serverState.online) {
+    setStatus('Reshem server está abierto' + (serverState.players > 0 ? ' · ' + serverState.players + ' jugando' : '') + '. Pulsa Jugar para entrar' + (state.playerName ? ' como ' + state.playerName : '') + '.', 'good');
   } else if (state.signedIn && !state.pendingApproval) {
     setStatus('Pulsa Jugar para abrir Minecraft' + (state.playerName ? ' como ' + state.playerName : '') + '.');
   } else if (state.signedIn) {
@@ -386,7 +470,7 @@ function idleStatus() {
 
 function applyState(next) {
   state = next;
-  $('foot-version').textContent = 'Ishe Client ' + state.appVersion;
+  $('foot-version').textContent = 'Reshem Client ' + state.appVersion;
   $('foot-mc').textContent = 'Minecraft ' + state.mcVersion + ' · Fabric';
   renderNews(state.news);
   renderMods(state.installed);
@@ -516,7 +600,7 @@ async function accountAction() {
   const next = await window.ishe.logout();
   if (next) applyState(next);
   hideNotice();
-  setStatus('Sesión cerrada. Ishe Client ya no guarda nada de tu cuenta.');
+  setStatus('Sesión cerrada. Reshem Client ya no guarda nada de tu cuenta.');
   bump('logoutDone');
 }
 
@@ -557,7 +641,7 @@ function gameExited(event) {
   if (event.failed) {
     setStatus('Minecraft se cerró con un error' + (event.code === null || event.code === undefined ? '.' : ' (código ' + event.code + ').'), 'bad');
     showNotice('bad', 'El juego se cerró con un error',
-      'Estas son sus últimas líneas. El registro completo está en logs/latest.log, dentro de la carpeta de Ishe Client (Ajustes).', event.tail || []);
+      'Estas son sus últimas líneas. El registro completo está en logs/latest.log, dentro de la carpeta de Reshem Client (Ajustes).', event.tail || []);
   } else {
     setStatus('Minecraft se cerró. Pulsa Jugar para volver a entrar.');
   }
@@ -573,6 +657,12 @@ function showResult(result) {
   const problems = result.problems || [];
   const pending = result.handoff === 'pending-approval';
 
+  if (result.status === 'server-closed') {
+    serverState = { watching: true, online: false, players: 0, max: 0 };
+    refreshPlayButton();
+    setStatus('Reshem server está cerrado ahora mismo. Cuando el dueño lo abra, JUGAR se enciende solo.', 'warn');
+    return;
+  }
   if (result.status === 'running') {
     setStatus('Minecraft ya está abierto.', 'good');
     return;
@@ -597,27 +687,27 @@ function showResult(result) {
     if (result.opened === 'failed') {
       setStatus('El juego está preparado.', 'good');
       showNotice('', 'Abre tú el launcher oficial',
-        (pending ? PENDING_TEXT + ' ' : '') + 'No pude abrir el launcher oficial de Minecraft. Ábrelo, elige el perfil «Ishe Client» y pulsa Jugar.', problems);
+        (pending ? PENDING_TEXT + ' ' : '') + 'No pude abrir el launcher oficial de Minecraft. Ábrelo, elige el perfil «Reshem Client» y pulsa Jugar.', problems);
     } else {
       setStatus(result.opened === 'opened'
         ? 'Listo. Se abrió el launcher oficial de Minecraft.'
         : 'El juego está preparado. Abriendo el launcher oficial de Minecraft…', 'good');
       showNotice(problems.length ? '' : 'good',
         problems.length ? 'Último paso (hubo avisos)' : 'Último paso',
-        (pending ? PENDING_TEXT + ' ' : '') + 'En el launcher oficial elige el perfil «Ishe Client» y pulsa Jugar. Si no se abrió solo, ábrelo tú.', problems);
+        (pending ? PENDING_TEXT + ' ' : '') + 'En el launcher oficial elige el perfil «Reshem Client» y pulsa Jugar. Si no se abrió solo, ábrelo tú.', problems);
     }
     return;
   }
   if (result.status === 'needs-close') {
     setStatus('Falta un paso: cierra el launcher oficial.', 'warn');
     showNotice('', 'Cierra el launcher oficial de Minecraft',
-      (pending ? PENDING_TEXT + ' ' : '') + 'Los mods ya están listos. Para añadir el perfil «Ishe Client» el launcher oficial tiene que estar cerrado del todo. Ciérralo y vuelve a pulsar Jugar.',
+      (pending ? PENDING_TEXT + ' ' : '') + 'Los mods ya están listos. Para añadir el perfil «Reshem Client» el launcher oficial tiene que estar cerrado del todo. Ciérralo y vuelve a pulsar Jugar.',
       problems.filter((p) => !p.includes('está abierto')));
     return;
   }
   if (result.status === 'no-profile') {
     setStatus('No pude añadir el perfil al launcher oficial.', 'warn');
-    showNotice('', 'Falta el perfil «Ishe Client»',
+    showNotice('', 'Falta el perfil «Reshem Client»',
       (pending ? PENDING_TEXT + ' ' : '') + 'Abre el launcher oficial de Minecraft una vez con tu cuenta, ciérralo y vuelve a pulsar Jugar.', problems);
     return;
   }
@@ -743,7 +833,7 @@ function buildSprites(root) {
 
 function startCats() {
   const strip = document.querySelector('.gatitos');
-  if (!strip || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!strip) return;
   const PERSONALITY = {
     negro: { speed: 24, rest: { sit: 3, sleep: 2, ovillo: 2, groom: 2, yawn: 1, stretch: 1 }, pause: [5000, 12000], walk: [6000, 14000] },
     siames: { speed: 38, rest: { groom: 4, sit: 2, scratch: 2, stretch: 1, yawn: 1, sleep: 1 }, pause: [3000, 8000], walk: [4000, 10000] },
@@ -847,7 +937,7 @@ const TIPS = [
   'Con FancyMenu puedes cambiar el fondo, el logo y los botones del menú del juego.',
   'La primera vez tarda más: se descargan el juego y los mods. Las siguientes son rápidas.',
   'A los gatos les encanta dormir en una cama. En Ajustes eliges cómo es el tuyo.',
-  'Ishe Client busca versiones nuevas cada vez que lo abres.',
+  'Reshem Client busca versiones nuevas cada vez que lo abres.',
 ];
 let tipTimer = 0;
 let tipIndex = 0;
@@ -877,7 +967,7 @@ async function init() {
   idleStatus();
   if (state.updateFellBackFrom) {
     showNotice('', 'Se volvió a la versión anterior',
-      'La versión ' + state.updateFellBackFrom + ' no pudo abrirse en este equipo, así que Ishe Client sigue con la ' + state.appVersion + '. Avísale a quien la publicó.', []);
+      'La versión ' + state.updateFellBackFrom + ' no pudo abrirse en este equipo, así que Reshem Client sigue con la ' + state.appVersion + '. Avísale a quien la publicó.', []);
   } else if (state.signedIn && state.pendingApproval) {
     showNotice('', 'Falta la aprobación de Mojang', PENDING_TEXT, []);
   } else if (!state.signedIn && !state.minecraftFound) {
@@ -902,38 +992,41 @@ async function init() {
       ? 'Guardado. Se aplica la próxima vez que pulses Jugar.'
       : 'No se pudo guardar el cambio.';
   });
-  $('server-save').addEventListener('click', async () => {
-    const result = await window.ishe.setServer($('server-address').value, $('server-join').checked);
-    if (result && result.ok) {
-      state.server = $('server-address').value.trim();
-      state.joinServer = $('server-join').checked;
-      $('server-hint').textContent = state.server ? 'Guardado. La próxima vez que pulses Jugar entrarás directo a ' + state.server + '.' : 'Guardado. Jugar abre el juego normal.';
-    } else {
-      $('server-hint').textContent = 'Esa dirección no es válida. Ejemplo: mi.servidor.com o mi.servidor.com:25566';
-    }
-  });
-  $('friend-save').addEventListener('click', async () => {
-    const result = await window.ishe.friendCodeSet($('friend-code').value);
-    if (result && result.ok) {
-      if (result.server) {
-        state.server = result.server;
-        state.joinServer = true;
-        renderServer();
+  // ---- skin
+  const SKIN_MESSAGES = {
+    'no-session': 'Inicia sesión primero (arriba a la derecha).',
+    session: 'Tu sesión caducó: vuelve a iniciar sesión.',
+    invalid: 'Esa imagen no vale: tiene que ser un PNG de 64×64 (o 64×32) y pesar poco.',
+    unreadable: 'No pude leer ese archivo.',
+    network: 'Sin conexión con Mojang. Inténtalo otra vez.',
+    refused: 'Mojang no aceptó el cambio. Inténtalo en un rato.',
+    'name-invalid': 'Ese nombre no es válido (letras, números y guion bajo, hasta 16).',
+    'name-not-found': 'No encontré a ese jugador.',
+    'no-skin': 'Ese jugador no tiene una skin propia que copiar.',
+  };
+  async function changeSkin(mode, value) {
+    const hint = $('skin-hint');
+    hint.textContent = 'Cambiando la skin…';
+    let result = null;
+    try { result = await window.ishe.skinChange(mode, value, $('skin-variant').value); } catch (_) { result = null; }
+    if (result && result.ok) hint.textContent = '¡Listo! Tu skin cambió. Se ve la próxima vez que entres al juego.';
+    else if (result && result.reason === 'cancelled') hint.textContent = 'El PNG tiene que ser de 64×64 (o 64×32).';
+    else hint.textContent = (result && SKIN_MESSAGES[result.reason]) || 'No se pudo cambiar la skin.';
+  }
+  for (const item of document.querySelectorAll('.seg-item')) {
+    item.addEventListener('click', () => {
+      $('skin-variant').value = item.dataset.variant;
+      for (const other of document.querySelectorAll('.seg-item')) {
+        const on = other === item;
+        other.classList.toggle('is-active', on);
+        other.setAttribute('aria-checked', on ? 'true' : 'false');
       }
-      $('friend-code').value = '';
-      state.friendCode = true;
-      $('friend-hint').textContent = 'Guardado. Nublado y Haku lo usan la próxima vez que entres al juego.';
-    } else {
-      $('friend-hint').textContent = result && result.reason === 'disk' ? 'No se pudo guardar el código.' : 'Ese código no es válido. Cópialo completo, empieza con ISHE-.';
-    }
-    renderFriend();
-  });
-  $('friend-clear').addEventListener('click', async () => {
-    await window.ishe.friendCodeClear();
-    state.friendCode = false;
-    $('friend-hint').textContent = 'Código quitado.';
-    renderFriend();
-  });
+    });
+  }
+  $('skin-file').addEventListener('click', () => changeSkin('file', ''));
+  $('skin-copy').addEventListener('click', () => changeSkin('player', $('skin-player').value));
+  setInterval(pollServer, 8000);
+  pollServer();
   $('open-folder').addEventListener('click', () => window.ishe.openFolder());
   $('account-button').addEventListener('click', accountAction);
   $('account-name-link').addEventListener('click', () => {

@@ -1,5 +1,5 @@
 'use strict';
-// Logica de instalacion de Ishe Client. Solo usa modulos incluidos en Node.
+// Logica de instalacion de Reshem Client. Solo usa modulos incluidos en Node.
 // La usan tanto la ventana del launcher (main.js) como la linea de comandos
 // de pruebas (cli.js).
 
@@ -8,17 +8,24 @@ const modishe = require('./modishe');
 const fs = require('fs');
 const path = require('path');
 
-const CLIENT_NAME = 'Ishe Client';
+const CLIENT_NAME = 'Reshem Client';
 const PROFILE_KEY = 'ishe-client';
 const MC_VERSION = '26.2';
 const USER_AGENT = 'IsheClient-Launcher/1.0';
 
-// Mods que forman Ishe Client (nombres de proyecto en Modrinth).
+// Mods que forman Reshem Client (nombres de proyecto en Modrinth).
 // Las dependencias obligatorias de cada uno se anaden solas.
 // simple-voice-chat: lo necesitan Nublado y Haku para oir y hablar.
-const MOD_PROJECTS = ['fabric-api', 'sodium', 'lithium', 'ferrite-core', 'fancymenu', 'modmenu', 'simple-voice-chat'];
+// iris: carga los shaders (junto con Sodium).
+const MOD_PROJECTS = ['fabric-api', 'sodium', 'iris', 'lithium', 'ferrite-core', 'fancymenu', 'modmenu', 'simple-voice-chat',
+  // extras (8 oct): mapa, papelera, cuadros, modelos de jugador, luz dinamica
+  'xaeros-world-map', 'trashslot', 'immersive-paintings', 'custom-player-models', 'lambdynamiclights'];
 
-// e4steam ya no forma parte de Ishe Client (desde 1.5.0). Solo se guarda su nombre para retirarlo si quedo de una version anterior.
+// Paquete de shaders que viene puesto (Complementary Reimagined, de Modrinth): se baja solo y queda activado la primera vez;
+// despues cada quien lo cambia o lo apaga en Opciones > Ajustes de video > Paquetes de shaders (no se vuelve a tocar).
+const SHADER_PROJECT = 'complementary-reimagined';
+
+// e4steam ya no forma parte de Reshem Client (desde 1.5.0). Solo se guarda su nombre para retirarlo si quedo de una version anterior.
 const E4STEAM_FILE = 'e4steam-fabric-quilt-mc26.1-26.2-v0.3.2-guard.jar';
 
 const DEFAULTS = {
@@ -111,6 +118,70 @@ async function modVersion(modrinthApi, project) {
   return versions[0] && typeof versions[0] === 'object' ? versions[0] : null;
 }
 
+// Version mas reciente de un paquete de shaders (cargador "iris") para MC_VERSION. null si no hay.
+async function shaderVersion(modrinthApi, project) {
+  const url = modrinthApi + '/project/' + encodeURIComponent(project) +
+    '/version?game_versions=%5B%22' + MC_VERSION + '%22%5D&loaders=%5B%22iris%22%5D';
+  const versions = await getJson(url);
+  if (!Array.isArray(versions) || versions.length === 0) return null;
+  const release = versions.find((v) => v && typeof v === 'object' && v.version_type === 'release');
+  const chosen = release || versions[0];
+  return chosen && typeof chosen === 'object' ? chosen : null;
+}
+
+// Deja el paquete de shaders en <juego>/shaderpacks y, solo si nunca se eligio uno, lo activa en config/iris.properties.
+async function installShaders(modrinthApi, gameDir, info, problem) {
+  let version;
+  try {
+    version = await shaderVersion(modrinthApi, SHADER_PROJECT);
+  } catch (error) {
+    problem('No pude consultar los shaders: ' + error.message);
+    return;
+  }
+  if (!version) {
+    info('los shaders todavía no tienen versión para Minecraft ' + MC_VERSION);
+    return;
+  }
+  const file = primaryFile(version);
+  if (!file || !/^[A-Za-z0-9._ +()-]+\.zip$/.test(text(file.filename))) {
+    problem('Los shaders no traen un archivo .zip válido.');
+    return;
+  }
+  const expected = text(file.hashes && file.hashes.sha512).toLowerCase();
+  const url = text(file.url);
+  if (!/^[0-9a-f]{128}$/.test(expected) || (modrinthApi.startsWith('https://') && !url.startsWith('https://'))) {
+    problem('Los shaders no traen verificación segura; no se instalan.');
+    return;
+  }
+  const packs = path.join(gameDir, 'shaderpacks');
+  fs.mkdirSync(packs, { recursive: true });
+  const target = path.join(packs, file.filename);
+  if (isFile(target) && sha(target, 'sha512') === expected) {
+    info('ya estaba   ' + file.filename);
+  } else {
+    const temp = target + '.descargando';
+    try {
+      const body = await httpGet(url, 600000);
+      if (crypto.createHash('sha512').update(body).digest('hex') !== expected) throw new Error('el archivo descargado no coincide con su código de verificación');
+      fs.writeFileSync(temp, body);
+      fs.renameSync(temp, target);
+      info('descargado  ' + file.filename);
+    } catch (error) {
+      try { fs.rmSync(temp, { force: true }); } catch (_) { /* nada que limpiar */ }
+      problem('No pude instalar los shaders: ' + error.message);
+      return;
+    }
+  }
+  // Activarlos solo la primera vez (si ya hay un iris.properties, la eleccion es de la persona).
+  const config = path.join(gameDir, 'config');
+  const props = path.join(config, 'iris.properties');
+  if (!isFile(props)) {
+    fs.mkdirSync(config, { recursive: true });
+    fs.writeFileSync(props, 'enableShaders=true\nshaderPack=' + file.filename + '\n');
+    info('shaders activados: ' + file.filename);
+  }
+}
+
 function primaryFile(version) {
   const files = Array.isArray(version.files) ? version.files.filter((f) => f && typeof f === 'object') : [];
   return files.find((f) => f.primary) || files[0] || null;
@@ -158,7 +229,7 @@ function profileIsCurrent(existing, wanted) {
 }
 
 /**
- * Instala o actualiza Ishe Client.
+ * Instala o actualiza Reshem Client.
  *
  * options: { minecraftDir, gameDir, bundledDir, icon, modrinthApi?, fabricMeta?, javaArgs?,
  *            isLauncherRunning?: () => boolean, profileOptional?: boolean }
@@ -223,7 +294,7 @@ async function install(options, onEvent) {
   info('Fabric ' + loaderVersion + ' instalado como ' + versionId);
 
   // ---- mods ---------------------------------------------------------------
-  step('Descargando los mods de Ishe Client');
+  step('Descargando los mods de Reshem Client');
   const modsDir = path.join(gameDir, 'mods');
   fs.mkdirSync(modsDir, { recursive: true });
   const manifestPath = path.join(gameDir, 'ishe-client-instalado.json');
@@ -301,6 +372,8 @@ async function install(options, onEvent) {
     }
   }
 
+  await installShaders(modrinthApi, gameDir, info, problem);
+
   // El mod Ishe (Nublado, Haku, cajero...): se actualiza solo desde la release "mods" del proyecto.
   try {
     const publicKey = options.publicKey || require('./clave-publica');
@@ -321,7 +394,7 @@ async function install(options, onEvent) {
   const oldE4steam = path.join(modsDir, E4STEAM_FILE);
   if (isFile(oldE4steam)) {
     fs.rmSync(oldE4steam, { force: true });
-    info('retirado    ' + E4STEAM_FILE + ' (ya no forma parte de Ishe Client)');
+    info('retirado    ' + E4STEAM_FILE + ' (ya no forma parte de Reshem Client)');
   }
   previousMods.delete('e4steam');
 
@@ -348,7 +421,7 @@ async function install(options, onEvent) {
   emit({ type: 'progress', done: 1, total: 1 });
 
   // ---- perfil en el launcher oficial ---------------------------------------
-  step("Añadiendo el perfil 'Ishe Client' al launcher oficial");
+  step("Añadiendo el perfil 'Reshem Client' al launcher oficial");
   const now = new Date().toISOString();
   let profilesUpdated = 0;
   let profileFilesFound = 0;
@@ -399,7 +472,7 @@ async function install(options, onEvent) {
     }
   }
   if (profileFilesFound === 0 && profileOptional) {
-    info('el launcher oficial no está instalado: no hace falta para jugar desde Ishe Client');
+    info('el launcher oficial no está instalado: no hace falta para jugar desde Reshem Client');
   } else if (profileFilesFound === 0) {
     problem('No se añadió el perfil al launcher. Abre el launcher oficial una vez, ciérralo y vuelve a intentarlo.');
   }
@@ -416,5 +489,5 @@ async function install(options, onEvent) {
 
 module.exports = {
   CLIENT_NAME, MC_VERSION, MOD_PROJECTS, E4STEAM_FILE, PROFILE_KEY, DEFAULTS,
-  StopError, defaultDirs, install, readManifest, safeFileName,
+  StopError, defaultDirs, install, installShaders, readManifest, safeFileName,
 };

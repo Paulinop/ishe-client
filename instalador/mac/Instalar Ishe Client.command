@@ -1,22 +1,22 @@
 #!/bin/bash
-# Instalador del launcher Ishe Client para Mac.
-# Doble clic en Finder, o desde Terminal:  bash "Instalar Ishe Client.command"
+# Instalador del launcher Reshem Client para Mac.
+# Doble clic en Finder, o desde Terminal:  bash "Instalar Reshem Client.command"
 #
 # Que hace:
 #   1. Descarga el motor de la aplicacion (Electron) desde su pagina oficial en
 #      GitHub, el adecuado para este Mac (chip Apple o Intel), y comprueba su
 #      integridad (SHA-256).
-#   2. Monta "Ishe Client.app" en la carpeta Aplicaciones de tu usuario
+#   2. Monta "Reshem Client.app" en la carpeta Aplicaciones de tu usuario
 #      (~/Applications). No pide contrasena de administrador.
-#   3. Abre Ishe Client.
+#   3. Abre Reshem Client.
 #
-# Se puede ejecutar otra vez para actualizar Ishe Client: no vuelve a descargar
+# Se puede ejecutar otra vez para actualizar Reshem Client: no vuelve a descargar
 # el motor si ya esta.
 
 set -u
 cd "$(dirname "$0")" || exit 1
 
-APP_NAME="Ishe Client"
+APP_NAME="Reshem Client"
 VERSION="44.5.1"
 SHA_ARM64="1d75703019bb16461ae65f3081d7e6f5c0b11e901d0ccb5c343bcf7bcdd6435c"
 SHA_X64="e567d13833d0e161d7749727355b98643461df3395b537cfa7bdddf8a8bfedff"
@@ -52,7 +52,7 @@ step() {
 
 echo
 echo "  ===================================="
-echo "     Instalador del launcher Ishe Client"
+echo "     Instalador del launcher Reshem Client"
 echo "  ===================================="
 
 [ -f "app/main.js" ] || fail "Falta la carpeta 'app'. Extrae el .zip completo en una carpeta y abre el instalador desde ahi."
@@ -85,7 +85,7 @@ esac
 
 # ---- la aplicacion no debe estar abierta ------------------------------------
 while [ -z "${ISHE_NO_PAUSE:-}" ] && pgrep -f "$APP/Contents/MacOS" >/dev/null 2>&1; do
-  echo "   Ishe Client esta abierto. Cierralo (Cmd + Q) para poder actualizarlo."
+  echo "   Reshem Client esta abierto. Cierralo (Cmd + Q) para poder actualizarlo."
   read -r -p "   Cuando lo hayas cerrado, pulsa Enter " _
 done
 
@@ -96,7 +96,7 @@ sign_app() {
 }
 
 copy_client_into() {
-  # $1 = carpeta .app. Copia Ishe Client y su icono dentro del motor.
+  # $1 = carpeta .app. Copia Reshem Client y su icono dentro del motor.
   rm -rf "$1/Contents/Resources/app"
   cp -R "app" "$1/Contents/Resources/app" || return 1
   if [ -f "app/assets/icon.icns" ]; then
@@ -108,8 +108,8 @@ copy_client_into() {
 if [ -f "$MARK" ] && [ "$(cat "$MARK" 2>/dev/null)" = "${VERSION}-${PACKAGE}" ] && [ -d "$APP/Contents/MacOS" ]; then
   step "El motor de la aplicacion ya esta instalado"
   echo "   Electron $VERSION ($PACKAGE)"
-  step "Copiando Ishe Client"
-  copy_client_into "$APP" || fail "No pude copiar Ishe Client dentro de la aplicacion."
+  step "Copiando Reshem Client"
+  copy_client_into "$APP" || fail "No pude copiar Reshem Client dentro de la aplicacion."
   sign_app "$APP" || fail "No pude firmar la aplicacion en este Mac (codesign fallo)."
   echo "   Listo."
 else
@@ -141,7 +141,7 @@ else
   [ -d "$NEW/Contents/MacOS" ] || fail "El paquete descargado no tiene el contenido esperado."
 
   rm -f "$NEW/Contents/Resources/default_app.asar"
-  copy_client_into "$NEW" || fail "No pude copiar Ishe Client dentro de la aplicacion."
+  copy_client_into "$NEW" || fail "No pude copiar Reshem Client dentro de la aplicacion."
   PLIST="$NEW/Contents/Info.plist"
   plutil -replace CFBundleName -string "$APP_NAME" "$PLIST" \
     && plutil -replace CFBundleDisplayName -string "$APP_NAME" "$PLIST" \
@@ -161,11 +161,11 @@ else
 fi
 
 echo
-echo "  Ishe Client quedo instalado."
+echo "  Reshem Client quedo instalado."
 echo
 echo "  Esta en la carpeta Aplicaciones de tu usuario:"
 echo "   $APP"
-echo "  Abrelo desde ahi (o buscalo con Spotlight: Cmd + Espacio, 'Ishe Client') y pulsa JUGAR."
+echo "  Abrelo desde ahi (o buscalo con Spotlight: Cmd + Espacio, 'Reshem Client') y pulsa JUGAR."
 echo
 if [ -z "${ISHE_NO_LAUNCH:-}" ]; then
   open "$APP" >/dev/null 2>&1

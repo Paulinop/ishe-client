@@ -1,4 +1,4 @@
-# Instalador del launcher Ishe Client para Windows
+# Instalador del launcher Reshem Client para Windows
 # Compatible con Windows PowerShell 5.1. Solo caracteres ASCII a proposito.
 #
 # Que hace:
@@ -6,10 +6,10 @@
 #      GitHub y comprueba su integridad (SHA-256).
 #   2. Lo instala en  %LOCALAPPDATA%\IsheClient  junto con Ishe Client.
 #   3. Crea accesos directos en el escritorio y en el menu Inicio.
-#   4. Abre Ishe Client.
+#   4. Abre Reshem Client.
 #
 # No necesita permisos de administrador. Se puede ejecutar otra vez para
-# actualizar Ishe Client: no vuelve a descargar el motor si ya esta.
+# actualizar Reshem Client: no vuelve a descargar el motor si ya esta.
 
 param(
     [string]$InstallDir = "",
@@ -59,7 +59,7 @@ function Install-Main {
 
     Write-Host ""
     Write-Host "  ====================================" -ForegroundColor Cyan
-    Write-Host "     Instalador del launcher Ishe Client" -ForegroundColor Cyan
+    Write-Host "     Instalador del launcher Reshem Client" -ForegroundColor Cyan
     Write-Host "  ====================================" -ForegroundColor Cyan
 
     if ([string]::IsNullOrEmpty($InstallDir)) {
@@ -70,14 +70,14 @@ function Install-Main {
         throw "Falta la carpeta 'app'. Extrae el .zip completo en una carpeta y ejecuta el instalador desde ahi."
     }
     if (-not [Environment]::Is64BitOperatingSystem) {
-        throw "Ishe Client necesita Windows de 64 bits."
+        throw "Reshem Client necesita Windows de 64 bits."
     }
 
     # ---- la aplicacion no debe estar abierta --------------------------------
     while ($true) {
         $running = @(Get-Process -Name $AppName -ErrorAction SilentlyContinue)
         if ($running.Count -eq 0 -or $NoPause) { break }
-        Write-Host "   Ishe Client esta abierto. Cierralo para poder actualizarlo." -ForegroundColor Yellow
+        Write-Host "   Reshem Client esta abierto. Cierralo para poder actualizarlo." -ForegroundColor Yellow
         Wait-ForUser "   Cuando lo hayas cerrado, pulsa Enter"
     }
 
@@ -127,7 +127,7 @@ function Install-Main {
                 $children = @(Get-ChildItem -LiteralPath $InstallDir -Force)
                 if ($children.Count -gt 0 -and -not (Test-Path -LiteralPath $marker)) {
                     Remove-Item -LiteralPath $unpacked -Recurse -Force
-                    throw ("La carpeta " + $InstallDir + " ya existe y no es de Ishe Client. Elige otra o vaciala.")
+                    throw ("La carpeta " + $InstallDir + " ya existe y no es de Reshem Client. Elige otra o vaciala.")
                 }
                 Remove-Item -LiteralPath $InstallDir -Recurse -Force
             }
@@ -138,8 +138,8 @@ function Install-Main {
         }
     }
 
-    # ---- Ishe Client (se copia siempre: asi tambien sirve para actualizar) ----
-    Write-Step "Copiando Ishe Client"
+    # ---- Reshem Client (se copia siempre: asi tambien sirve para actualizar) ----
+    Write-Step "Copiando Reshem Client"
     $resources = Join-Path $InstallDir "resources"
     $appTarget = Join-Path $resources "app"
     if (Test-Path -LiteralPath $appTarget) { Remove-Item -LiteralPath $appTarget -Recurse -Force }
@@ -159,23 +159,24 @@ function Install-Main {
             $places = @([Environment]::GetFolderPath("Desktop"), [Environment]::GetFolderPath("Programs"))
             foreach ($place in $places) {
                 if ([string]::IsNullOrEmpty($place) -or -not (Test-Path -LiteralPath $place)) { continue }
-                $link = $shell.CreateShortcut((Join-Path $place ($AppName + ".lnk")))
+                $viejo = Join-Path $place ($AppName + ".lnk"); if (Test-Path -LiteralPath $viejo) { Remove-Item -LiteralPath $viejo -Force -ErrorAction SilentlyContinue }
+                $link = $shell.CreateShortcut((Join-Path $place "Reshem Client.lnk"))
                 $link.TargetPath = $exe
                 $link.WorkingDirectory = $InstallDir
-                $link.Description = "Ishe Client"
+                $link.Description = "Reshem Client"
                 if (Test-Path -LiteralPath $icon) { $link.IconLocation = $icon }
                 $link.Save()
             }
-            Write-Info "Acceso directo 'Ishe Client' en el escritorio y en el menu Inicio."
+            Write-Info "Acceso directo 'Reshem Client' en el escritorio y en el menu Inicio."
         } catch {
-            Write-Host ("   AVISO: no pude crear los accesos directos. Abre Ishe Client desde " + $exe) -ForegroundColor Yellow
+            Write-Host ("   AVISO: no pude crear los accesos directos. Abre Reshem Client desde " + $exe) -ForegroundColor Yellow
         }
     }
 
     Write-Host ""
-    Write-Host "  Ishe Client quedo instalado." -ForegroundColor Green
+    Write-Host "  Reshem Client quedo instalado." -ForegroundColor Green
     Write-Host ""
-    Write-Host "  Abrelo con el acceso directo 'Ishe Client' del escritorio y pulsa JUGAR."
+    Write-Host "  Abrelo con el acceso directo 'Reshem Client' del escritorio y pulsa JUGAR."
     Write-Host ""
     if (-not $NoLaunch) {
         try { Start-Process -FilePath $exe -WorkingDirectory $InstallDir } catch { }

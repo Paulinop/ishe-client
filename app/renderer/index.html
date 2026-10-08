@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ishe Client</title>
+  <title>Reshem Client</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -26,7 +26,7 @@
   <header class="topbar">
     <div class="brand">
       <img class="brand-logo" id="brand-logo" src="../assets/logo.png" alt="">
-      <span class="brand-name">ISHE<span class="brand-sub">CLIENT</span></span>
+      <span class="brand-name">RESHEM<span class="brand-sub">CLIENT</span></span>
     </div>
     <nav class="nav" aria-label="Secciones">
       <button class="nav-item is-active" data-view="inicio" type="button">Inicio</button>
@@ -72,7 +72,7 @@
         </div>
         <div class="hero-body">
           <p class="hero-kicker" id="hero-kicker">Minecraft 26.2</p>
-          <h1 class="hero-title" id="hero-title">Ishe Client</h1>
+          <h1 class="hero-title" id="hero-title">Reshem</h1>
           <p class="hero-status" id="status" role="status" aria-live="polite">Listo para preparar el juego.</p>
           <div class="progress" id="progress" hidden>
             <div class="progress-bar" id="progress-bar"></div>
@@ -104,8 +104,10 @@
 
     <!-- ============================= MODS ============================= -->
     <section class="view" id="view-mods" aria-labelledby="mods-title">
-      <h1 class="page-title" id="mods-title">Mods instalados</h1>
-      <p class="page-lead" id="mods-lead"></p>
+      <div class="page-head">
+        <h1 class="page-title" id="mods-title">Mods</h1>
+        <p class="page-lead" id="mods-lead"></p>
+      </div>
       <div class="mods" id="mods"></div>
     </section>
 
@@ -114,37 +116,39 @@
       <h1 class="page-title" id="settings-title">Ajustes</h1>
 
       <div class="settings-grid">
+      <div class="card wide skin-card" id="skin-card">
+        <div class="skin-stage" aria-hidden="true">
+          <canvas class="skin-canvas" id="skin-canvas" width="16" height="32"></canvas>
+          <span class="skin-plinth"></span>
+        </div>
+        <div class="skin-body">
+          <span class="card-kicker">Personaje</span>
+          <h2 class="card-title" id="skin-title">Tu skin</h2>
+          <p class="card-text" id="skin-lead">Cambia el aspecto de tu cuenta de Minecraft. Se ve la próxima vez que entres al juego.</p>
+          <div class="seg" role="radiogroup" aria-label="Modelo de la skin">
+            <button class="seg-item is-active" data-variant="classic" type="button" role="radio" aria-checked="true">Brazos anchos</button>
+            <button class="seg-item" data-variant="slim" type="button" role="radio" aria-checked="false">Brazos finos</button>
+          </div>
+          <input type="hidden" id="skin-variant" value="classic" />
+          <div class="skin-actions">
+            <button class="button is-primary" id="skin-file" type="button">Subir un PNG…</button>
+            <span class="skin-or">o copiar la de</span>
+            <input class="input skin-player" id="skin-player" type="text" autocomplete="off" spellcheck="false" maxlength="16" placeholder="Nombre de un jugador" />
+            <button class="button" id="skin-copy" type="button">Copiar</button>
+          </div>
+          <p class="card-hint" id="skin-hint">El PNG tiene que ser de 64×64 (o 64×32).</p>
+        </div>
+      </div>
+
       <div class="card">
-        <label class="card-title" for="ram">Memoria para el juego</label>
+        <label class="card-title" for="ram">Memoria</label>
         <p class="card-text">Más memoria ayuda con muchos mods. No pongas más de la mitad de la que tiene tu PC.</p>
         <select class="select" id="ram"></select>
-        <p class="card-hint" id="ram-hint">El cambio se aplica la próxima vez que pulses Jugar.</p>
+        <p class="card-hint" id="ram-hint">Se aplica la próxima vez que pulses Jugar.</p>
       </div>
 
       <div class="card">
-        <label class="card-title" for="server-address">Mi servidor</label>
-        <p class="card-text">Si pones la dirección de tu servidor, al pulsar Jugar el juego abre y entra directo, sin menú ni «crear mundo».</p>
-        <input class="input" id="server-address" type="text" autocomplete="off" spellcheck="false" placeholder="mi.servidor.com" />
-        <label class="card-text"><input type="checkbox" id="server-join" checked /> Entrar directo al servidor al pulsar Jugar</label>
-        <div class="row">
-          <button class="button is-primary" id="server-save" type="button">Guardar servidor</button>
-        </div>
-        <p class="card-hint" id="server-hint">Déjalo vacío para abrir el juego normal.</p>
-      </div>
-
-      <div class="card">
-        <label class="card-title" for="friend-code">Código de amigos (la voz y la IA de Nublado y Haku)</label>
-        <p class="card-text" id="friend-status"></p>
-        <input class="input" id="friend-code" type="password" autocomplete="off" spellcheck="false" placeholder="ISHE-…" />
-        <div class="row">
-          <button class="button is-primary" id="friend-save" type="button">Guardar código</button>
-          <button class="button" id="friend-clear" type="button">Quitar código</button>
-        </div>
-        <p class="card-hint" id="friend-hint">Guishe te lo manda en privado. No lo compartas.</p>
-      </div>
-
-      <div class="card">
-        <span class="card-title">Versión y actualizaciones</span>
+        <span class="card-title">Versión</span>
         <p class="card-text" id="version-line"></p>
         <p class="card-text" id="update-status" role="status" aria-live="polite"></p>
         <div class="row">
@@ -153,16 +157,13 @@
         </div>
       </div>
 
-      <div class="card">
-        <span class="card-title">Carpeta de Ishe Client</span>
-        <p class="card-text">Aquí están tus mods, mundos y ajustes del client. Es independiente de tu Minecraft normal.</p>
-        <code class="path" id="game-dir"></code>
+      <div class="card wide carpeta-card">
+        <div>
+          <span class="card-title">Tu carpeta</span>
+          <p class="card-text">Aquí están tus mods y ajustes. Es independiente de tu Minecraft normal.</p>
+          <code class="path" id="game-dir"></code>
+        </div>
         <button class="button" id="open-folder" type="button">Abrir carpeta</button>
-      </div>
-
-      <div class="card">
-        <span class="card-title">Tus mundos</span>
-        <p class="card-text">Ishe Client empieza sin mundos. Para usar uno que ya tienes, copia su carpeta desde <code>saves</code> de tu Minecraft normal a <code>saves</code> dentro de la carpeta de Ishe Client. Copia, no muevas.</p>
       </div>
 
       <div class="card wide" id="gatitos-card">
@@ -179,8 +180,7 @@
 
       <div class="card wide">
         <span class="card-title">Tu cuenta</span>
-        <p class="card-text">Con tu cuenta de Microsoft iniciada, Ishe Client descarga Minecraft de los servidores oficiales de Mojang y lo abre directamente. Solo funciona con cuentas que tienen Minecraft: Java Edition; no hay modo sin cuenta. Tu contraseña se escribe únicamente en la página de Microsoft, nunca aquí.</p>
-        <p class="card-text">Sin sesión iniciada, Ishe Client deja el juego preparado y abre el launcher oficial de Minecraft; ahí eliges el perfil «Ishe Client» y pulsas Jugar.</p>
+        <p class="card-text">Reshem Client abre el juego con tu cuenta de Microsoft (necesita Minecraft: Java Edition). Tu contraseña se escribe solo en la página de Microsoft, nunca aquí.</p>
         <p class="card-hint" id="session-hint"></p>
         <div class="provisional" id="provisional" hidden>
           <label class="field" for="provisional-name">Tu nombre de Minecraft (para ver tu personaje mientras Mojang aprueba)
@@ -195,7 +195,7 @@
       </div>
 
       <details class="card wide" id="creator">
-        <summary class="card-title">Para el creador de Ishe Client</summary>
+        <summary class="card-title">Para el creador de Reshem Client</summary>
         <p class="card-text">Aquí se prepara una versión nueva para todos: lleva los colores y el logo que tienes puestos ahora, y lo que escribas sale en Novedades. Hace falta la clave de actualizaciones, que solo tiene el creador.</p>
         <p class="card-text" id="creator-key-status"></p>
         <div class="row">
@@ -218,13 +218,13 @@
           <li>Entra en <strong>github.com/Paulinop/ishe-client/releases/new</strong></li>
           <li>En «Choose a tag» escribe <strong id="creator-tag"></strong> y pulsa «Create new tag».</li>
           <li>Arrastra a la zona de archivos estos: <span id="creator-files"></span></li>
-          <li>Pulsa «Publish release». Al abrir Ishe Client, todos la reciben.</li>
+          <li>Pulsa «Publish release». Al abrir Reshem Client, todos la reciben.</li>
         </ol>
       </details>
 
       <div class="card wide">
         <span class="card-title">Acerca de</span>
-        <p class="card-text">Ishe Client es un proyecto personal, gratuito y sin fines comerciales. No incluye ni redistribuye archivos de Minecraft.</p>
+        <p class="card-text">Reshem Client es un proyecto personal, gratuito y sin fines comerciales. No incluye ni redistribuye archivos de Minecraft.</p>
         <p class="card-text legal-block">NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.</p>
         <p class="card-text legal-block">NO ES UN PRODUCTO OFICIAL DE MINECRAFT. NO ESTÁ APROBADO POR MOJANG NI MICROSOFT, NI ASOCIADO CON ELLOS.</p>
       </div>
@@ -233,7 +233,7 @@
   </main>
 
   <footer class="foot">
-    <span id="foot-version">Ishe Client</span>
+    <span id="foot-version">Reshem Client</span>
     <span id="foot-mc"></span>
     <span class="legal" id="legal">NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.</span>
   </footer>
@@ -252,7 +252,7 @@
   <div class="overlay" id="login" hidden>
     <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="login-title">
       <h2 class="dialog-title" id="login-title">Inicia sesión con Microsoft</h2>
-      <p class="dialog-lead">Usa la cuenta de Microsoft que tiene Minecraft: Java Edition. La contraseña se escribe solo en la página de Microsoft, nunca en Ishe Client.</p>
+      <p class="dialog-lead">Usa la cuenta de Microsoft que tiene Minecraft: Java Edition. La contraseña se escribe solo en la página de Microsoft, nunca en Reshem Client.</p>
       <ol class="dialog-steps">
         <li>Abre la página de Microsoft: <strong id="login-page">www.microsoft.com/link</strong></li>
         <li>Escribe este código y entra con tu cuenta:</li>

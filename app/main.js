@@ -1,5 +1,5 @@
 'use strict';
-// Proceso principal de Ishe Client (launcher).
+// Proceso principal de Reshem Client (launcher).
 // Prepara Minecraft 26.2 + Fabric + mods. Con una cuenta de Microsoft que tiene
 // Minecraft: Java Edition, descarga el juego de los servidores oficiales y lo
 // abre directamente. Sin cuenta iniciada (o mientras Mojang no haya aprobado la
@@ -20,6 +20,11 @@ const tema = require('./core/tema');
 const paquete = require('./core/paquete');
 const updater = require('./core/updater');
 const amigos = require('./core/amigos');
+const estadoServidor = require('./core/estado-servidor');
+const skinCore = require('./core/skin');
+
+// El servidor de Ishe (Reshem server): todos entran por aqui al pulsar Jugar. Es una direccion publica; la lista blanca la manda el dueño.
+const DEFAULT_SERVER = 'fried-recently.tun.ply.gg';
 const creator = require('./core/creator');
 
 const APP_DIR = __dirname;
@@ -181,9 +186,9 @@ function readConfig() {
     const typed = data.provisional;
     const provisional = typed && /^[A-Za-z0-9_]{1,16}$/.test(String(typed.name)) && /^[0-9a-f]{32}$/.test(String(typed.uuid))
       ? { name: typed.name, uuid: typed.uuid } : null;
-    return { ramGb: RAM_CHOICES.includes(data.ramGb) ? data.ramGb : 0, tema: tema.pick(data.tema), provisional, servidor: game.serverAddress(data.servidor), entrar: data.entrar !== false };
+    return { ramGb: RAM_CHOICES.includes(data.ramGb) ? data.ramGb : 0, tema: tema.pick(data.tema), provisional, servidor: game.serverAddress(data.servidor) || DEFAULT_SERVER, entrar: data.entrar !== false };
   } catch (_) {
-    return { ramGb: 0, tema: {}, provisional: null, servidor: '', entrar: true };
+    return { ramGb: 0, tema: {}, provisional: null, servidor: DEFAULT_SERVER, entrar: true };
   }
 }
 
@@ -374,7 +379,7 @@ async function creatorBuild(input) {
     parent = chosen.canceled || !chosen.filePaths[0] ? '' : chosen.filePaths[0];
   }
   if (!parent) return { ok: false, cancelled: true };
-  const folder = path.join(parent, 'Ishe Client ' + built.version + ' - actualizacion');
+  const folder = path.join(parent, 'Reshem Client ' + built.version + ' - actualizacion');
   try {
     fs.mkdirSync(folder, { recursive: true });
     for (const [name, body] of built.files) fs.writeFileSync(path.join(folder, name), body);
@@ -499,9 +504,27 @@ function send(payload) {
   if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('ishe:event', payload);
 }
 
+// Estado del servidor (abierto o cerrado), recordado unos segundos para no preguntar a cada rato.
+let serverStatusCache = { at: 0, address: '', value: { online: false } };
+async function serverStatusNow(force) {
+  const config = readConfig();
+  const address = config.entrar ? config.servidor : '';
+  if (!address) return { watching: false, online: true, players: 0, max: 0 };
+  if (!force && serverStatusCache.address === address && Date.now() - serverStatusCache.at < 5000) return serverStatusCache.value;
+  const result = await estadoServidor.query(address, { timeoutMs: 4000 });
+  const value = { watching: true, online: result.online, players: result.players || 0, max: result.max || 0, address };
+  serverStatusCache = { at: Date.now(), address, value };
+  return value;
+}
+
 async function play() {
   if (busy) return { status: 'busy' };
   if (gameRunning) return { status: 'running' };
+  if (signedIn()) {
+    // Con el juego directo, solo se abre si el servidor esta abierto: si no, no hay a donde entrar.
+    const server = await serverStatusNow(true);
+    if (server.watching && !server.online) return { status: 'server-closed', state: getState() };
+  }
   busy = true;
   try {
     const config = readConfig();
@@ -604,7 +627,7 @@ async function play() {
 }
 
 // En Windows, el acceso directo que creo el instalador apunta al icono viejo y la barra de tareas lo usa.
-// Al abrir, Ishe Client deja su propio acceso directo (escritorio y menu Inicio) con el icono actual.
+// Al abrir, Reshem Client deja su propio acceso directo (escritorio y menu Inicio) con el icono actual.
 function refreshShortcutIcons() {
   if (process.platform !== 'win32' || TESTING) return;
   try {
@@ -617,8 +640,8 @@ function refreshShortcutIcons() {
     if (!current || !current.equals(wanted)) fs.writeFileSync(target, wanted);
     const folders = [app.getPath('desktop'), path.join(process.env.APPDATA || '', 'Microsoft', 'Windows', 'Start Menu', 'Programs')];
     let changed = false;
-    for (const folder of folders) {
-      const link = path.join(folder, 'Ishe Client.lnk');
+    for (const folder of folders) for (const nombre of ['Reshem Client.lnk', 'Ishe Client.lnk']) {
+      const link = path.join(folder, nombre);
       if (!fs.existsSync(link)) continue;
       const details = shell.readShortcutLink(link);
       // Solo se toca el acceso directo propio: el que abre este mismo programa.
@@ -639,7 +662,7 @@ function createWindow() {
     minHeight: 600,
     show: false,
     backgroundColor: '#0b110a',
-    title: 'Ishe Client',
+    title: 'Reshem Client',
     icon: path.join(APP_DIR, 'assets', 'logo.png'),
     autoHideMenuBar: true,
     webPreferences: {
@@ -730,6 +753,46 @@ if (!app.requestSingleInstanceLock()) {
       if (text !== '' && !game.serverAddress(text)) return { ok: false, reason: 'invalid' };
       writeConfig({ servidor: text, entrar: join !== false });
       return { ok: true };
+    });
+    ipcMain.handle('ishe:server-status', async (event) => (fromOurWindow(event) ? serverStatusNow(false) : null));
+    ipcMain.handle('ishe:skin-change', async (event, mode, value, variant) => {
+      if (!fromOurWindow(event)) return { ok: false };
+      if (!signedIn() || current.pending) return { ok: false, reason: 'no-session' };
+      let minecraft;
+      try {
+        minecraft = await minecraftForPlay();
+      } catch (error) {
+        return { ok: false, reason: 'session' };
+      }
+      let result;
+      if (mode === 'file') {
+        const chosen = await dialog.showOpenDialog(mainWindow, { title: 'Elige tu skin (PNG de 64x64)', properties: ['openFile'], filters: [{ name: 'Skin', extensions: ['png'] }] });
+        if (chosen.canceled || !chosen.filePaths[0]) return { ok: false, reason: 'cancelled' };
+        let png;
+        try {
+          if (fs.statSync(chosen.filePaths[0]).size > 200 * 1024) return { ok: false, reason: 'invalid', detail: 'size' };
+          png = fs.readFileSync(chosen.filePaths[0]);
+        } catch (_) {
+          return { ok: false, reason: 'unreadable' };
+        }
+        result = await skinCore.uploadFile(minecraft.accessToken, png, variant);
+      } else if (mode === 'player') {
+        let found;
+        try {
+          found = await auth.lookupPlayer(typeof value === 'string' ? value : '', AUTH_ENDPOINTS);
+        } catch (error) {
+          return { ok: false, reason: reasonOf(error) === auth.REASONS.NAME_NOT_FOUND ? 'name-not-found' : 'name-invalid' };
+        }
+        if (!found.skinHash) return { ok: false, reason: 'no-skin' };
+        result = await skinCore.uploadUrl(minecraft.accessToken, 'https://textures.minecraft.net/texture/' + found.skinHash, variant);
+      } else {
+        return { ok: false };
+      }
+      if (result.ok) {
+        const hash = await skinCore.currentHash(minecraft.accessToken);
+        refreshSkin(Object.assign({}, minecraft, { skinHash: hash || minecraft.skinHash }));
+      }
+      return result;
     });
     ipcMain.handle('ishe:set-display-name', (event, name) => (fromOurWindow(event) ? setDisplayName(typeof name === 'string' ? name.slice(0, 40) : '') : null));
     ipcMain.handle('ishe:clear-display-name', (event) => (fromOurWindow(event) ? clearDisplayName() : null));

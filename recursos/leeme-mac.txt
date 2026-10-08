@@ -1,7 +1,7 @@
-ISHE CLIENT - launcher para Mac
+RESHEM CLIENT - launcher para Mac
 ===============================
 
-Ishe Client es una aplicación con tu diseño que prepara Minecraft 26.2 con
+Reshem Client es una aplicación con tu diseño que prepara Minecraft 26.2 con
 Fabric, mods de rendimiento, menú personalizable y el mod Ishe, y abre el juego
 con tu cuenta de Microsoft (versión 1.2).
 Necesita macOS 13 o más reciente. Sirve para Mac con chip Apple y con Intel.
@@ -10,27 +10,27 @@ Necesita macOS 13 o más reciente. Sirve para Mac con chip Apple y con Intel.
 CÓMO INSTALARLO
 ---------------
 1. Extrae este .zip (doble clic).
-2. Haz doble clic en "Instalar Ishe Client.command". Se abre Terminal.
+2. Haz doble clic en "Instalar Reshem Client.command". Se abre Terminal.
 3. El instalador descarga el motor de la aplicación (unos 130 MB, solo la
-   primera vez), monta "Ishe Client" en la carpeta Aplicaciones de tu usuario
+   primera vez), monta "Reshem Client" en la carpeta Aplicaciones de tu usuario
    y la abre.
 
-Después ya no necesitas esta carpeta: abre Ishe Client desde Aplicaciones o
-con Spotlight (Cmd + Espacio, escribe "Ishe Client").
+Después ya no necesitas esta carpeta: abre Reshem Client desde Aplicaciones o
+con Spotlight (Cmd + Espacio, escribe "Reshem Client").
 
 
 SI EL MAC NO DEJA ABRIR EL INSTALADOR
 -------------------------------------
 Es normal con archivos descargados que no vienen de la App Store.
 
-A) Clic derecho sobre "Instalar Ishe Client.command" > Abrir > Abrir.
+A) Clic derecho sobre "Instalar Reshem Client.command" > Abrir > Abrir.
    En macOS recientes: Ajustes del Sistema > Privacidad y seguridad >
    botón "Abrir igualmente", después de haberlo intentado abrir una vez.
 
 B) Desde Terminal (funciona siempre):
    1. Abre la app Terminal.
    2. Escribe  bash  seguido de un espacio (sin pulsar Enter todavía).
-   3. Arrastra "Instalar Ishe Client.command" a la ventana.
+   3. Arrastra "Instalar Reshem Client.command" a la ventana.
    4. Pulsa Enter.
 
 La aplicación ya instalada no debería dar ese aviso, porque se monta en tu
@@ -39,20 +39,20 @@ propio Mac.
 
 CÓMO JUGAR
 ----------
-Ishe Client tiene dos formas de abrir el juego y elige sola:
+Reshem Client tiene dos formas de abrir el juego y elige sola:
 
-A) Con tu sesión iniciada en Ishe Client: el juego se abre desde aquí
+A) Con tu sesión iniciada en Reshem Client: el juego se abre desde aquí
    1. Pulsa "Iniciar sesión" (abajo a la izquierda). Aparece un código.
    2. Pulsa "Abrir la página de Microsoft", escribe ahí el código y entra con
       la cuenta de Microsoft que tiene Minecraft: Java Edition. La contraseña
-      se escribe solo en la página de Microsoft, nunca en Ishe Client.
+      se escribe solo en la página de Microsoft, nunca en Reshem Client.
    3. Pulsa JUGAR. La primera vez descarga los mods, el juego y Java desde
       sus servidores oficiales (alrededor de 1 GB; tarda varios minutos) y
       abre Minecraft. Las siguientes veces solo comprueba y abre.
    Para esta forma no hace falta tener el launcher oficial.
 
    IMPORTANTE: esta forma solo funciona cuando Mojang haya aprobado
-   Ishe Client (la solicitud se envió el 6 de octubre de 2026 y no tiene
+   Reshem Client (la solicitud se envió el 6 de octubre de 2026 y no tiene
    plazo fijo). Hasta entonces verás "Falta la aprobación de Mojang" y se
    usa la forma B. Cuando la aprueben no hay que reinstalar ni volver a
    iniciar sesión: JUGAR empezará a abrir el juego directamente.
@@ -60,9 +60,9 @@ A) Con tu sesión iniciada en Ishe Client: el juego se abre desde aquí
 B) Sin sesión iniciada, o mientras falte la aprobación: launcher oficial
    1. Ten instalado el launcher oficial de Minecraft, ábrelo una vez con tu
       cuenta y ciérralo.
-   2. Pulsa JUGAR. Descarga los mods y crea el perfil "Ishe Client" en el
+   2. Pulsa JUGAR. Descarga los mods y crea el perfil "Reshem Client" en el
       launcher oficial.
-   3. Se abre el launcher oficial: elige el perfil "Ishe Client" y pulsa
+   3. Se abre el launcher oficial: elige el perfil "Reshem Client" y pulsa
       Jugar. Si no se abre solo, ábrelo tú.
 
 Pantallas: Inicio (Jugar, estado y novedades), Mods (lo instalado) y Ajustes
@@ -74,18 +74,18 @@ PERSONALIZAR Y ACTUALIZAR
 Colores y logo: Ajustes > Apariencia. Se ven al momento y se guardan en tu
 equipo. "Volver a lo original" deshace todo.
 Tu personaje: al iniciar sesión aparecen tu nombre y la cabeza de tu skin
-(cuando Mojang haya aprobado Ishe Client; antes no hay nombre que mostrar).
-Versiones nuevas: cada vez que abres Ishe Client busca una versión nueva en
+(cuando Mojang haya aprobado Reshem Client; antes no hay nombre que mostrar).
+Versiones nuevas: cada vez que abres Reshem Client busca una versión nueva en
 la página del proyecto (github.com/Paulinop/ishe-client). Si la hay, baja
 solo los archivos del client (menos de 1 MB), comprueba que está firmada por
 el creador y te ofrece reiniciar. No hay que reinstalar. Si una versión nueva
-no llega a abrirse, Ishe Client vuelve sola a la anterior.
+no llega a abrirse, Reshem Client vuelve sola a la anterior.
 La versión que tienes se ve abajo a la izquierda y en Ajustes.
 
 
 SOLO CUENTAS QUE TIENEN EL JUEGO
 --------------------------------
-Ishe Client no tiene modo sin cuenta. Solo abre Minecraft con una cuenta de
+Reshem Client no tiene modo sin cuenta. Solo abre Minecraft con una cuenta de
 Microsoft que tiene Minecraft: Java Edition, y lo comprueba al iniciar
 sesión y cada vez que renueva la sesión. Cada amigo inicia sesión con su
 propia cuenta en su propio equipo.
@@ -96,15 +96,15 @@ sitio que no sea Microsoft, Xbox y Minecraft. "Cerrar sesión" lo borra.
 
 DÓNDE GUARDA LAS COSAS
 ----------------------
-La aplicación:    ~/Applications/Ishe Client.app
+La aplicación:    ~/Applications/Reshem Client.app
 Mods, mundos y ajustes del client:
                   ~/Library/Application Support/ishe-client
-Sesión guardada (cifrada):           ~/Library/Application Support/Ishe Client/sesion.json
+Sesión guardada (cifrada):           ~/Library/Application Support/Reshem Client/sesion.json
 Java para el juego:                  ~/Library/Application Support/ishe-client/runtime
 El juego, sus bibliotecas y recursos se guardan en la carpeta normal de
 Minecraft, compartidos con el launcher oficial para no bajarlos dos veces.
 Del launcher oficial solo se cambia la lista de perfiles (se añade
-"Ishe Client"); antes de cambiarla se guarda una copia (archivo
+"Reshem Client"); antes de cambiarla se guarda una copia (archivo
 ".antes-de-ishe-FECHA").
 
 Si ya usaste el instalador anterior (el que solo preparaba los mods), este
@@ -115,8 +115,8 @@ ACTUALIZAR Y DESINSTALAR
 ------------------------
 Actualizar: ejecuta el instalador de una versión nueva. No vuelve a descargar
 el motor.
-Desinstalar: arrastra "Ishe Client" de ~/Applications a la Papelera y borra
-el perfil "Ishe Client" del launcher oficial. Para borrar también mods y
+Desinstalar: arrastra "Reshem Client" de ~/Applications a la Papelera y borra
+el perfil "Reshem Client" del launcher oficial. Para borrar también mods y
 mundos del client, borra ~/Library/Application Support/ishe-client.
 
 
@@ -137,8 +137,8 @@ algo que ajustar. Si no arranca, copia el mensaje; mientras tanto, el
 instalador sin ventana (IsheClient-Instalador-Mac.zip) hace la preparación
 para el launcher oficial.
 
-Al guardar la sesión, macOS puede preguntar si permites a Ishe Client usar
-el Llavero ("Ishe Client Safe Storage"). Es el cifrado de tu sesión. Como la
+Al guardar la sesión, macOS puede preguntar si permites a Reshem Client usar
+el Llavero ("Reshem Client Safe Storage"). Es el cifrado de tu sesión. Como la
 aplicación se firma en tu propio Mac, puede volver a preguntarlo cada vez
 que la reinstales con el instalador (las actualizaciones automáticas no
 tocan la aplicación instalada, así que no deberían provocarlo).
@@ -150,7 +150,7 @@ NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG
 OR MICROSOFT.
 NO ES UN PRODUCTO OFICIAL DE MINECRAFT. NO ESTÁ APROBADO POR MOJANG NI
 MICROSOFT, NI ASOCIADO CON ELLOS.
-Ishe Client no incluye ni redistribuye archivos de Minecraft: el juego se
+Reshem Client no incluye ni redistribuye archivos de Minecraft: el juego se
 descarga de los servidores de Mojang en el equipo de cada jugador.
 Los mods se descargan de Modrinth y pertenecen a sus autores. El motor
 de la aplicación es Electron (licencia MIT), descargado de su página oficial.
