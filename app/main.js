@@ -241,7 +241,7 @@ function getState() {
     engine: process.versions.electron || '',
     theme: tema.effective(APP_DIR),
     playerSkin: player ? skinDataUrl : '',
-    playerNameProvisional: Boolean(player && player.provisional),
+
     update,
     updateFellBackFrom: ISHE.fellBackFrom,
     creator: { keyLoaded: Boolean(creatorKey), nextVersion: creator.nextVersion(ISHE.version), folder: creatorFolder },

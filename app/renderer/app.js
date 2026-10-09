@@ -318,15 +318,15 @@ function renderAccount() {
     $('account-sub').textContent = state.pendingApproval ? 'Esperando a Mojang' : 'Minecraft: Java Edition';
     $('account-button').textContent = 'Cerrar sesión';
   }
-  $('account-name').title = state.playerNameProvisional
+
     ? name + ' (nombre que escribiste tú; Mojang aún no lo ha confirmado)'
     : $('account-name').textContent;
   // Mientras Mojang no aprueba, se puede escribir el nombre a mano para ver el personaje.
   const canType = Boolean(state.signedIn && state.pendingApproval);
   $('account-name-link').hidden = !(canType && !name);
-  $('provisional').hidden = !canType;
-  $('provisional-clear').hidden = !state.playerNameProvisional;
-  if (state.playerNameProvisional && document.activeElement !== $('provisional-name')) $('provisional-name').value = name;
+
+
+
   avatar.textContent = state.signedIn && name ? name[0].toUpperCase() : '?';
   avatar.classList.toggle('is-empty', !(state.signedIn && name));
   drawFace(state.playerSkin);
@@ -604,13 +604,13 @@ async function accountAction() {
   bump('logoutDone');
 }
 
-async function saveDisplayName() {
-  const hint = $('provisional-hint');
-  $('provisional-save').disabled = true;
+
+
+
   hint.textContent = 'Buscando tu personaje…';
   let result = null;
-  try { result = await window.ishe.setDisplayName($('provisional-name').value); } catch (_) { result = null; }
-  $('provisional-save').disabled = false;
+
+
   if (result && result.ok) {
     applyState(result.state);
     idleStatus();
@@ -627,11 +627,11 @@ async function saveDisplayName() {
   bump('nameDone');
 }
 
-async function clearDisplayName() {
-  applyState(await window.ishe.clearDisplayName());
+
+
   idleStatus();
-  $('provisional-name').value = '';
-  $('provisional-hint').textContent = 'Nombre quitado.';
+
+
   bump('nameDone');
 }
 
@@ -1031,13 +1031,13 @@ async function init() {
   $('account-button').addEventListener('click', accountAction);
   $('account-name-link').addEventListener('click', () => {
     showView('ajustes');
-    $('provisional').scrollIntoView({ block: 'center' });
-    $('provisional-name').focus();
+
+
   });
-  $('provisional-save').addEventListener('click', saveDisplayName);
-  $('provisional-clear').addEventListener('click', clearDisplayName);
-  $('provisional-name').addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') saveDisplayName();
+
+
+
+
   });
   $('update-check').addEventListener('click', () => window.ishe.updateCheck());
   $('update-restart').addEventListener('click', restartForUpdate);

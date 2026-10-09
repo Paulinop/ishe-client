@@ -17,11 +17,15 @@ const USER_AGENT = 'IsheClient-Launcher/1.0';
 // Las dependencias obligatorias de cada uno se anaden solas.
 // simple-voice-chat: lo necesitan Nublado y Haku para oir y hablar.
 // iris: carga los shaders (junto con Sodium).
-const MOD_PROJECTS = ['fabric-api', 'sodium', 'iris', 'lithium', 'ferrite-core', 'fancymenu', 'modmenu', 'simple-voice-chat',
+const MOD_PROJECTS = ['fabric-api', 'sodium', 'iris', 'lithium', 'ferrite-core', 'fancymenu', 'modmenu', 'plasmo-voice',
   // extras (8 oct): mapa, papelera, cuadros, modelos de jugador, luz dinamica
   'xaeros-world-map', 'trashslot', 'immersive-paintings', 'custom-player-models', 'lambdynamiclights',
   // mobs mutantes (estilo Dedsafio): creeper, esqueleto y zombi mutantes, etc.
-  'mutant-monsters'];
+  'mutant-monsters',
+  // nuevos mods (Dedsafio 4):
+  'halloween-decorations', 'emotecraft', 'bendy-lib', 'playeranimator', 'worldedit', 'litematica', 'malilib', 'morpher', 'supplementaries', 'creeper-overhaul', 'immersive-hotbar', 'immersive-ui', 'waterframes',
+  // dependencias de los nuevos mods:
+  'moonlight', 'watervision', 'watermedia', 'creativecore', 'geckolib', 'resourceful-config', 'resourceful-lib', 'yacl', 'shatterbyte-lib', 'brrp', 'sophisticated-backpacks'];
 
 // Paquete de shaders que viene puesto (Complementary Reimagined, de Modrinth): se baja solo y queda activado la primera vez;
 // despues cada quien lo cambia o lo apaga en Opciones > Ajustes de video > Paquetes de shaders (no se vuelve a tocar).
@@ -111,10 +115,16 @@ async function getJson(url) {
 // Version mas reciente de un proyecto para Fabric + MC_VERSION, prefiriendo
 // las publicadas como "release". null si no hay ninguna.
 async function modVersion(modrinthApi, project) {
-  const url = modrinthApi + '/project/' + encodeURIComponent(project) +
+  let url = modrinthApi + '/project/' + encodeURIComponent(project) +
     '/version?game_versions=%5B%22' + MC_VERSION + '%22%5D&loaders=%5B%22fabric%22%5D';
-  const versions = await getJson(url);
-  if (!Array.isArray(versions) || versions.length === 0) return null;
+  let versions = await getJson(url);
+  if (!Array.isArray(versions) || versions.length === 0) {
+    // Fallback a 1.21.1 para mods que no tienen la version 26.2 taggeada
+    url = modrinthApi + '/project/' + encodeURIComponent(project) +
+      '/version?game_versions=%5B%221.21.1%22%5D&loaders=%5B%22fabric%22%5D';
+    versions = await getJson(url);
+    if (!Array.isArray(versions) || versions.length === 0) return null;
+  }
   const release = versions.find((v) => v && typeof v === 'object' && v.version_type === 'release');
   if (release) return release;
   return versions[0] && typeof versions[0] === 'object' ? versions[0] : null;

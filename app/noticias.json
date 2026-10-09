@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.6.2: nuevas mecánicas de Reshem",
+    "fecha": "2026-10-09",
+    "texto": "Nuevos mods agregados al cliente: Plasmo Voice (reemplaza a Simple Voice Chat), Emotecraft con todos nuestros emotes exclusivos, Litematica para tus schematics, y los nuevos mods de Dedsafío 4 (Creeper Overhaul, Morpher, Supplementaries, Immersive Hotbar, Immersive UI, Waterframes). Además, se quitó el cuadro de nombre provisional ya que Mojang aprobó nuestra app oficial."
+  },
+  {
     "titulo": "Versión 1.6.1: mobs mutantes y ruleta nueva",
     "fecha": "2026-10-08",
     "texto": "Nuevo mod: Mutant Monsters (creepers, zombis, esqueletos y endermans mutantes). Con el mod Ishe 1.5.0 la ruleta del servidor ahora es la rueda animada del Dedsafío con 8 colores y muchísimas variantes: eventos rojos y amarillos distintos cada vez, mejoras permanentes de los monstruos, drops con coordenadas, mascotas, maldiciones y más. Las intis de la esquina ahora muestran lo que tienes en el banco. Nublado y Haku te contestan a la primera si los miras."
