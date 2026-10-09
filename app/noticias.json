@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.6.3: corrección de crasheo",
+    "fecha": "2026-10-09",
+    "texto": "Lanzamiento de emergencia: Los mods agregados en la 1.6.2 (como Emotecraft, Morpher y los de Dedsafío 4) tenían mixins incompatibles con la versión de base del cliente y causaban que el juego crasheara al iniciar. Se han retirado automáticamente para que puedan volver a entrar a jugar con normalidad. ¡Disculpen las molestias!"
+  },
+  {
     "titulo": "Versión 1.6.2: nuevas mecánicas de Reshem",
     "fecha": "2026-10-09",
     "texto": "Nuevos mods agregados al cliente: Plasmo Voice (reemplaza a Simple Voice Chat), Emotecraft con todos nuestros emotes exclusivos, Litematica para tus schematics, y los nuevos mods de Dedsafío 4 (Creeper Overhaul, Morpher, Supplementaries, Immersive Hotbar, Immersive UI, Waterframes). Además, se quitó el cuadro de nombre provisional ya que Mojang aprobó nuestra app oficial."
