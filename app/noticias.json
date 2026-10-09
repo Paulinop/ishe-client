@@ -1,8 +1,8 @@
 [
   {
-    "titulo": "Versión 1.6.3: corrección de crasheo",
+    "titulo": "Versión 1.6.4: solución definitiva",
     "fecha": "2026-10-09",
-    "texto": "Lanzamiento de emergencia: Los mods agregados en la 1.6.2 (como Emotecraft, Morpher y los de Dedsafío 4) tenían mixins incompatibles con la versión de base del cliente y causaban que el juego crasheara al iniciar. Se han retirado automáticamente para que puedan volver a entrar a jugar con normalidad. ¡Disculpen las molestias!"
+    "texto": "Solucionado el problema que hacía que el launcher se quedara en blanco o que el juego crasheara por mods incompatibles. Todo ha vuelto a la normalidad y ya se puede jugar perfectamente."
   },
   {
     "titulo": "Versión 1.6.2: nuevas mecánicas de Reshem",

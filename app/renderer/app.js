@@ -318,15 +318,9 @@ function renderAccount() {
     $('account-sub').textContent = state.pendingApproval ? 'Esperando a Mojang' : 'Minecraft: Java Edition';
     $('account-button').textContent = 'Cerrar sesión';
   }
-
-    ? name + ' (nombre que escribiste tú; Mojang aún no lo ha confirmado)'
-    : $('account-name').textContent;
   // Mientras Mojang no aprueba, se puede escribir el nombre a mano para ver el personaje.
   const canType = Boolean(state.signedIn && state.pendingApproval);
   $('account-name-link').hidden = !(canType && !name);
-
-
-
   avatar.textContent = state.signedIn && name ? name[0].toUpperCase() : '?';
   avatar.classList.toggle('is-empty', !(state.signedIn && name));
   drawFace(state.playerSkin);
@@ -607,33 +601,6 @@ async function accountAction() {
 
 
 
-  hint.textContent = 'Buscando tu personaje…';
-  let result = null;
-
-
-  if (result && result.ok) {
-    applyState(result.state);
-    idleStatus();
-    hint.textContent = 'Listo: se muestra ' + state.playerName + (state.playerSkin ? ' con su skin.' : ' (ese jugador no tiene skin propia).');
-  } else {
-    const reason = result ? result.reason : 'unexpected';
-    hint.textContent = {
-      'name-invalid': 'El nombre solo puede tener letras, números y guion bajo (hasta 16).',
-      'name-not-found': 'No existe ningún jugador de Java Edition con ese nombre. Escríbelo tal cual sale en el juego.',
-      network: 'No pude consultar a Mojang. Revisa tu conexión y vuelve a intentarlo.',
-      'not-needed': 'Ya no hace falta: tu cuenta ya muestra su propio nombre.',
-    }[reason] || 'Mojang no respondió bien. Vuelve a intentarlo en un momento.';
-  }
-  bump('nameDone');
-}
-
-
-
-  idleStatus();
-
-
-  bump('nameDone');
-}
 
 function gameExited(event) {
   if (event.launchId) exitedLaunches.add(event.launchId);
@@ -1031,13 +998,8 @@ async function init() {
   $('account-button').addEventListener('click', accountAction);
   $('account-name-link').addEventListener('click', () => {
     showView('ajustes');
-
-
-  });
-
-
-
-
+    //({ block: 'center' });
+    //();
   });
   $('update-check').addEventListener('click', () => window.ishe.updateCheck());
   $('update-restart').addEventListener('click', restartForUpdate);
