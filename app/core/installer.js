@@ -17,7 +17,12 @@ const USER_AGENT = 'IsheClient-Launcher/1.0';
 // Las dependencias obligatorias de cada uno se anaden solas.
 // simple-voice-chat: lo necesitan Nublado y Haku para oir y hablar.
 // iris: carga los shaders (junto con Sodium).
-const MOD_PROJECTS = ['fabric-api', 'simple-voice-chat', 'sodium', 'iris', 'lithium', 'ferrite-core', 'fancymenu', 'modmenu', 'xaeros-world-map', 'trashslot', 'immersive-paintings', 'custom-player-models', 'lambdynamiclights', 'mutant-monsters'];
+const MOD_PROJECTS = [
+  'fabric-api', 'sodium', 'iris', 'lithium', 'ferrite-core', 'fancymenu', 'modmenu',
+  'xaeros-world-map', 'trashslot', 'immersive-paintings', 'custom-player-models', 'lambdynamiclights',
+  'mutant-monsters',
+  'plasmo-voice', 'emotecraft', 'player-animation-library', 'worldedit', 'litematica', 'malilib', 'immersive-hotbar'
+];
 
 // Paquete de shaders que viene puesto (Complementary Reimagined, de Modrinth): se baja solo y queda activado la primera vez;
 // despues cada quien lo cambia o lo apaga en Opciones > Ajustes de video > Paquetes de shaders (no se vuelve a tocar).

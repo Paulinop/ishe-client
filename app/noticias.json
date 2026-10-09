@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.6.5: nuevos mods para 26.2",
+    "fecha": "2026-10-09",
+    "texto": "Agregados mods oficiales para 26.2: Emotecraft (+1800 emotes), Plasmo Voice, WorldEdit, Litematica (schematics) + MaLiLib, e Immersive Hotbar. ¡A disfrutar!"
+  },
+  {
     "titulo": "Versión 1.6.4: solución definitiva",
     "fecha": "2026-10-09",
     "texto": "Solucionado el problema que hacía que el launcher se quedara en blanco o que el juego crasheara por mods incompatibles. Todo ha vuelto a la normalidad y ya se puede jugar perfectamente."
