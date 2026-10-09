@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.6.1: mobs mutantes y ruleta nueva",
+    "fecha": "2026-10-08",
+    "texto": "Nuevo mod: Mutant Monsters (creepers, zombis, esqueletos y endermans mutantes). Con el mod Ishe 1.5.0 la ruleta del servidor ahora es la rueda animada del Dedsafío con 8 colores y muchísimas variantes: eventos rojos y amarillos distintos cada vez, mejoras permanentes de los monstruos, drops con coordenadas, mascotas, maldiciones y más. Las intis de la esquina ahora muestran lo que tienes en el banco. Nublado y Haku te contestan a la primera si los miras."
+  },
+  {
     "titulo": "Versión 1.6.0: ahora se llama Reshem",
     "fecha": "2026-10-08",
     "texto": "Ishe Client pasa a llamarse Reshem Client (y el servidor, Reshem server). Jugar entra directo al servidor y, si está cerrado, el botón se pone gris y dice CERRADO. Nuevo: shaders ya activados (si tu PC va lenta, apágalos en Opciones > Ajustes de video > Paquetes de shaders), el narrador siempre apagado, mapa de Xaero, papelera (TrashSlot), cuadros (Immersive Paintings), modelos de jugador (CPM) y luz dinámica. Ajustes y Mods rediseñados y cambio de skin desde Ajustes."

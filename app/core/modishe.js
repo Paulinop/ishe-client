@@ -14,7 +14,7 @@ const NOTICE_NAME = 'ishe-mod.json';
 const PROJECT_KEY = 'ishe-mod';
 const FORMAT = 1;
 const FILE_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._+-]{0,120}\.jar$/;
-const LIMITS = { noticeBytes: 64 * 1024, jarBytes: 24 * 1024 * 1024 };
+const LIMITS = { noticeBytes: 64 * 1024, jarBytes: 128 * 1024 * 1024 };
 const USER_AGENT = 'IsheClient-Launcher';
 
 class ModError extends Error {}

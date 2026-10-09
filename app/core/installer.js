@@ -19,7 +19,9 @@ const USER_AGENT = 'IsheClient-Launcher/1.0';
 // iris: carga los shaders (junto con Sodium).
 const MOD_PROJECTS = ['fabric-api', 'sodium', 'iris', 'lithium', 'ferrite-core', 'fancymenu', 'modmenu', 'simple-voice-chat',
   // extras (8 oct): mapa, papelera, cuadros, modelos de jugador, luz dinamica
-  'xaeros-world-map', 'trashslot', 'immersive-paintings', 'custom-player-models', 'lambdynamiclights'];
+  'xaeros-world-map', 'trashslot', 'immersive-paintings', 'custom-player-models', 'lambdynamiclights',
+  // mobs mutantes (estilo Dedsafio): creeper, esqueleto y zombi mutantes, etc.
+  'mutant-monsters'];
 
 // Paquete de shaders que viene puesto (Complementary Reimagined, de Modrinth): se baja solo y queda activado la primera vez;
 // despues cada quien lo cambia o lo apaga en Opciones > Ajustes de video > Paquetes de shaders (no se vuelve a tocar).
