@@ -488,6 +488,15 @@ async function install(options, onEvent) {
         }
     }
   }
+  // Simple Voice Chat ya no se usa (el servidor usa Plasmo Voice): si queda de antes, se retira porque estorba (iconos de micro tachado y sin conexion).
+  if (currentMods.has('plasmo-voice') || Array.from(currentMods.values()).some((f) => /^plasmovoice/i.test(f))) {
+    for (const f of fs.readdirSync(modsDir)) {
+      if (/^voicechat-fabric-.*.jar$/i.test(f)) {
+        fs.rmSync(path.join(modsDir, f), { force: true });
+        info('retirado    ' + f + ' (el chat de voz es Plasmo Voice)');
+      }
+    }
+  }
   const mods = Array.from(currentMods.keys()).sort().map((key) => ({ project: key, file: currentMods.get(key) }));
   fs.writeFileSync(manifestPath, JSON.stringify(
     { client: CLIENT_NAME, minecraft: MC_VERSION, fabric: versionId, mods }, null, 2));

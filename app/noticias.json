@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.7.5: arreglos",
+    "fecha": "2026-10-10",
+    "texto": "Solo puede haber un Haku y un Nublado. Las misiones nuevas salen cada 3 días de Minecraft de verdad. Los avisos son de un solo color. Se quitó la música rara de otros mods y el icono de micrófono tachado (ahora el chat de voz es solo Plasmo Voice)."
+  },
+  {
     "titulo": "Versión 1.7.4: tu personaje normal y disfraces",
     "fecha": "2026-10-10",
     "texto": "Ahora todos se ven con su skin normal. Los operadores pueden convertirse en Haku o Nublado con /ishe disfraz, y en mobs de Minecraft con /disguise. Los muebles de MrCrayfish ya no necesitan electricidad: ponlos y funcionan."
