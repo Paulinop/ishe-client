@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.7.6: Axiom",
+    "fecha": "2026-10-10",
+    "texto": "Se agrega Axiom para construir y editar el mundo (mover, estirar y rotar bloques). Se quitó definitivamente el mod de las skins raras."
+  },
+  {
     "titulo": "Versión 1.7.5: arreglos",
     "fecha": "2026-10-10",
     "texto": "Solo puede haber un Haku y un Nublado. Las misiones nuevas salen cada 3 días de Minecraft de verdad. Los avisos son de un solo color. Se quitó la música rara de otros mods y el icono de micrófono tachado (ahora el chat de voz es solo Plasmo Voice)."

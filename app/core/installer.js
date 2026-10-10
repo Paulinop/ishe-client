@@ -23,7 +23,7 @@ const MOD_PROJECTS = [
   'xaeros-world-map', 'trashslot', 'immersive-paintings', 'custom-player-models', 'lambdynamiclights',
   'mutant-monsters', 'macaws-furniture', 'krypton',
   'promenade', 'elytra-trims', 'status-effect-bars', 'cloth-config', 'betterend', 'shulkerboxtooltip',
-  'dreamdisplays', 'betternetherportals', 'alexs-caves-renewed',
+  'dreamdisplays', 'axiom', 'betternetherportals', 'alexs-caves-renewed',
   'plasmo-voice', 'emotecraft', 'player-animation-library', 'worldedit', 'litematica', 'malilib', 'immersive-hotbar', 'customskyboxes'
 ];
 
@@ -491,6 +491,10 @@ async function install(options, onEvent) {
   // Simple Voice Chat ya no se usa (el servidor usa Plasmo Voice): si queda de antes, se retira porque estorba (iconos de micro tachado y sin conexion).
   if (currentMods.has('plasmo-voice') || Array.from(currentMods.values()).some((f) => /^plasmovoice/i.test(f))) {
     for (const f of fs.readdirSync(modsDir)) {
+      if (/^sparkle-morpher/i.test(f)) {
+        fs.rmSync(path.join(modsDir, f), { force: true });
+        info('retirado    ' + f + ' (Sparkles Morpher ya no forma parte de Reshem)');
+      }
       if (/^voicechat-fabric-.*.jar$/i.test(f)) {
         fs.rmSync(path.join(modsDir, f), { force: true });
         info('retirado    ' + f + ' (el chat de voz es Plasmo Voice)');
