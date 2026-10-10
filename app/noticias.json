@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.7.7: Sloths Display Entity Editor",
+    "fecha": "2026-10-10",
+    "texto": "Se agrega Sloths Display Entity Editor: crea bloques e items de display que puedes estirar, girar y poner en cualquier posición."
+  },
+  {
     "titulo": "Versión 1.7.6: Axiom",
     "fecha": "2026-10-10",
     "texto": "Se agrega Axiom para construir y editar el mundo (mover, estirar y rotar bloques). Se quitó definitivamente el mod de las skins raras."
