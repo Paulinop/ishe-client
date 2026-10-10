@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.1: vitrina de Haku",
+    "fecha": "2026-10-10",
+    "texto": "Los objetos de la vitrina ya no tienen letreros encima y el clic derecho abre la tienda. Los operadores pueden colocar cada objeto con /ishe vitrina poner."
+  },
+  {
     "titulo": "Versión 1.8.0: tótems nuevos y juego en español",
     "fecha": "2026-10-10",
     "texto": "Cuatro tótems nuevos (Hierro, Oro, Esmeralda y Netherita) que se desbloquean con el tiempo en la tienda de Haku. Al salvarte dan 5 corazones amarillos. El juego ahora siempre se abre en español."
