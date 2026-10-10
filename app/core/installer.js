@@ -23,7 +23,7 @@ const MOD_PROJECTS = [
   'xaeros-world-map', 'trashslot', 'immersive-paintings', 'custom-player-models', 'lambdynamiclights',
   'mutant-monsters', 'macaws-furniture', 'krypton',
   'sparkles-morpher', 'promenade', 'elytra-trims', 'status-effect-bars', 'cloth-config', 'betterend', 'shulkerboxtooltip',
-  'dreamdisplays', 'alexs-caves-renewed',
+  'dreamdisplays', 'betternetherportals', 'alexs-caves-renewed',
   'plasmo-voice', 'emotecraft', 'player-animation-library', 'worldedit', 'litematica', 'malilib', 'immersive-hotbar', 'customskyboxes'
 ];
 

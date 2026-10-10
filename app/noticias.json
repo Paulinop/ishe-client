@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.7.3: portales de cualquier forma (Better Nether Portals)",
+    "fecha": "2026-10-10",
+    "texto": "Better Nether Portals ya funciona en 26.2: puedes construir portales del Nether de cualquier forma y orientación. También: la pantalla de bienvenida de Better End ya no sale, y se arreglaron choques entre Promenade, Alex's Caves y Elytra Trims. Si el juego se cierra al abrir, borra el archivo \"better_nether_portals\" de tu carpeta de mods y vuelve a abrir el launcher."
+  },
+  {
     "titulo": "Versión 1.7.1: misiones más variadas y avisos más limpios",
     "fecha": "2026-10-10",
     "texto": "Las misiones ahora piden fabricar, cocinar, explorar biomas, bajar a las profundidades y hasta fabricar objetos de los mods nuevos para entregarlos al Obelisco. Los avisos de mobs y mods nuevos salen de un solo color y los animales pacíficos aparecen sin anuncio. Nuevo shader por defecto: BSL (sin sombras raras). Arreglos de compatibilidad: Promenade, Alex's Caves, Elytra Trims y Status Effect Bars. Ya puedes poner tus propias animaciones de ruleta y de muerte."
