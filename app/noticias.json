@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.5: la ruleta roja ahora es de verdad difícil",
+    "fecha": "2026-10-10",
+    "texto": "La ruleta roja ya no manda monstruos a perseguirte: ahora hay gas tóxico (hace falta una máscara antigás, que se fabrica con cuero, hierro, cristal y carbón) y un ascenso forzado hasta cierta altura, además de tormentas, meteoritos y olas de calor."
+  },
+  {
     "titulo": "Versión 1.8.4: /empezar limpia las pruebas",
     "fecha": "2026-10-10",
     "texto": "Al escribir /empezar la partida arranca desde cero: se borran las misiones, la ruleta y los desbloqueos de las pruebas. Antes de /empezar no se muestran misiones."
