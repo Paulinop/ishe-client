@@ -22,7 +22,7 @@ const MOD_PROJECTS = [
   'fabric-api', 'sodium', 'iris', 'lithium', 'ferrite-core', 'fancymenu', 'modmenu',
   'xaeros-world-map', 'trashslot', 'immersive-paintings', 'custom-player-models', 'lambdynamiclights',
   'mutant-monsters', 'macaws-furniture', 'krypton',
-  'sparkles-morpher', 'promenade', 'elytra-trims', 'status-effect-bars', 'cloth-config', 'betterend', 'shulkerboxtooltip',
+  'promenade', 'elytra-trims', 'status-effect-bars', 'cloth-config', 'betterend', 'shulkerboxtooltip',
   'dreamdisplays', 'betternetherportals', 'alexs-caves-renewed',
   'plasmo-voice', 'emotecraft', 'player-animation-library', 'worldedit', 'litematica', 'malilib', 'immersive-hotbar', 'customskyboxes'
 ];

@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.7.4: tu personaje normal y disfraces",
+    "fecha": "2026-10-10",
+    "texto": "Ahora todos se ven con su skin normal. Los operadores pueden convertirse en Haku o Nublado con /ishe disfraz, y en mobs de Minecraft con /disguise. Los muebles de MrCrayfish ya no necesitan electricidad: ponlos y funcionan."
+  },
+  {
     "titulo": "Versión 1.7.3: portales de cualquier forma (Better Nether Portals)",
     "fecha": "2026-10-10",
     "texto": "Better Nether Portals ya funciona en 26.2: puedes construir portales del Nether de cualquier forma y orientación. También: la pantalla de bienvenida de Better End ya no sale, y se arreglaron choques entre Promenade, Alex's Caves y Elytra Trims. Si el juego se cierra al abrir, borra el archivo \"better_nether_portals\" de tu carpeta de mods y vuelve a abrir el launcher."
