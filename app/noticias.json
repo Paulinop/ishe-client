@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.3: tienda sin agotarse",
+    "fecha": "2026-10-10",
+    "texto": "Las cosas de la tienda de Haku ya no se agotan. Se arregló el cuadro rosa que salía sobre Nublado y Haku al hablar."
+  },
+  {
     "titulo": "Versión 1.8.2: Better End y tienda",
     "fecha": "2026-10-10",
     "texto": "Better End funciona desde el principio (solo sus mobs llegan con la ruleta). La tienda de Haku abierta desde la vitrina ya no se cierra sola."
