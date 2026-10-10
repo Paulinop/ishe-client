@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.7.0: Bloodfall, misiones con Obelisco y enciclopedia nueva",
+    "fecha": "2026-10-10",
+    "texto": "Bloodfall: el evento apocalíptico de meteoritos (con bomba gigante y supernova que rompen de verdad). Misiones nuevas: salen mientras juegas y se cobran hablando con el Obelisco del spawn. La tienda de Haku ahora tiene una vitrina con los objetos flotando y se renueva cada 2 días. Enciclopedia nueva (/enciclopedia o tecla J) con mobs, mods, crafteos y cambios del mundo. Zombis más fuertes y con cuernos cuando sube la dificultad. Números de daño flotantes. Voz con Plasmo Voice. Nuevos mods: Refurbished Furniture, Alex's Caves, Better End, Dream Displays, Better Nether Portals, Sparkles Morpher, Elytra Trims, Status Effect Bars y ShulkerBoxTooltip. Los mods y mobs nuevos se van activando con la ruleta amarilla."
+  },
+  {
     "titulo": "Versión 1.6.7: Macaw's Furniture, rendimiento y optimizaciones",
     "fecha": "2026-10-09",
     "texto": "Agregado Macaw's Furniture (el mod de muebles más popular y bonito con armarios, cajoneras y sillas funcionales de cada madera), Krypton para acelerar la red y Simple Voice Chat integrado para hablar y que Nublado y Haku te escuchen sin configuración."

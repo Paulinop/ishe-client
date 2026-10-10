@@ -150,7 +150,7 @@ function publish(text, jars) {
   let result = await installer.install(installOptions(), (e) => events.push(e));
   const modsDir = path.join(gameDir, 'mods');
   check(result.exitCode === 0 && fs.existsSync(path.join(modsDir, n1.archivo)), 'Jugar instala el mod Ishe junto con los demas (' + result.problems.join('; ') + ')');
-  check(fs.existsSync(path.join(modsDir, 'simple-voice-chat-1.0.jar')), 'Simple Voice Chat tambien se instala (lo necesitan Nublado y Haku)');
+  check(fs.existsSync(path.join(modsDir, 'plasmo-voice-1.0.jar')), 'Plasmo Voice tambien se instala (lo usan Nublado y Haku)');
   check(result.mods.some((m) => m.project === modishe.PROJECT_KEY && m.file === n1.archivo), 'queda anotado en la lista de mods instalados');
   publish(modishe.sign(n2, PRIVATE), [[n2.archivo, JAR2]]);
   result = await installer.install(installOptions(), () => {});

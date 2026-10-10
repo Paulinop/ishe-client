@@ -15,13 +15,33 @@ const USER_AGENT = 'IsheClient-Launcher/1.0';
 
 // Mods que forman Reshem Client (nombres de proyecto en Modrinth).
 // Las dependencias obligatorias de cada uno se anaden solas.
-// simple-voice-chat: lo necesitan Nublado y Haku para oir y hablar.
+// plasmo-voice: lo usan Nublado, Haku y los jugadores para hablar (el mod Reshem tambien funciona con simple-voice-chat si en la config
+// chat_de_voz pone "simplevoicechat", pero no se instalan los dos a la vez).
 // iris: carga los shaders (junto con Sodium).
 const MOD_PROJECTS = [
   'fabric-api', 'sodium', 'iris', 'lithium', 'ferrite-core', 'fancymenu', 'modmenu',
   'xaeros-world-map', 'trashslot', 'immersive-paintings', 'custom-player-models', 'lambdynamiclights',
   'mutant-monsters', 'macaws-furniture', 'krypton',
-  'simple-voice-chat', 'emotecraft', 'player-animation-library', 'worldedit', 'litematica', 'malilib', 'immersive-hotbar', 'customskyboxes'
+  'sparkles-morpher', 'elytra-trims', 'status-effect-bars', 'betterend', 'shulkerboxtooltip',
+  'dreamdisplays', 'betternetherportals', 'alexs-caves-renewed',
+  'plasmo-voice', 'emotecraft', 'player-animation-library', 'worldedit', 'litematica', 'malilib', 'immersive-hotbar', 'customskyboxes'
+];
+
+// Mods que NO estan en Modrinth: se bajan de la release oficial de su autor en GitHub, con su codigo de verificacion SHA-256.
+// (Refurbished Furniture, de MrCrayfish, y Framework, la libreria que necesita.) Al cambiar de version hay que actualizar url y sha256.
+const EXTRA_MODS = [
+  {
+    key: 'github:framework',
+    file: 'framework-fabric-0.13.26+26.2-signed.jar',
+    url: 'https://github.com/MrCrayfish/Framework/releases/download/v0.13.26%2B26.2/framework-fabric-0.13.26%2B26.2-signed.jar',
+    sha256: '71a3790ae072073c93367722e94c3d91b8463ac35f576cb0d1ec9bf909faae4c',
+  },
+  {
+    key: 'github:refurbished_furniture',
+    file: 'refurbished_furniture-fabric-1.0.25+26.2-signed.jar',
+    url: 'https://github.com/MrCrayfish/MrCrayfishFurnitureMod-Refurbished/releases/download/v1.0.25%2B26.2/refurbished_furniture-fabric-1.0.25%2B26.2-signed.jar',
+    sha256: '78b98c20be2158a625a34eef116096a9bc4de3af37918ffebde678d30750e695',
+  },
 ];
 
 // Paquete de shaders que viene puesto (Complementary Reimagined, de Modrinth): se baja solo y queda activado la primera vez;
@@ -379,6 +399,29 @@ async function install(options, onEvent) {
       const dependencyProject = text(dependency.project_id);
       if (dependency.dependency_type === 'required' && dependencyProject !== '') queue.push(dependencyProject);
     }
+  }
+
+  for (const extra of EXTRA_MODS) {
+    const target = path.join(modsDir, extra.file);
+    if (isFile(target) && sha(target, 'sha256') === extra.sha256) {
+      info('ya estaba   ' + extra.file);
+    } else {
+      const temp = target + '.descargando';
+      try {
+        const body = await httpGet(extra.url, 600000);
+        if (crypto.createHash('sha256').update(body).digest('hex') !== extra.sha256) {
+          throw new Error('el archivo descargado no coincide con su código de verificación');
+        }
+        fs.writeFileSync(temp, body);
+        fs.renameSync(temp, target);
+        info('descargado  ' + extra.file);
+      } catch (error) {
+        try { fs.rmSync(temp, { force: true }); } catch (_) { /* nada que limpiar */ }
+        problem("No pude instalar '" + extra.key + "': " + error.message);
+        continue;
+      }
+    }
+    currentMods.set(extra.key, extra.file);
   }
 
   await installShaders(modrinthApi, gameDir, info, problem);

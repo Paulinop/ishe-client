@@ -7,6 +7,7 @@ const $ = (id) => document.getElementById(id);
 // Nombre y categoria que se muestran para cada archivo de mod conocido.
 const KNOWN_MODS = [
   [/^ishe-/i, 'Ishe (Nublado, Haku y más)', 'Ishe'],
+  [/^plasmovoice/i, 'Plasmo Voice', 'Amigos'],
   [/^voicechat/i, 'Simple Voice Chat', 'Amigos'],
   [/^fabric-api/i, 'Fabric API', 'Base'],
   [/^iris/i, 'Iris Shaders', 'Rendimiento'],
