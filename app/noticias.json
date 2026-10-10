@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.7.9: /empezar, puertas y tienda nueva",
+    "fecha": "2026-10-10",
+    "texto": "La partida empieza con /empezar (antes no hay ruleta ni dificultad). Haku y Nublado abren puertas y portillos. Solo puede haber un Haku y un Nublado (/ishe traer). La tienda de Haku tiene un diseño más limpio y algunos precios se ajustaron."
+  },
+  {
     "titulo": "Versión 1.7.8: sin Axiom",
     "fecha": "2026-10-10",
     "texto": "Se quitó Axiom. El servidor ahora tiene las mismas versiones de Better End que el juego (arregla el error de registros desconocidos al entrar)."
