@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.0: tótems nuevos y juego en español",
+    "fecha": "2026-10-10",
+    "texto": "Cuatro tótems nuevos (Hierro, Oro, Esmeralda y Netherita) que se desbloquean con el tiempo en la tienda de Haku. Al salvarte dan 5 corazones amarillos. El juego ahora siempre se abre en español."
+  },
+  {
     "titulo": "Versión 1.7.9: /empezar, puertas y tienda nueva",
     "fecha": "2026-10-10",
     "texto": "La partida empieza con /empezar (antes no hay ruleta ni dificultad). Haku y Nublado abren puertas y portillos. Solo puede haber un Haku y un Nublado (/ishe traer). La tienda de Haku tiene un diseño más limpio y algunos precios se ajustaron."

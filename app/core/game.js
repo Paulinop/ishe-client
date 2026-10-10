@@ -475,7 +475,7 @@ function buildArguments(prepared, options, account) {
  */
 // Ajustes que Reshem deja siempre iguales en options.txt antes de abrir el juego: el narrador apagado (sin pantalla de "activar narrador"
 // al entrar y sin Ctrl+B). El resto de las opciones de la persona no se toca.
-const OPCIONES_FIJAS = [['narrator', '0'], ['narratorHotkey', 'false'], ['onboardAccessibility', 'false']];
+const OPCIONES_FIJAS = [['narrator', '0'], ['narratorHotkey', 'false'], ['onboardAccessibility', 'false'], ['lang', 'es_es']];
 
 function fixOptions(gameDir) {
   const file = path.join(gameDir, 'options.txt');
