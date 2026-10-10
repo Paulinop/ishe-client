@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.4: /empezar limpia las pruebas",
+    "fecha": "2026-10-10",
+    "texto": "Al escribir /empezar la partida arranca desde cero: se borran las misiones, la ruleta y los desbloqueos de las pruebas. Antes de /empezar no se muestran misiones."
+  },
+  {
     "titulo": "Versión 1.8.3: tienda sin agotarse",
     "fecha": "2026-10-10",
     "texto": "Las cosas de la tienda de Haku ya no se agotan. Se arregló el cuadro rosa que salía sobre Nublado y Haku al hablar."
