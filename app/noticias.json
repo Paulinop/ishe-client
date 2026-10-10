@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.7.8: sin Axiom",
+    "fecha": "2026-10-10",
+    "texto": "Se quitó Axiom. El servidor ahora tiene las mismas versiones de Better End que el juego (arregla el error de registros desconocidos al entrar)."
+  },
+  {
     "titulo": "Versión 1.7.7: Sloths Display Entity Editor",
     "fecha": "2026-10-10",
     "texto": "Se agrega Sloths Display Entity Editor: crea bloques e items de display que puedes estirar, girar y poner en cualquier posición."
