@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.7.1: misiones más variadas y avisos más limpios",
+    "fecha": "2026-10-10",
+    "texto": "Las misiones ahora piden fabricar, cocinar, explorar biomas, bajar a las profundidades y hasta fabricar objetos de los mods nuevos para entregarlos al Obelisco. Los avisos de mobs y mods nuevos salen de un solo color y los animales pacíficos aparecen sin anuncio. Nuevo shader por defecto: BSL (sin sombras raras). Arreglos de compatibilidad: Promenade, Alex's Caves, Elytra Trims y Status Effect Bars. Ya puedes poner tus propias animaciones de ruleta y de muerte."
+  },
+  {
     "titulo": "Versión 1.7.0: Bloodfall, misiones con Obelisco y enciclopedia nueva",
     "fecha": "2026-10-10",
     "texto": "Bloodfall: el evento apocalíptico de meteoritos (con bomba gigante y supernova que rompen de verdad). Misiones nuevas: salen mientras juegas y se cobran hablando con el Obelisco del spawn. La tienda de Haku ahora tiene una vitrina con los objetos flotando y se renueva cada 2 días. Enciclopedia nueva (/enciclopedia o tecla J) con mobs, mods, crafteos y cambios del mundo. Zombis más fuertes y con cuernos cuando sube la dificultad. Números de daño flotantes. Voz con Plasmo Voice. Nuevos mods: Refurbished Furniture, Alex's Caves, Better End, Dream Displays, Better Nether Portals, Sparkles Morpher, Elytra Trims, Status Effect Bars y ShulkerBoxTooltip. Los mods y mobs nuevos se van activando con la ruleta amarilla."

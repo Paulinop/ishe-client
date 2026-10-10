@@ -24,8 +24,8 @@ async function main() {
   let mala = false;
   const server = http.createServer((req, res) => {
     consultas.push(req.url);
-    if (req.url.startsWith('/project/complementary-reimagined/version')) {
-      const archivo = { filename: mala ? '../escape.zip' : 'ComplementaryReimagined_rTest.zip', primary: true, hashes: { sha512: hash }, url: 'http://127.0.0.1:' + server.address().port + '/dl/pack.zip' };
+    if (req.url.startsWith('/project/bsl-shaders/version')) {
+      const archivo = { filename: mala ? '../escape.zip' : 'BSL_rTest.zip', primary: true, hashes: { sha512: hash }, url: 'http://127.0.0.1:' + server.address().port + '/dl/pack.zip' };
       res.end(JSON.stringify([{ version_type: 'release', files: [archivo] }]));
     } else if (req.url === '/dl/pack.zip') {
       res.end(body);
@@ -40,11 +40,11 @@ async function main() {
   const infos = [];
   const problems = [];
   await installer.installShaders(api, gameDir, (m) => infos.push(m), (m) => problems.push(m));
-  check(fs.existsSync(path.join(gameDir, 'shaderpacks', 'ComplementaryReimagined_rTest.zip')), 'baja el paquete de shaders a shaderpacks');
+  check(fs.existsSync(path.join(gameDir, 'shaderpacks', 'BSL_rTest.zip')), 'baja el paquete de shaders a shaderpacks');
   check(problems.length === 0, 'sin problemas');
   check(consultas.some((u) => u.includes('loaders=%5B%22iris%22%5D')), 'pide la version para el cargador iris');
   const props = fs.readFileSync(path.join(gameDir, 'config', 'iris.properties'), 'utf8');
-  check(/enableShaders=true/.test(props) && /shaderPack=ComplementaryReimagined_rTest\.zip/.test(props), 'los activa la primera vez en iris.properties');
+  check(/enableShaders=true/.test(props) && /shaderPack=BSL_rTest\.zip/.test(props), 'los activa la primera vez en iris.properties');
 
   // la eleccion de la persona no se pisa
   fs.writeFileSync(path.join(gameDir, 'config', 'iris.properties'), 'enableShaders=false\nshaderPack=OtroPaquete.zip\n');

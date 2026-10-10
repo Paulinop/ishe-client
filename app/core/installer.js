@@ -22,8 +22,8 @@ const MOD_PROJECTS = [
   'fabric-api', 'sodium', 'iris', 'lithium', 'ferrite-core', 'fancymenu', 'modmenu',
   'xaeros-world-map', 'trashslot', 'immersive-paintings', 'custom-player-models', 'lambdynamiclights',
   'mutant-monsters', 'macaws-furniture', 'krypton',
-  'sparkles-morpher', 'elytra-trims', 'status-effect-bars', 'betterend', 'shulkerboxtooltip',
-  'dreamdisplays', 'betternetherportals', 'alexs-caves-renewed',
+  'sparkles-morpher', 'promenade', 'elytra-trims', 'status-effect-bars', 'cloth-config', 'betterend', 'shulkerboxtooltip',
+  'dreamdisplays', 'alexs-caves-renewed',
   'plasmo-voice', 'emotecraft', 'player-animation-library', 'worldedit', 'litematica', 'malilib', 'immersive-hotbar', 'customskyboxes'
 ];
 
@@ -44,9 +44,14 @@ const EXTRA_MODS = [
   },
 ];
 
+// Versiones FIJAS: mods cuya ultima version no arranca junto con el resto. Se baja exactamente esa version (si desaparece, se usa la mas nueva).
+//  - elytra-trims 4.9.1 llama a un metodo de Iris que Iris 1.11.4 (la ultima para 26.2) todavia no tiene; la 4.9.0 funciona.
+const VERSIONES_FIJAS = { 'elytra-trims': '4.9.0' };
+
 // Paquete de shaders que viene puesto (Complementary Reimagined, de Modrinth): se baja solo y queda activado la primera vez;
 // despues cada quien lo cambia o lo apaga en Opciones > Ajustes de video > Paquetes de shaders (no se vuelve a tocar).
-const SHADER_PROJECT = 'complementary-reimagined';
+// BSL Shaders (antes Complementary Reimagined, que en 26.2 dejaba sombras raras).
+const SHADER_PROJECT = 'bsl-shaders';
 
 // e4steam ya no forma parte de Reshem Client (desde 1.5.0). Solo se guarda su nombre para retirarlo si quedo de una version anterior.
 const E4STEAM_FILE = 'e4steam-fabric-quilt-mc26.1-26.2-v0.3.2-guard.jar';
@@ -142,6 +147,8 @@ async function modVersion(modrinthApi, project) {
     versions = await getJson(url);
     if (!Array.isArray(versions) || versions.length === 0) return null;
   }
+  const fija = VERSIONES_FIJAS[project] && versions.find((v) => v && typeof v === 'object' && v.version_number === VERSIONES_FIJAS[project]);
+  if (fija) return fija;
   const release = versions.find((v) => v && typeof v === 'object' && v.version_type === 'release');
   if (release) return release;
   return versions[0] && typeof versions[0] === 'object' ? versions[0] : null;
@@ -204,10 +211,20 @@ async function installShaders(modrinthApi, gameDir, info, problem) {
   // Activarlos solo la primera vez (si ya hay un iris.properties, la eleccion es de la persona).
   const config = path.join(gameDir, 'config');
   const props = path.join(config, 'iris.properties');
+  const marcador = path.join(config, 'ishe-shader-bsl.txt');
   if (!isFile(props)) {
     fs.mkdirSync(config, { recursive: true });
     fs.writeFileSync(props, 'enableShaders=true\nshaderPack=' + file.filename + '\n');
+    fs.writeFileSync(marcador, 'ok\n');
     info('shaders activados: ' + file.filename);
+  } else if (!isFile(marcador)) {
+    // Una sola vez: quien tenia puesto el shader viejo que venia con Reshem (Complementary) pasa a BSL. Si eligio otro, no se toca.
+    const actual = fs.readFileSync(props, 'utf8');
+    if (/^shaderPack=ComplementaryReimagined/m.test(actual)) {
+      fs.writeFileSync(props, actual.replace(/^shaderPack=.*$/m, 'shaderPack=' + file.filename));
+      info('shaders cambiados a ' + file.filename + ' (el anterior dejaba sombras raras)');
+    }
+    fs.writeFileSync(marcador, 'ok\n');
   }
 }
 
