@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.30: la ruleta anuncia los tótems",
+    "fecha": "2026-10-11",
+    "texto": "Cuando un tótem de Dedsafio sale a la venta en la tienda de Haku, la Ruleta Verde lo anuncia."
+  },
+  {
     "titulo": "Versión 1.8.29: tótems en la tienda",
     "fecha": "2026-10-11",
     "texto": "Haku vende los tótems de Dedsafio según avanzan los días: Gólem, Nutritótem, Eón y Glebanoide."
