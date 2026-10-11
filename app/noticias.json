@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.19: bolsas y shulker de ender",
+    "fecha": "2026-10-11",
+    "texto": "Nuevas Bolsa Primitiva (27 huecos), Bolsa Glebanoide (36 huecos) y Shulker de Ender (guarda lo mismo que el cofre de ender). Las recetas ahora se ven en la enciclopedia."
+  },
+  {
     "titulo": "Versión 1.8.18: mochilas shulker y máscara para siempre",
     "fecha": "2026-10-11",
     "texto": "Las mochilas shulker ya se pueden fabricar (caja shulker, cuero y cordel) y teñir de 16 colores. La máscara antigás es una sola y no se gasta nunca."
