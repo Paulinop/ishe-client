@@ -15,8 +15,7 @@ const USER_AGENT = 'IsheClient-Launcher/1.0';
 
 // Mods que forman Reshem Client (nombres de proyecto en Modrinth).
 // Las dependencias obligatorias de cada uno se anaden solas.
-// plasmo-voice: lo usan Nublado, Haku y los jugadores para hablar (el mod Reshem tambien funciona con simple-voice-chat si en la config
-// chat_de_voz pone "simplevoicechat", pero no se instalan los dos a la vez).
+// simple-voice-chat: lo usan Nublado, Haku y los jugadores para hablar (es el chat de voz de Reshem; Plasmo Voice se probo y no funciono bien, asi que no se instala).
 // iris: carga los shaders (junto con Sodium).
 const MOD_PROJECTS = [
   'fabric-api', 'sodium', 'iris', 'lithium', 'ferrite-core', 'fancymenu', 'modmenu',
@@ -24,7 +23,7 @@ const MOD_PROJECTS = [
   'mutant-monsters', 'macaws-furniture', 'krypton',
   'promenade', 'elytra-trims', 'status-effect-bars', 'cloth-config', 'betterend', 'shulkerboxtooltip',
   'dreamdisplays', 'sloths-display-entity-editor', 'betternetherportals', 'alexs-caves-renewed',
-  'plasmo-voice', 'emotecraft', 'player-animation-library', 'worldedit', 'litematica', 'malilib', 'immersive-hotbar', 'customskyboxes'
+  'simple-voice-chat', 'emotecraft', 'player-animation-library', 'worldedit', 'litematica', 'malilib', 'immersive-hotbar', 'customskyboxes'
 ];
 
 // Mods que NO estan en Modrinth: se bajan de la release oficial de su autor en GitHub, con su codigo de verificacion SHA-256.
@@ -488,16 +487,16 @@ async function install(options, onEvent) {
         }
     }
   }
-  // Simple Voice Chat ya no se usa (el servidor usa Plasmo Voice): si queda de antes, se retira porque estorba (iconos de micro tachado y sin conexion).
-  if (currentMods.has('plasmo-voice') || Array.from(currentMods.values()).some((f) => /^plasmovoice/i.test(f))) {
+  // Plasmo Voice ya no se usa (el chat de voz es Simple Voice Chat): si queda de antes, se retira porque dos chats de voz a la vez se estorban.
+  if (currentMods.has('simple-voice-chat') || Array.from(currentMods.values()).some((f) => /^voicechat/i.test(f))) {
     for (const f of fs.readdirSync(modsDir)) {
       if (/^sparkle-morpher/i.test(f)) {
         fs.rmSync(path.join(modsDir, f), { force: true });
         info('retirado    ' + f + ' (Sparkles Morpher ya no forma parte de Reshem)');
       }
-      if (/^voicechat-fabric-.*.jar$/i.test(f)) {
+      if (/^plasmovoice.*.jar$/i.test(f)) {
         fs.rmSync(path.join(modsDir, f), { force: true });
-        info('retirado    ' + f + ' (el chat de voz es Plasmo Voice)');
+        info('retirado    ' + f + ' (el chat de voz es Simple Voice Chat)');
       }
     }
   }

@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.9: vuelve Simple Voice Chat",
+    "fecha": "2026-10-11",
+    "texto": "El chat de voz vuelve a ser Simple Voice Chat, que sí funcionaba con Nublado y Haku. El launcher quita Plasmo Voice solo."
+  },
+  {
     "titulo": "Versión 1.8.8: niebla con volumen",
     "fecha": "2026-10-10",
     "texto": "El gas tóxico y la niebla letal ahora tienen bocanadas grandes y suaves de niebla flotando alrededor, además de la niebla de pantalla."
