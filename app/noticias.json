@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.26: bolsa cian corregida",
+    "fecha": "2026-10-11",
+    "texto": "Arreglo del color cian de las bolsas."
+  },
+  {
     "titulo": "Versión 1.8.25: bolsas más gorditas",
     "fecha": "2026-10-11",
     "texto": "Las bolsas tienen la panza más redonda y alta."
