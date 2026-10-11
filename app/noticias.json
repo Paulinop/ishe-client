@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.14: nuevo dardo",
+    "fecha": "2026-10-11",
+    "texto": "El dardo estrena un diseño nuevo, hecho a mano por Guishe."
+  },
+  {
     "titulo": "Versión 1.8.13: fichas de objetos, baya y sueño del darto",
     "fecha": "2026-10-11",
     "texto": "Al pasar el cursor por los objetos nuevos sale una ficha con lo que hacen. Nueva Baya Uvina (respiración acuática) que cae de las hojas, nuevo diseño del dardo y un efecto de sueño mucho más realista."
