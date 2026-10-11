@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.27: nueva Bolsa Glebanoide",
+    "fecha": "2026-10-11",
+    "texto": "La Bolsa Glebanoide tiene un diseño nuevo: una bolsa cian con un ojo verde."
+  },
+  {
     "titulo": "Versión 1.8.26: bolsa cian corregida",
     "fecha": "2026-10-11",
     "texto": "Arreglo del color cian de las bolsas."
