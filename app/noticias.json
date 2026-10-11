@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.8: niebla con volumen",
+    "fecha": "2026-10-10",
+    "texto": "El gas tóxico y la niebla letal ahora tienen bocanadas grandes y suaves de niebla flotando alrededor, además de la niebla de pantalla."
+  },
+  {
     "titulo": "Versión 1.8.7: niebla real y contador limpio",
     "fecha": "2026-10-10",
     "texto": "El gas tóxico y la niebla letal ahora usan niebla de verdad (verde o gris) en vez de partículas. Los eventos muestran solo su cuenta atrás arriba, sin barra."
