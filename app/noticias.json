@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.12: cofre seguro",
+    "fecha": "2026-10-11",
+    "texto": "Nuevo cofre seguro con teclado de 4 dígitos: se fabrica con hierro, redstone y un cofre. Solo se abre con el código y nadie le saca nada, ni con embudos."
+  },
+  {
     "titulo": "Versión 1.8.11: paquete de texturas de Reshem",
     "fecha": "2026-10-11",
     "texto": "El mod incluye un paquete de texturas propio, siempre activo, para cambiar las texturas de Minecraft y de los mods."
