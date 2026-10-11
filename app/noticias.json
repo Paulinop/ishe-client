@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.13: fichas de objetos, baya y sueño del darto",
+    "fecha": "2026-10-11",
+    "texto": "Al pasar el cursor por los objetos nuevos sale una ficha con lo que hacen. Nueva Baya Uvina (respiración acuática) que cae de las hojas, nuevo diseño del dardo y un efecto de sueño mucho más realista."
+  },
+  {
     "titulo": "Versión 1.8.12: cofre seguro",
     "fecha": "2026-10-11",
     "texto": "Nuevo cofre seguro con teclado de 4 dígitos: se fabrica con hierro, redstone y un cofre. Solo se abre con el código y nadie le saca nada, ni con embudos."
