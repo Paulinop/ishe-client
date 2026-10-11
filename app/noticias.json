@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.11: paquete de texturas de Reshem",
+    "fecha": "2026-10-11",
+    "texto": "El mod incluye un paquete de texturas propio, siempre activo, para cambiar las texturas de Minecraft y de los mods."
+  },
+  {
     "titulo": "Versión 1.8.10: Nublado y Haku gastan menos",
     "fecha": "2026-10-11",
     "texto": "Nublado y Haku hacen muchas menos peticiones a Gemini por cada frase, para no quedarse sin límite con la cuenta gratis."
