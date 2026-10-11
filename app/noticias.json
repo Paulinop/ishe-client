@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.7: niebla real y contador limpio",
+    "fecha": "2026-10-10",
+    "texto": "El gas tóxico y la niebla letal ahora usan niebla de verdad (verde o gris) en vez de partículas. Los eventos muestran solo su cuenta atrás arriba, sin barra."
+  },
+  {
     "titulo": "Versión 1.8.6: más desafíos rojos y máscaras",
     "fecha": "2026-10-10",
     "texto": "La ruleta roja suma tormenta de creepers cargados, lluvia de fuego y niebla letal. La máscara antigás ahora se ve puesta, se gasta y tiene una versión avanzada con ingredientes de Better End, Alex's Caves y Mutant Monsters. Cada evento muestra su cuenta atrás en la barra."
