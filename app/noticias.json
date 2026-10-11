@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.10: Nublado y Haku gastan menos",
+    "fecha": "2026-10-11",
+    "texto": "Nublado y Haku hacen muchas menos peticiones a Gemini por cada frase, para no quedarse sin límite con la cuenta gratis."
+  },
+  {
     "titulo": "Versión 1.8.9: vuelve Simple Voice Chat",
     "fecha": "2026-10-11",
     "texto": "El chat de voz vuelve a ser Simple Voice Chat, que sí funcionaba con Nublado y Haku. El launcher quita Plasmo Voice solo."
