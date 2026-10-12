@@ -41,6 +41,13 @@ const EXTRA_MODS = [
     url: 'https://github.com/MrCrayfish/MrCrayfishFurnitureMod-Refurbished/releases/download/v1.0.25%2B26.2/refurbished_furniture-fabric-1.0.25%2B26.2-signed.jar',
     sha256: '78b98c20be2158a625a34eef116096a9bc4de3af37918ffebde678d30750e695',
   },
+  {
+    // The Bumblezone portado a 26.2 para Reshem (release "colmena-1" de este mismo proyecto)
+    key: 'github:the_bumblezone',
+    file: 'the_bumblezone-7.9.0-port26.2.jar',
+    url: 'https://github.com/Paulinop/ishe-client/releases/download/colmena-1/the_bumblezone.jar',
+    sha256: '4ffcef6193b60f4fce995f61f23946959413c5037e4b6e9860ac48cce63ffa65',
+  },
 ];
 
 // Versiones FIJAS: mods cuya ultima version no arranca junto con el resto. Se baja exactamente esa version (si desaparece, se usa la mas nueva).

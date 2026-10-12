@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.34: la Colmena para todos",
+    "fecha": "2026-10-11",
+    "texto": "Reshem Client ahora instala solo el mod The Bumblezone (la Colmena), que se activa con la ruleta amarilla."
+  },
+  {
     "titulo": "Versión 1.8.33: la Perla de Miel",
     "fecha": "2026-10-11",
     "texto": "A la Colmena solo se entra lanzando una Perla de Miel (perla de ender rodeada de miel) contra un panal. La perla de ender normal ya no sirve."
