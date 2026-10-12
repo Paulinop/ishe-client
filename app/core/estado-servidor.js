@@ -90,7 +90,13 @@ async function query(address, options) {
       try {
         const status = JSON.parse(pending.toString('utf8', start, start + jsonLength.value));
         const players = status && status.players ? status.players : {};
-        return finish({ online: true, players: Number(players.online) || 0, max: Number(players.max) || 0, ms: Date.now() - started });
+        const sample = Array.isArray(players.sample)
+          ? players.sample
+            .map((p) => (p && typeof p.name === 'string' ? p.name.replace(/§[0-9a-fk-or]/gi, '').trim() : ''))
+            .filter((name) => /^[A-Za-z0-9_]{1,16}$/.test(name))
+            .slice(0, 12)
+          : [];
+        return finish({ online: true, players: Number(players.online) || 0, max: Number(players.max) || 0, sample, ms: Date.now() - started });
       } catch (_) {
         return finish({ online: false });
       }

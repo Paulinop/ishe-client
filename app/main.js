@@ -6,7 +6,7 @@
 // aplicacion) deja el juego preparado y abre el launcher oficial.
 // No existe ningun modo de juego sin cuenta.
 
-const { app, BrowserWindow, Menu, clipboard, dialog, ipcMain, safeStorage, session, shell } = require('electron');
+const { app, BrowserWindow, Menu, clipboard, dialog, ipcMain, nativeImage, safeStorage, session, shell } = require('electron');
 const fs = require('fs');
 const { execFile } = require('child_process');
 const os = require('os');
@@ -22,6 +22,7 @@ const updater = require('./core/updater');
 const amigos = require('./core/amigos');
 const estadoServidor = require('./core/estado-servidor');
 const skinCore = require('./core/skin');
+const galeria = require('./core/galeria');
 
 // El servidor de Ishe (Reshem server): todos entran por aqui al pulsar Jugar. Es una direccion publica; la lista blanca la manda el dueño.
 const DEFAULT_SERVER = 'fried-recently.tun.ply.gg';
@@ -143,11 +144,14 @@ function loadSavedSkin() {
   if (!player) return;
   try {
     const body = fs.readFileSync(skinFile(player.uuid));
-    if (body.length <= 512 * 1024) skinDataUrl = 'data:image/png;base64,' + body.toString('base64');
+    if (body.length <= 512 * 1024) {
+      skinDataUrl = 'data:image/png;base64,' + body.toString('base64');
+      try { skinCore.syncPlayerDefaultSkin(wardrobeDir(), { name: player.name, pngBuffer: body }); } catch (_) { }
+    }
   } catch (_) { /* aun no se descargo */ }
 }
 
-/** Descarga la skin del jugador para dibujar su cara. Si falla, se queda la inicial. */
+/** Descarga la skin del jugador para dibujar su cara y guardarla primero en su guardarropa. */
 async function refreshSkin(minecraft) {
   if (!minecraft || !minecraft.skinHash) return;
   try {
@@ -156,8 +160,45 @@ async function refreshSkin(minecraft) {
     if (!player || player.uuid !== minecraft.uuid) return; // cambio de cuenta mientras tanto
     fs.writeFileSync(skinFile(minecraft.uuid), body);
     skinDataUrl = 'data:image/png;base64,' + body.toString('base64');
+    try { skinCore.syncPlayerDefaultSkin(wardrobeDir(), { name: player.name || minecraft.name, pngBuffer: body }); } catch (_) { }
     send({ type: 'account', state: getState() });
   } catch (_) { /* sin skin: se muestra la inicial del nombre */ }
+}
+
+/** Si el jugador aun no tiene su skin por defecto primera en Guardados, la busca en su cuenta o en usercache.json. */
+async function syncDefaultSkinOnStartup() {
+  if (TESTING) return;
+  try {
+    const player = shownPlayer();
+    if (player && player.name && !skinDataUrl) {
+      const found = await auth.lookupPlayer(player.name, AUTH_ENDPOINTS);
+      if (found && found.skinHash) {
+        await refreshSkin({ uuid: player.uuid, name: found.name, skinHash: found.skinHash });
+        return;
+      }
+    }
+    if (fs.existsSync(path.join(wardrobeDir(), 'mi-skin-actual.png'))) return;
+    let candidateName = player && player.name ? player.name : '';
+    if (!candidateName) {
+      for (const dir of [gameDir, minecraftDir]) {
+        if (!dir) continue;
+        try {
+          const cache = JSON.parse(fs.readFileSync(path.join(dir, 'usercache.json'), 'utf8'));
+          if (Array.isArray(cache) && cache[0] && typeof cache[0].name === 'string') {
+            candidateName = cache[0].name;
+            break;
+          }
+        } catch (_) { /* probar siguiente */ }
+      }
+    }
+    if (!candidateName) return;
+    const found = await auth.lookupPlayer(candidateName, AUTH_ENDPOINTS);
+    if (!found || !found.skinHash) return;
+    const pngBuffer = await auth.downloadSkin(found.skinHash, AUTH_ENDPOINTS);
+    if (skinCore.syncPlayerDefaultSkin(wardrobeDir(), { name: found.name, pngBuffer })) {
+      send({ type: 'account', state: getState() });
+    }
+  } catch (_) { /* sin conexion o sin perfil */ }
 }
 
 function reasonOf(error) {
@@ -186,9 +227,16 @@ function readConfig() {
     const typed = data.provisional;
     const provisional = typed && /^[A-Za-z0-9_]{1,16}$/.test(String(typed.name)) && /^[0-9a-f]{32}$/.test(String(typed.uuid))
       ? { name: typed.name, uuid: typed.uuid } : null;
-    return { ramGb: RAM_CHOICES.includes(data.ramGb) ? data.ramGb : 0, tema: tema.pick(data.tema), provisional, servidor: game.serverAddress(data.servidor) || DEFAULT_SERVER, entrar: data.entrar !== false };
+    return {
+      ramGb: RAM_CHOICES.includes(data.ramGb) ? data.ramGb : 0,
+      tema: tema.pick(data.tema),
+      provisional,
+      servidor: game.serverAddress(data.servidor) || DEFAULT_SERVER,
+      entrar: data.entrar !== false,
+      subirCapturas: data.subirCapturas !== false,
+    };
   } catch (_) {
-    return { ramGb: 0, tema: {}, provisional: null, servidor: DEFAULT_SERVER, entrar: true };
+    return { ramGb: 0, tema: {}, provisional: null, servidor: DEFAULT_SERVER, entrar: true, subirCapturas: true };
   }
 }
 
@@ -231,6 +279,14 @@ function readInstalled() {
   }
 }
 
+function wardrobeDir() {
+  return path.join(app.getPath('userData'), 'skins-guardadas');
+}
+
+function communityGalleryDir() {
+  return path.join(app.getPath('userData'), 'galeria-comunidad');
+}
+
 function getState() {
   let minecraftFound = false;
   try { minecraftFound = fs.statSync(minecraftDir).isDirectory(); } catch (_) { minecraftFound = false; }
@@ -252,6 +308,10 @@ function getState() {
     installed: readInstalled(),
     ramGb: config.ramGb,
     ramChoices: RAM_CHOICES,
+    shadersEnabled: installer.getShadersEnabled(gameDir),
+    autoUploadScreenshots: config.subirCapturas !== false,
+    wardrobe: skinCore.listWardrobe(wardrobeDir()),
+    gallery: galeria.getAll({ communityDir: communityGalleryDir(), gameDir, minecraftDir }),
     friendCode: amigos.active(gameDir),
     server: config.servidor,
     joinServer: config.entrar,
@@ -509,10 +569,10 @@ let serverStatusCache = { at: 0, address: '', value: { online: false } };
 async function serverStatusNow(force) {
   const config = readConfig();
   const address = config.entrar ? config.servidor : '';
-  if (!address) return { watching: false, online: true, players: 0, max: 0 };
+  if (!address) return { watching: false, online: true, players: 0, max: 0, sample: [], ms: 0 };
   if (!force && serverStatusCache.address === address && Date.now() - serverStatusCache.at < 5000) return serverStatusCache.value;
   const result = await estadoServidor.query(address, { timeoutMs: 4000 });
-  const value = { watching: true, online: result.online, players: result.players || 0, max: result.max || 0, address };
+  const value = { watching: true, online: result.online, players: result.players || 0, max: result.max || 0, sample: result.sample || [], ms: result.ms || 0, address };
   serverStatusCache = { at: Date.now(), address, value };
   return value;
 }
@@ -677,9 +737,37 @@ function createWindow() {
   // La ventana solo muestra sus propios archivos: no abre enlaces ni navega fuera.
   mainWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   mainWindow.webContents.on('will-navigate', (event) => event.preventDefault());
+  mainWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.type === 'keyDown' && input.key === 'F11') {
+      event.preventDefault();
+      mainWindow.setFullScreen(!mainWindow.isFullScreen());
+    }
+  });
   mainWindow.once('ready-to-show', () => mainWindow.show());
   mainWindow.on('closed', () => { mainWindow = null; });
   mainWindow.loadFile(path.join(APP_DIR, 'renderer', 'index.html'));
+}
+
+let scanningScreenshots = false;
+async function checkNewScreenshots() {
+  if (scanningScreenshots || !mainWindow || mainWindow.isDestroyed()) return;
+  const config = readConfig();
+  if (config.subirCapturas === false) return;
+  scanningScreenshots = true;
+  try {
+    const player = shownPlayer();
+    const res = await galeria.scanAndAutoUpload({
+      communityDir: communityGalleryDir(),
+      gameDir,
+      minecraftDir,
+      author: player && player.name ? player.name : 'Jugador Reshem',
+    });
+    if (res && res.uploaded && res.gallery) {
+      send({ type: 'gallery', gallery: res.gallery, autoUploaded: res.lastTitle || 'Nueva captura' });
+    }
+  } catch (_) { /* ignorar */ } finally {
+    scanningScreenshots = false;
+  }
 }
 
 if (!app.requestSingleInstanceLock()) {
@@ -723,6 +811,17 @@ if (!app.requestSingleInstanceLock()) {
         ISHE.confirm(); // la ventana cargo y habla con este proceso: la version en uso funciona
         // Despues de confirmar, busca una version nueva (en pruebas, solo contra el servidor de pruebas).
         if (!TESTING || TEST.updateBase) setTimeout(() => { checkForUpdates(); }, 1200);
+        if (!TESTING) {
+          setTimeout(() => { syncDefaultSkinOnStartup(); }, 1400);
+          setTimeout(async () => {
+            const changed = await galeria.syncFromGithub(communityGalleryDir());
+            if (changed) send({ type: 'gallery', gallery: galeria.getAll({ communityDir: communityGalleryDir(), gameDir, minecraftDir }) });
+          }, 1800);
+          setTimeout(() => {
+            checkNewScreenshots();
+            setInterval(checkNewScreenshots, 5000);
+          }, 2200);
+        }
       }
       return getState();
     });
@@ -731,6 +830,21 @@ if (!app.requestSingleInstanceLock()) {
       if (!fromOurWindow(event) || !RAM_CHOICES.includes(gigabytes)) return false;
       writeConfig({ ramGb: gigabytes });
       return true;
+    });
+    ipcMain.handle('ishe:set-shaders', (event, enabled) => {
+      if (!fromOurWindow(event)) return { ok: false };
+      try {
+        const currentShaders = installer.setShadersEnabled(gameDir, Boolean(enabled));
+        try { installer.setShadersEnabled(minecraftDir, Boolean(enabled)); } catch (_) { }
+        return { ok: true, shadersEnabled: currentShaders };
+      } catch (_) {
+        return { ok: false };
+      }
+    });
+    ipcMain.handle('ishe:repair-mods', (event) => {
+      if (!fromOurWindow(event) || busy || gameRunning) return { ok: false };
+      installer.repairModsCache(gameDir);
+      return { ok: true, state: getState() };
     });
     ipcMain.handle('ishe:friend-code-set', (event, code) => {
       if (!fromOurWindow(event) || typeof code !== 'string') return { ok: false };
@@ -755,6 +869,70 @@ if (!app.requestSingleInstanceLock()) {
       return { ok: true };
     });
     ipcMain.handle('ishe:server-status', async (event) => (fromOurWindow(event) ? serverStatusNow(false) : null));
+    ipcMain.handle('ishe:skin-wardrobe-list', (event) => (fromOurWindow(event) ? skinCore.listWardrobe(wardrobeDir()) : []));
+    ipcMain.handle('ishe:skin-wardrobe-add', async (event, mode, value, name, variant) => {
+      if (!fromOurWindow(event)) return { ok: false };
+      let pngBuffer = null;
+      let skinName = typeof name === 'string' ? name.trim() : '';
+      if (mode === 'file') {
+        const chosen = await dialog.showOpenDialog(mainWindow, { title: 'Elige una skin para guardar (PNG de 64x64)', properties: ['openFile'], filters: [{ name: 'Skin', extensions: ['png'] }] });
+        if (chosen.canceled || !chosen.filePaths[0]) return { ok: false, reason: 'cancelled' };
+        try {
+          if (fs.statSync(chosen.filePaths[0]).size > 200 * 1024) return { ok: false, reason: 'invalid', detail: 'size' };
+          pngBuffer = fs.readFileSync(chosen.filePaths[0]);
+          if (!skinName) skinName = path.basename(chosen.filePaths[0], '.png');
+        } catch (_) {
+          return { ok: false, reason: 'unreadable' };
+        }
+      } else if (mode === 'player') {
+        let found;
+        try {
+          found = await auth.lookupPlayer(typeof value === 'string' ? value : '', AUTH_ENDPOINTS);
+        } catch (error) {
+          return { ok: false, reason: reasonOf(error) === auth.REASONS.NAME_NOT_FOUND ? 'name-not-found' : 'name-invalid' };
+        }
+        if (!found.skinHash) return { ok: false, reason: 'no-skin' };
+        try {
+          pngBuffer = await auth.downloadSkin(found.skinHash, AUTH_ENDPOINTS);
+          if (!skinName) skinName = found.name;
+        } catch (_) {
+          return { ok: false, reason: 'network' };
+        }
+      } else if (mode === 'current') {
+        const player = shownPlayer();
+        if (!player) return { ok: false, reason: 'no-session' };
+        try {
+          pngBuffer = fs.readFileSync(skinFile(player.uuid));
+          if (!skinName) skinName = player.name;
+        } catch (_) {
+          return { ok: false, reason: 'no-skin' };
+        }
+      } else {
+        return { ok: false };
+      }
+      return skinCore.saveToWardrobe(wardrobeDir(), { name: skinName, variant, pngBuffer });
+    });
+    ipcMain.handle('ishe:skin-wardrobe-delete', (event, id) => (fromOurWindow(event) ? skinCore.deleteFromWardrobe(wardrobeDir(), id) : { ok: false }));
+    ipcMain.handle('ishe:skin-wardrobe-use', async (event, id) => {
+      if (!fromOurWindow(event)) return { ok: false };
+      const savedSkin = skinCore.getWardrobePng(wardrobeDir(), id);
+      if (!savedSkin) return { ok: false, reason: 'invalid' };
+      if (!signedIn() || current.pending) return { ok: false, reason: 'no-session' };
+      let minecraft;
+      try {
+        minecraft = await minecraftForPlay();
+      } catch (_) {
+        return { ok: false, reason: 'session' };
+      }
+      const result = await skinCore.uploadFile(minecraft.accessToken, savedSkin.png, savedSkin.variant);
+      if (result.ok) {
+        fs.writeFileSync(skinFile(minecraft.uuid), savedSkin.png);
+        skinDataUrl = 'data:image/png;base64,' + savedSkin.png.toString('base64');
+        try { skinCore.syncPlayerDefaultSkin(wardrobeDir(), { name: savedSkin.name || minecraft.name, variant: savedSkin.variant, pngBuffer: savedSkin.png }); } catch (_) { }
+        send({ type: 'account', state: getState() });
+      }
+      return result;
+    });
     ipcMain.handle('ishe:skin-change', async (event, mode, value, variant) => {
       if (!fromOurWindow(event)) return { ok: false };
       if (!signedIn() || current.pending) return { ok: false, reason: 'no-session' };
@@ -775,6 +953,7 @@ if (!app.requestSingleInstanceLock()) {
         } catch (_) {
           return { ok: false, reason: 'unreadable' };
         }
+        try { skinCore.saveToWardrobe(wardrobeDir(), { name: path.basename(chosen.filePaths[0], '.png'), variant, pngBuffer: png }); } catch (_) { }
         result = await skinCore.uploadFile(minecraft.accessToken, png, variant);
       } else if (mode === 'player') {
         let found;
@@ -784,6 +963,10 @@ if (!app.requestSingleInstanceLock()) {
           return { ok: false, reason: reasonOf(error) === auth.REASONS.NAME_NOT_FOUND ? 'name-not-found' : 'name-invalid' };
         }
         if (!found.skinHash) return { ok: false, reason: 'no-skin' };
+        try {
+          const downloaded = await auth.downloadSkin(found.skinHash, AUTH_ENDPOINTS);
+          skinCore.saveToWardrobe(wardrobeDir(), { name: found.name, variant, pngBuffer: downloaded });
+        } catch (_) { }
         result = await skinCore.uploadUrl(minecraft.accessToken, 'https://textures.minecraft.net/texture/' + found.skinHash, variant);
       } else {
         return { ok: false };
@@ -792,7 +975,83 @@ if (!app.requestSingleInstanceLock()) {
         const hash = await skinCore.currentHash(minecraft.accessToken);
         refreshSkin(Object.assign({}, minecraft, { skinHash: hash || minecraft.skinHash }));
       }
-      return result;
+      return Object.assign({}, result, { wardrobe: skinCore.listWardrobe(wardrobeDir()) });
+    });
+    ipcMain.handle('ishe:gallery-list', async (event) => {
+      if (!fromOurWindow(event)) return null;
+      if (!TESTING) {
+        try { await checkNewScreenshots(); } catch (_) { }
+        try { await galeria.syncFromGithub(communityGalleryDir()); } catch (_) { }
+      }
+      return galeria.getAll({ communityDir: communityGalleryDir(), gameDir, minecraftDir });
+    });
+    ipcMain.handle('ishe:set-auto-screenshots', async (event, enabled) => {
+      if (!fromOurWindow(event)) return { ok: false };
+      const on = Boolean(enabled);
+      writeConfig({ subirCapturas: on });
+      if (on && !TESTING) {
+        await checkNewScreenshots();
+      }
+      return { ok: true, autoUploadScreenshots: on };
+    });
+    ipcMain.handle('ishe:gallery-copy', (event, id, source) => {
+      if (!fromOurWindow(event)) return false;
+      const filePath = galeria.findFilePath({ communityDir: communityGalleryDir(), gameDir, minecraftDir }, String(id || ''), String(source || ''));
+      if (!filePath) return false;
+      try {
+        clipboard.writeImage(nativeImage.createFromPath(filePath));
+        return true;
+      } catch (_) {
+        return false;
+      }
+    });
+    ipcMain.handle('ishe:gallery-share', async (event, id, title) => {
+      if (!fromOurWindow(event)) return { ok: false };
+      const filePath = galeria.findFilePath({ communityDir: communityGalleryDir(), gameDir, minecraftDir }, String(id || ''), 'local');
+      if (!filePath) return { ok: false, reason: 'not-found' };
+      try {
+        const pngBuffer = fs.readFileSync(filePath);
+        const player = shownPlayer();
+        const shared = await galeria.sharePhoto({
+          communityDir: communityGalleryDir(),
+          pngBuffer,
+          title: typeof title === 'string' && title.trim() ? title.trim() : path.basename(filePath, '.png').replace(/_/g, ' '),
+          author: player && player.name ? player.name : 'Jugador Reshem',
+        });
+        return Object.assign({}, shared, { gallery: galeria.getAll({ communityDir: communityGalleryDir(), gameDir, minecraftDir }) });
+      } catch (_) {
+        return { ok: false, reason: 'disk' };
+      }
+    });
+    ipcMain.handle('ishe:gallery-upload-file', async (event, title) => {
+      if (!fromOurWindow(event)) return { ok: false };
+      const chosen = await dialog.showOpenDialog(mainWindow, {
+        title: 'Elige una captura (PNG) para compartir con todos',
+        defaultPath: fs.existsSync(path.join(gameDir, 'screenshots')) ? path.join(gameDir, 'screenshots') : app.getPath('pictures'),
+        properties: ['openFile'],
+        filters: [{ name: 'Imagen PNG', extensions: ['png'] }],
+      });
+      if (chosen.canceled || !chosen.filePaths[0]) return { ok: false, reason: 'cancelled' };
+      try {
+        const pngBuffer = fs.readFileSync(chosen.filePaths[0]);
+        const player = shownPlayer();
+        const shared = await galeria.sharePhoto({
+          communityDir: communityGalleryDir(),
+          pngBuffer,
+          title: typeof title === 'string' && title.trim() ? title.trim() : path.basename(chosen.filePaths[0], '.png').replace(/_/g, ' '),
+          author: player && player.name ? player.name : 'Jugador Reshem',
+        });
+        return Object.assign({}, shared, { gallery: galeria.getAll({ communityDir: communityGalleryDir(), gameDir, minecraftDir }) });
+      } catch (_) {
+        return { ok: false, reason: 'invalid' };
+      }
+    });
+    ipcMain.handle('ishe:gallery-open-folder', async (event) => {
+      if (!fromOurWindow(event)) return false;
+      const shotsDir = path.join(gameDir, 'screenshots');
+      fs.mkdirSync(shotsDir, { recursive: true });
+      if (TESTING) return true;
+      return (await shell.openPath(shotsDir)) === '';
     });
     ipcMain.handle('ishe:set-display-name', (event, name) => (fromOurWindow(event) ? setDisplayName(typeof name === 'string' ? name.slice(0, 40) : '') : null));
     ipcMain.handle('ishe:clear-display-name', (event) => (fromOurWindow(event) ? clearDisplayName() : null));

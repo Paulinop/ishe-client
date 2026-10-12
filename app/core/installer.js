@@ -461,8 +461,10 @@ async function install(options, onEvent) {
     else if (result.status === 'otra-version') info('el mod Ishe publicado es para Minecraft ' + result.minecraft + ': se deja el que tienes');
     else info('todavía no hay ningún mod Ishe publicado');
     if (result.file) currentMods.set(modishe.PROJECT_KEY, result.file);
+    else if (previousMods.has(modishe.PROJECT_KEY)) currentMods.set(modishe.PROJECT_KEY, previousMods.get(modishe.PROJECT_KEY));
   } catch (error) {
     problem('No pude actualizar el mod Ishe (se conserva el que ya tenías): ' + error.message);
+    if (previousMods.has(modishe.PROJECT_KEY)) currentMods.set(modishe.PROJECT_KEY, previousMods.get(modishe.PROJECT_KEY));
   }
 
   // e4steam ya no se instala: si quedo de una version anterior, se retira (y se olvida de la lista de mods instalados).
@@ -477,6 +479,7 @@ async function install(options, onEvent) {
   // ejecucion instalo bien con otro nombre. Si un mod fallo hoy, se conserva el
   // que ya tenias. Nunca se tocan mods que anadiste tu a mano.
   const keptFiles = new Set(currentMods.values());
+  const wantedProjects = new Set(MOD_PROJECTS.concat(EXTRA_MODS.map((e) => e.key), [modishe.PROJECT_KEY]));
   for (const [oldProject, oldFile] of previousMods) {
     if (currentMods.has(oldProject)) {
       if (currentMods.get(oldProject) !== oldFile && !keptFiles.has(oldFile)) {
@@ -486,12 +489,12 @@ async function install(options, onEvent) {
           info('retirado    ' + oldFile + ' (versión anterior)');
         }
       }
-    } else {
+    } else if (!wantedProjects.has(oldProject)) {
       const oldPath = path.join(modsDir, oldFile);
-        if (isFile(oldPath)) {
-          fs.rmSync(oldPath, { force: true });
-          info('retirado    ' + oldFile + ' (retirado del modpack)');
-        }
+      if (isFile(oldPath)) {
+        fs.rmSync(oldPath, { force: true });
+        info('retirado    ' + oldFile + ' (retirado del modpack)');
+      }
     }
   }
   // Plasmo Voice ya no se usa (el chat de voz es Simple Voice Chat): si queda de antes, se retira porque dos chats de voz a la vez se estorban.
@@ -579,8 +582,46 @@ async function install(options, onEvent) {
   };
 }
 
+/** Mira si los shaders estan activados en config/iris.properties (por defecto true). */
+function getShadersEnabled(gameDir) {
+  const props = path.join(gameDir, 'config', 'iris.properties');
+  if (!isFile(props)) return true;
+  try {
+    const content = fs.readFileSync(props, 'utf8');
+    const match = /^enableShaders=(true|false)$/m.exec(content);
+    return match ? match[1] === 'true' : true;
+  } catch (_) {
+    return true;
+  }
+}
+
+/** Activa o apaga los shaders en config/iris.properties (util para PCs flojas). */
+function setShadersEnabled(gameDir, enabled) {
+  const configDir = path.join(gameDir, 'config');
+  const props = path.join(configDir, 'iris.properties');
+  fs.mkdirSync(configDir, { recursive: true });
+  let content = '';
+  try { content = fs.readFileSync(props, 'utf8'); } catch (_) { content = ''; }
+  const wanted = 'enableShaders=' + (enabled ? 'true' : 'false');
+  if (/^enableShaders=/m.test(content)) {
+    content = content.replace(/^enableShaders=.*$/m, wanted);
+  } else {
+    content = (content ? content.trimEnd() + '\n' : '') + wanted + '\n';
+  }
+  fs.writeFileSync(props, content);
+  return Boolean(enabled);
+}
+
+/** Limpia el registro de mods instalados para forzar una verificacion completa al pulsar Jugar. */
+function repairModsCache(gameDir) {
+  const manifestPath = path.join(gameDir, 'ishe-client-instalado.json');
+  try { fs.rmSync(manifestPath, { force: true }); } catch (_) { }
+  return true;
+}
+
 module.exports = {
   CLIENT_NAME, MC_VERSION, MOD_PROJECTS, E4STEAM_FILE, PROFILE_KEY, DEFAULTS,
   StopError, defaultDirs, install, installShaders, readManifest, safeFileName,
+  getShadersEnabled, setShadersEnabled, repairModsCache,
 };
 

@@ -108,38 +108,54 @@ function bodyShape(g, x0 = 3, y0 = 5) {
 
 function walk(f) {
   const g = makeGrid();
-  const sway = [0, 1, 0, 1][f];
-  tail(g, [[2, 7, 2, 2], [1, 5, 2, 3], [0 + sway, 3, 2, 3], [0 + sway, 1, 2, 2]]);
-  bodyShape(g);
-  head(g, 13, 0);
-  const phase = (p) => [{ dx: 1, lift: 0 }, { dx: 0, lift: 1 }, { dx: -1, lift: 0 }, { dx: 0, lift: 1 }][((p % 4) + 4) % 4];
+  const bob = f % 2 === 1 ? -1 : 0;
+  const sway = [0, 1, 2, 1][f];
+  tail(g, [[2, 7 + bob, 2, 2], [1, 5 + bob, 2, 2], [0 + sway, 3 + bob, 2, 2], [0 + sway, 1 + bob, 2, 2]]);
+  bodyShape(g, 3, 5 + bob);
+  head(g, 13, f === 2 ? 1 : 0);
+  const phase = (p) => [
+    { dx: 2, lift: 0 },
+    { dx: 0, lift: 1 },
+    { dx: -2, lift: 0 },
+    { dx: 1, lift: 2 },
+  ][((p % 4) + 4) % 4];
   const legs = [{ x: 4, p: f + 2, far: true }, { x: 11, p: f, far: true }, { x: 6, p: f }, { x: 13, p: f + 2 }];
   for (const leg of legs) {
     const { dx, lift } = phase(leg.p);
-    const len = 3 - lift;
-    g.rect(leg.x + dx, 11, 2, len - 1, leg.far ? 'd' : 't');
-    g.rect(leg.x + dx, 11 + len - 1, 2, 1, 'l');
+    const topY = 10 + bob;
+    const len = Math.max(2, 4 - lift - bob);
+    g.rect(leg.x + dx, topY, 2, len - 1, leg.far ? 'd' : 't');
+    g.rect(leg.x + dx + (lift > 0 ? 1 : 0), topY + len - 1, 2, 1, 'l');
   }
   return g;
 }
 
 function run(f) {
   const g = makeGrid();
-  const air = f % 2 === 0;
-  g.shift(0, air ? -1 : 0);
-  tail(g, [[0, 7, 3, 2]]);
-  g.rect(0, 7, 1, 2, 'd');
-  bodyShape(g);
-  head(g, 13, 1);
-  if (air) {
-    g.rect(0, 11, 5, 2, 'd'); g.rect(0, 11, 2, 2, 'l');           // patas de atras estiradas (lejana)
-    g.rect(2, 10, 4, 2, 't'); g.rect(2, 10, 2, 2, 'l');           // patas de atras estiradas (cercana)
-    g.rect(15, 11, 5, 2, 'd'); g.rect(18, 11, 2, 2, 'l');         // patas de adelante estiradas (lejana)
-    g.rect(14, 10, 5, 2, 't'); g.rect(17, 10, 2, 2, 'l');         // patas de adelante estiradas (cercana)
+  const shiftY = [ -1, 0, 0, -1 ][f];
+  g.shift(0, shiftY);
+  const tailY = [6, 7, 8, 6][f];
+  tail(g, [[0, tailY, 4, 2], [0, tailY - 1, 2, 1]]);
+  g.rect(0, tailY, 1, 2, 'd');
+  bodyShape(g, 3, 5);
+  head(g, 13, f % 2 === 0 ? 1 : 0);
+  if (f === 0) {
+    g.rect(0, 10, 5, 2, 'd'); g.rect(0, 10, 2, 2, 'l');
+    g.rect(2, 9, 4, 2, 't'); g.rect(1, 9, 2, 2, 'l');
+    g.rect(15, 10, 5, 2, 'd'); g.rect(18, 10, 2, 2, 'l');
+    g.rect(14, 9, 5, 2, 't'); g.rect(17, 9, 2, 2, 'l');
+  } else if (f === 1) {
+    g.rect(2, 11, 3, 2, 'd'); g.rect(13, 11, 3, 3, 'd');
+    g.rect(4, 10, 3, 3, 't'); g.rect(15, 11, 3, 3, 't');
+    g.rect(15, 13, 2, 1, 'l'); g.rect(4, 12, 2, 1, 'l');
+  } else if (f === 2) {
+    g.rect(6, 11, 2, 3, 'd'); g.rect(9, 11, 2, 3, 'd');
+    g.rect(8, 11, 2, 3, 't'); g.rect(11, 11, 2, 3, 't');
+    g.rect(6, 13, 2, 1, 'l'); g.rect(8, 13, 2, 1, 'l'); g.rect(9, 13, 2, 1, 'l'); g.rect(11, 13, 2, 1, 'l');
   } else {
-    g.rect(5, 11, 2, 2, 'd'); g.rect(10, 11, 2, 2, 'd');
-    g.rect(7, 11, 2, 2, 't'); g.rect(13, 11, 2, 2, 't');
-    g.rect(5, 13, 2, 1, 'l'); g.rect(7, 13, 2, 1, 'l'); g.rect(10, 13, 2, 1, 'l'); g.rect(13, 13, 2, 1, 'l');
+    g.rect(2, 11, 3, 3, 'd'); g.rect(14, 10, 4, 2, 'd');
+    g.rect(4, 11, 3, 3, 't'); g.rect(15, 9, 5, 2, 't');
+    g.rect(4, 13, 2, 1, 'l'); g.rect(18, 9, 2, 2, 'l');
   }
   return g;
 }
@@ -156,7 +172,7 @@ function sitBase(g) {
 
 function sit(f) {
   const g = makeGrid();
-  tail(g, f ? [[1, 13, 4, 1], [0, 11, 2, 3], [0, 10, 2, 1]] : [[1, 13, 4, 1], [0, 12, 2, 2], [0, 12, 2, 1]]);
+  tail(g, f ? [[1, 13, 4, 1], [0, 10, 2, 4], [1, 9, 2, 1]] : [[1, 13, 4, 1], [0, 12, 2, 2], [0, 11, 2, 1]]);
   sitBase(g);
   head(g, 8, 0);
   return g;

@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.36: nuevo diseño del launcher",
+    "fecha": "2026-10-12",
+    "texto": "Reshem Client estrena diseño: menú lateral, tu sesión arriba, capturas destacadas y novedades. Si JUGAR sale en gris \"CERRADO\", el servidor o su túnel está apagado."
+  },
+  {
     "titulo": "Versión 1.8.35: Do a Barrel Roll",
     "fecha": "2026-10-12",
     "texto": "Nuevo mod para volar con elytra con control total: ratón para girar y subir/bajar, A y D para virar."

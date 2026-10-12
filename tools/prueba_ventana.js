@@ -39,7 +39,19 @@ fs.rmSync(path.join(outDir, 'result.json'), { force: true });
 
 // Comprueba que el ciclo de pasos de un gato avanza de verdad (una animacion que no se mueve no da ningun error).
 const pasos = "(async () => { const cat = document.querySelector('.gatitos .gato'); cat.className = 'gato negro pelo-negro st-walk'; const layer = cat.querySelector('.l-b'); const seen = new Set(); for (let k = 0; k < 10; k++) { seen.add(getComputedStyle(layer).maskPosition); await new Promise((r) => setTimeout(r, 90)); } return { unicos: seen.size }; })()";
-const steps = ['eval:pasos|' + pasos, 'shot:inicio', 'dump:inicio', 'view:mods', 'shot:mods', 'view:ajustes', 'shot:ajustes', 'dump:ajustes', 'view:inicio'];
+const steps = [
+  'eval:pasos|' + pasos,
+  'shot:inicio', 'dump:inicio',
+  'view:skins', 'shot:skins',
+  'view:capturas', 'shot:capturas',
+  'view:mods', 'shot:mods',
+  'view:ajustes', 'shot:ajustes', 'dump:ajustes',
+  'size:1920x1080',
+  'view:inicio', 'shot:inicio-full',
+  'view:skins', 'shot:skins-full',
+  'view:ajustes', 'shot:ajustes-full',
+  'view:inicio',
+];
 const run = spawnSync(path.join(engine, exeName), ['--user-data-dir=' + data], {
   env: Object.assign({}, process.env, {
     ISHE_TEST_OUT: outDir,
@@ -58,7 +70,7 @@ if (fs.existsSync(resultFile)) {
   check(result.errors.length === 0, 'sin errores en la ventana' + (result.errors.length ? ': ' + result.errors.join(' | ').slice(0, 400) : ''));
   const pasosResult = result.steps.find((step) => step.label === 'pasos');
   check(Boolean(pasosResult) && pasosResult.value.unicos >= 3, 'los gatos mueven las patas al caminar (' + (pasosResult ? pasosResult.value.unicos : '?') + ' cuadros distintos)');
-  for (const name of ['inicio', 'mods', 'ajustes']) check(fs.existsSync(path.join(outDir, name + '.png')), 'captura de ' + name);
+  for (const name of ['inicio', 'skins', 'capturas', 'mods', 'ajustes', 'inicio-full', 'skins-full', 'ajustes-full']) check(fs.existsSync(path.join(outDir, name + '.png')), 'captura de ' + name);
 }
 fs.rmSync(work, { recursive: true, force: true });
 console.log('\n' + (failed ? failed + ' failed' : 'todo bien') + ' (capturas en ' + outDir + ')');
