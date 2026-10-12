@@ -23,7 +23,7 @@ const MOD_PROJECTS = [
   'mutant-monsters', 'macaws-furniture', 'krypton',
   'promenade', 'elytra-trims', 'status-effect-bars', 'cloth-config', 'betterend', 'shulkerboxtooltip',
   'dreamdisplays', 'sloths-display-entity-editor', 'betternetherportals', 'alexs-caves-renewed',
-  'simple-voice-chat', 'emotecraft', 'player-animation-library', 'worldedit', 'litematica', 'malilib', 'immersive-hotbar', 'customskyboxes'
+  'simple-voice-chat', 'emotecraft', 'player-animation-library', 'worldedit', 'litematica', 'malilib', 'immersive-hotbar', 'customskyboxes', 'do-a-barrel-roll', 'yacl'
 ];
 
 // Mods que NO estan en Modrinth: se bajan de la release oficial de su autor en GitHub, con su codigo de verificacion SHA-256.

@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.35: Do a Barrel Roll",
+    "fecha": "2026-10-12",
+    "texto": "Nuevo mod para volar con elytra con control total: ratón para girar y subir/bajar, A y D para virar."
+  },
+  {
     "titulo": "Versión 1.8.34: la Colmena para todos",
     "fecha": "2026-10-11",
     "texto": "Reshem Client ahora instala solo el mod The Bumblezone (la Colmena), que se activa con la ruleta amarilla."
