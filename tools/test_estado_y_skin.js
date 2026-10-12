@@ -106,5 +106,5 @@ function minecraftFalso(json, opciones) {
   check(!o.ok && o.reason === 'network', 'sin conexion se dice');
 
   console.log((checks - failures) + ' de ' + checks + ' comprobaciones bien');
-  process.exit(failures ? 1 : 0);
+  process.exitCode = failures ? 1 : 0;
 })().catch((e) => { console.error(e); process.exit(1); });

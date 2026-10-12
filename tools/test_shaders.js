@@ -68,5 +68,5 @@ async function main() {
 
 main().then(() => {
   console.log(failures === 0 ? checks + ' de ' + checks + ' comprobaciones bien' : failures + ' fallaron');
-  process.exit(failures === 0 ? 0 : 1);
+  process.exitCode = failures === 0 ? 0 : 1;
 }).catch((error) => { console.error(error); process.exit(1); });

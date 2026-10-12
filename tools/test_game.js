@@ -187,15 +187,19 @@ async function messageOf(promise) {
   check(exists(mc, 'libraries', 'org/ow2/asm/asm/9.10.1/asm-9.10.1.jar') && !exists(mc, 'libraries', 'org/ow2/asm/asm/9.6/asm-9.6.jar'), 'biblioteca repetida: se usa la de Fabric y no la del juego');
   const objects = path.join(mc, 'assets', 'objects');
   check(exists(mc, 'assets', 'indexes', '32.json') && fs.readdirSync(objects).reduce((n, d) => n + fs.readdirSync(path.join(objects, d)).length, 0) === 2, 'indice de recursos y 2 recursos distintos (el repetido se baja una vez)');
-  check(prepared.java === path.join(dirs.gameDir, 'runtime', 'java-runtime-epsilon', 'linux', 'bin', 'java') && (fs.statSync(prepared.java).mode & 0o111) !== 0, 'Java instalado en la carpeta de Ishe Client y ejecutable');
-  check(fs.readlinkSync(path.join(path.dirname(path.dirname(prepared.java)), 'lib', 'modules-link')) === 'modules', 'enlaces de Java creados');
+  check(prepared.java === path.join(dirs.gameDir, 'runtime', 'java-runtime-epsilon', 'linux', 'bin', 'java') && (process.platform === 'win32' || (fs.statSync(prepared.java).mode & 0o111) !== 0), 'Java instalado en la carpeta de Ishe Client y ejecutable');
+  // en Windows crear enlaces simbolicos exige permiso especial; el codigo lo tolera (Java no los necesita), asi que ahi solo se comprueba que no falle
+  const enlace = path.join(path.dirname(path.dirname(prepared.java)), 'lib', 'modules-link');
+  let enlaceLeido = null;
+  try { enlaceLeido = fs.readlinkSync(enlace); } catch (_) { /* sin enlace */ }
+  check(enlaceLeido === 'modules' || (process.platform === 'win32' && enlaceLeido === null), 'enlaces de Java creados' + (enlaceLeido === null ? ' (Windows sin permiso de enlaces: se omiten)' : ''));
   check(exists(dirs.gameDir, 'cache', '26.2.json') && !exists(mc, 'versions', '26.2', '26.2.json'), 'la descripcion de la version se guarda aparte, sin tocar la del launcher oficial');
   check(!hits.includes('/log.xml') && !hits.includes('/v/26.3.json'), 'no pide nada que no necesita');
   check(events.filter((e) => e.type === 'step').map((e) => e.text).join('|') === 'Comprobando la versión de Minecraft|Descargando Minecraft|Descargando bibliotecas|Descargando recursos del juego|Preparando Java', 'avisa de cada paso');
 
   console.log('G3 argumentos de arranque');
   const args = game.buildArguments(prepared, optionsFor(dirs, { ramGb: 0 }), ACCOUNT);
-  const cp = args[args.indexOf('-cp') + 1].split(':');
+  const cp = args[args.indexOf('-cp') + 1].split(':').reduce((acc, parte) => { if (acc.length && /^[A-Za-z]$/.test(acc[acc.length - 1])) acc[acc.length - 1] += ':' + parte; else acc.push(parte); return acc; }, []); // en Windows las rutas llevan 'C:'
   const main = args.indexOf('net.fabricmc.loader.impl.launch.knot.KnotClient');
   check(main > args.indexOf('-cp') && args.indexOf('--username') > main && !args.includes('net.minecraft.client.main.Main'), 'orden: Java, clase principal de Fabric, opciones del juego');
   check(cp.length === 6 && cp[cp.length - 1] === path.join(mc, 'versions', '26.2', '26.2.jar') && cp[0].endsWith('asm-9.10.1.jar') && cp.every((f) => fs.existsSync(f)), 'classpath: Fabric primero, juego al final, todos los archivos existen');
@@ -226,11 +230,15 @@ async function messageOf(promise) {
   process.env.ISHE_FAKE_JAVA_OUT = argvFile;
   process.env.ISHE_FAKE_ECHO = TOKEN;
   process.env.ISHE_FAKE_JAVA_EXIT = '3';
-  const running = await game.launch(prepared, optionsFor(dirs, { ramGb: 6 }), ACCOUNT);
-  const ended = await running.exited;
-  check(fs.readFileSync(argvFile, 'utf8').trimEnd().split('\n').join('\u0000') === six.join('\u0000'), 'Java recibe exactamente los argumentos calculados');
-  check(ended.code === 3 && ended.tail.length === 2 && ended.tail.some((l) => l.includes('second line')), 'se conoce el codigo de salida y las ultimas lineas');
-  check(!ended.tail.join('\n').includes(TOKEN) && ended.tail.join('\n').includes('***'), 'la sesion se tapa en las lineas guardadas');
+  if (process.platform === 'win32') {
+    console.log('  (Windows: el Java falso es un script de shell, no se puede ejecutar aqui; esa parte se prueba en Linux y Mac)');
+  } else {
+    const running = await game.launch(prepared, optionsFor(dirs, { ramGb: 6 }), ACCOUNT);
+    const ended = await running.exited;
+    check(fs.readFileSync(argvFile, 'utf8').trimEnd().split('\n').join('\u0000') === six.join('\u0000'), 'Java recibe exactamente los argumentos calculados');
+    check(ended.code === 3 && ended.tail.length === 2 && ended.tail.some((l) => l.includes('second line')), 'se conoce el codigo de salida y las ultimas lineas');
+    check(!ended.tail.join('\n').includes(TOKEN) && ended.tail.join('\n').includes('***'), 'la sesion se tapa en las lineas guardadas');
+  }
   const broken = Object.assign({}, prepared, { java: path.join(dirs.root, 'no-such-java') });
   check((await messageOf(game.launch(broken, optionsFor(dirs), ACCOUNT))).startsWith('No se pudo iniciar Java'), 'si Java no arranca se explica');
 
