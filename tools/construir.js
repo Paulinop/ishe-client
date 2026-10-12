@@ -67,6 +67,8 @@ function buildPackages(appDir) {
   // En Windows los .bat, .ps1 y .txt llevan finales de linea de Windows; el LEEME ademas BOM para el Bloc de notas.
   fs.writeFileSync(path.join(win, 'Instalar Ishe Client.bat'), crlf(read('instalador', 'win', 'Instalar Ishe Client.bat')));
   fs.writeFileSync(path.join(win, 'instalar-launcher.ps1'), crlf(read('instalador', 'win', 'instalar-launcher.ps1')));
+  fs.writeFileSync(path.join(win, 'instalar-mods.ps1'), crlf(read('instalador', 'win', 'instalar-mods.ps1')));
+  fs.writeFileSync(path.join(win, 'instalar-mods.js'), lf(read('instalador', 'win', 'instalar-mods.js')));
   fs.writeFileSync(path.join(win, 'LEEME.txt'), '﻿' + crlf(read('recursos', 'leeme-win.txt')));
 
   copyTree(appDir, path.join(mac, 'app'));
