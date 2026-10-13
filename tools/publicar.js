@@ -10,6 +10,7 @@
 //             proyecto: nunca se copia dentro ni se sube a GitHub.
 //   --notas   texto que sale en Novedades. Si falta, se usa la tarjeta "Versión X" de
 //             app/noticias.json.
+//   --motor-minimo N  (raro) el aviso pide un motor N: los clientes viejos dicen "instala de nuevo" en vez de bajar el paquete (para cuando la ventana trae archivos que un paquete no puede llevar)
 //   --subir   publica en GitHub con la herramienta "gh" (hay que haber hecho "gh auth login").
 //             Sin --subir solo deja los archivos en dist/actualizacion/ para revisarlos.
 
@@ -83,6 +84,7 @@ function main() {
     privateKeyPem,
     publicKeyPem,
     today: new Date().toISOString().slice(0, 10),
+    motorMinimo: Number(argument('motor-minimo')) || undefined,
   });
   fs.rmSync(copy, { recursive: true, force: true });
 

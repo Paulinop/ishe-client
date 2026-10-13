@@ -115,6 +115,8 @@ function build(options) {
     archivos,
     extras,
   };
+  // un aviso que pide reinstalar: los clientes viejos dicen "necesita instalar de nuevo" en vez de bajar un paquete que no pueden mostrar bien
+  if (options.motorMinimo) manifest.motorMinimo = options.motorMinimo;
   const envelope = paquete.sign(manifest, options.privateKeyPem);
   if (!paquete.verify(envelope, options.publicKeyPem)) throw new Error('No se pudo firmar la actualización.');
   out.set(paquete.MANIFEST_NAME, Buffer.from(envelope));

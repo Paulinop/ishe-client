@@ -213,7 +213,7 @@ const DEFAULT_COMMUNITY = [
   {
     id: 'comunidad-puesto-haku',
     file: 'comunidad-puesto-haku.png',
-    title: 'Puesto de Haku y Vitrina',
+    title: 'Puesto de Haku y Nublado',
     author: 'Servidor Reshem',
     date: '2026-10-10',
     theme: { kind: 'puesto', seed: 1, skyTop: '#071022', skyMid: '#122644', skyBot: '#21455e', astroX: 184, astro: '#fde047', spark: '#fef08a', mountain: '#12292e', grass: '#1f4e3d', dirt: '#0c1f1a' },
@@ -221,7 +221,7 @@ const DEFAULT_COMMUNITY = [
   {
     id: 'comunidad-ruleta-eventos',
     file: 'comunidad-ruleta-eventos.png',
-    title: 'Bloodfall y Ruleta del Reto',
+    title: 'Atardecer con Shaders BSL',
     author: 'PaulinoG',
     date: '2026-10-10',
     theme: { kind: 'ruleta', seed: 3, skyTop: '#1f060a', skyMid: '#450d16', skyBot: '#6e1723', astroX: 44, astro: '#ef4444', spark: '#fca5a5', mountain: '#280e14', grass: '#3b1c1a', dirt: '#1c0d0c' },
@@ -229,7 +229,7 @@ const DEFAULT_COMMUNITY = [
   {
     id: 'comunidad-exploracion',
     file: 'comunidad-exploracion.png',
-    title: 'Obelisco de Misiones',
+    title: 'Bosque de Taiga en Reshem',
     author: 'Comunidad Reshem',
     date: '2026-10-11',
     theme: { kind: 'obelisco', seed: 5, skyTop: '#140e2e', skyMid: '#2e1a4a', skyBot: '#5b2a5c', astroX: 176, astro: '#f59e0b', spark: '#f5d0fe', mountain: '#1b1630', grass: '#254238', dirt: '#111e1b' },
@@ -239,20 +239,39 @@ const DEFAULT_COMMUNITY = [
 function ensureCommunity(communityDir) {
   fs.mkdirSync(communityDir, { recursive: true });
   const manifestPath = path.join(communityDir, 'galeria.json');
+  const bundledDir = path.join(__dirname, '..', 'renderer', 'assets', 'mc-hero');
   for (const item of DEFAULT_COMMUNITY) {
     const filePath = path.join(communityDir, item.file);
+    const bundledPath = path.join(bundledDir, item.file);
     let needsWrite = !fs.existsSync(filePath);
     if (!needsWrite) {
-      try { needsWrite = fs.statSync(filePath).size < 8000; } catch (_) { needsWrite = true; }
+      try { needsWrite = fs.statSync(filePath).size < 100000; } catch (_) { needsWrite = true; }
     }
     if (needsWrite) {
-      fs.writeFileSync(filePath, buildShowcasePng(item.theme));
+      if (fs.existsSync(bundledPath)) {
+        fs.copyFileSync(bundledPath, filePath);
+      } else {
+        fs.writeFileSync(filePath, buildShowcasePng(item.theme));
+      }
     }
   }
   if (fs.existsSync(manifestPath)) {
     try {
       const data = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-      if (Array.isArray(data) && data.length > 0) return data;
+      if (Array.isArray(data) && data.length > 0) {
+        let changed = false;
+        const byId = new Map(DEFAULT_COMMUNITY.map((it) => [it.id, it]));
+        for (const entry of data) {
+          const def = entry && byId.get(entry.id);
+          if (def && entry.title !== def.title) {
+            entry.title = def.title;
+            entry.author = def.author;
+            changed = true;
+          }
+        }
+        if (changed) fs.writeFileSync(manifestPath, JSON.stringify(data, null, 2));
+        return data;
+      }
     } catch (_) { /* se regenera */ }
   }
   const list = DEFAULT_COMMUNITY.map((item) => ({

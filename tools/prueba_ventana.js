@@ -38,13 +38,15 @@ fs.mkdirSync(outDir, { recursive: true });
 fs.rmSync(path.join(outDir, 'result.json'), { force: true });
 
 // Comprueba que el ciclo de pasos de un gato avanza de verdad (una animacion que no se mueve no da ningun error).
-const pasos = "(async () => { const cat = document.querySelector('.gatitos .gato'); cat.className = 'gato negro pelo-negro st-walk'; const layer = cat.querySelector('.l-b'); const seen = new Set(); for (let k = 0; k < 10; k++) { seen.add(getComputedStyle(layer).maskPosition); await new Promise((r) => setTimeout(r, 90)); } return { unicos: seen.size }; })()";
+const pasos = "(async () => { const cat = document.querySelector('.gatitos .gato'); cat.className = 'gato negro pelo-negro st-walk'; const layer = cat.querySelector('.l-b'); const seen = new Set(); for (let k = 0; k < 45 && seen.size < 4; k++) { seen.add(getComputedStyle(layer).maskPosition); await new Promise((r) => setTimeout(r, 90)); } return { unicos: seen.size }; })()";
 const steps = [
   'eval:pasos|' + pasos,
   'shot:inicio', 'dump:inicio',
   'view:skins', 'shot:skins',
   'view:capturas', 'shot:capturas',
   'view:mods', 'shot:mods',
+  "eval:scrollMods|(async () => { const m = document.querySelector('.main'); m.scrollTop = 480; m.dispatchEvent(new Event('scroll')); await new Promise(r => setTimeout(r, 250)); return { scrollP: document.documentElement.style.getPropertyValue('--scroll-p') }; })()",
+  'shot:mods-scroll',
   'view:ajustes', 'shot:ajustes', 'dump:ajustes',
   'size:1920x1080',
   'view:inicio', 'shot:inicio-full',

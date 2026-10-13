@@ -8,8 +8,38 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Fondo de mina mejorado que se mueve detras de toda la ventana -->
+  <!-- Fondo animado estilo minecraft.net/es-es/about-minecraft (Cherry Grove & Waterfall) -->
   <div class="mina piedra" aria-hidden="true">
+    <div class="mc-hero-scene">
+      <div class="mc-hero-layers">
+        <div class="mc-layer-sky">
+          <img class="mc-hero-img" src="assets/mc-hero/Sky_Sun.png" alt="">
+          <img class="mc-hero-img mc-layer-clouds" src="assets/mc-hero/Clouds.png" alt="">
+        </div>
+        <div class="mc-layer-bg">
+          <img class="mc-hero-img" src="assets/mc-hero/BG_Near.png" alt="">
+        </div>
+        <div class="mc-layer-focus">
+          <div class="mc-focus-main">
+            <img class="mc-hero-img" src="assets/mc-hero/Focus_Cherry.png" alt="">
+            <div class="mc-focus-anims">
+              <div class="mc-anim-layer mc-anim-window"></div>
+              <div class="mc-anim-layer mc-anim-sprite mc-anim-waterfall"></div>
+              <div class="mc-anim-layer mc-anim-sprite mc-anim-petals-1"></div>
+              <div class="mc-anim-layer mc-anim-sprite mc-anim-petals-2"></div>
+              <div class="mc-anim-layer mc-anim-sprite mc-anim-petals-3"></div>
+              <div class="mc-anim-layer mc-anim-sprite mc-anim-bee"></div>
+              <div class="mc-anim-layer mc-anim-sprite mc-anim-pig"></div>
+              <div class="mc-anim-layer mc-anim-sprite mc-anim-chicken-1"></div>
+              <div class="mc-anim-layer mc-anim-sprite mc-anim-chicken-2"></div>
+            </div>
+          </div>
+        </div>
+        <div class="mc-layer-fg">
+          <img class="mc-hero-img" src="assets/mc-hero/Foreground.png" alt="">
+        </div>
+      </div>
+    </div>
     <div class="mina-ores"></div>
     <div class="mina-brillos a"></div>
     <div class="mina-brillos b"></div>
@@ -45,85 +75,31 @@
       <nav class="nav" aria-label="Secciones">
         <button class="nav-item is-active" data-view="inicio" type="button">
           <span class="nav-icon nav-icon-play" aria-hidden="true">
-            <!-- Bloque de Pasto 3D isométrico (estilo Minecraft Launcher oficial) -->
-            <svg viewBox="0 0 24 24" width="24" height="24">
-              <polygon fill="#79c036" points="12,2 21,7 12,12 3,7"/>
-              <polygon fill="#91d648" points="12,3 19,7 12,10.8 5,7"/>
-              <polygon fill="#866043" points="3,7 12,12 12,22 3,17"/>
-              <polygon fill="#65462f" points="12,12 21,7 21,17 12,22"/>
-              <polygon fill="#5ea426" points="3,7 12,12 12,15.2 9,13.6 9,14.8 6,13.1 6,11.9 3,10.2"/>
-              <polygon fill="#47801b" points="12,12 21,7 21,10.2 18,11.9 18,13.1 15,14.8 15,13.6 12,15.2"/>
-              <polygon fill="#a47856" points="5,14 7,15 7,17 5,16"/>
-              <polygon fill="#4d3422" points="15,15 17,14 17,16 15,17"/>
-            </svg>
+            <img class="nav-block-img" src="assets/nav/nav-play.png" alt="">
           </span>
           <span class="nav-label">Jugar</span>
         </button>
         <button class="nav-item" data-view="skins" type="button">
           <span class="nav-icon nav-icon-skins" aria-hidden="true">
-            <!-- Bloque Cabeza de Jugador 3D isométrico -->
-            <svg viewBox="0 0 24 24" width="24" height="24">
-              <polygon fill="#5a3a22" points="12,2 21,7 12,12 3,7"/>
-              <polygon fill="#e2ae83" points="3,7 12,12 12,22 3,17"/>
-              <polygon fill="#b8845c" points="12,12 21,7 21,17 12,22"/>
-              <polygon fill="#462c19" points="3,7 12,12 12,14.6 3,9.6"/>
-              <polygon fill="#352011" points="12,12 21,7 21,9.6 12,14.6"/>
-              <polygon fill="#ffffff" points="4.6,12.2 6.5,13.2 6.5,15 4.6,14"/>
-              <polygon fill="#3b2618" points="5.6,12.7 6.8,13.4 6.8,15.2 5.6,14.5"/>
-              <polygon fill="#ffffff" points="8.4,14.3 10.2,15.3 10.2,17.1 8.4,16.1"/>
-              <polygon fill="#3b2618" points="9.2,14.7 10.5,15.4 10.5,17.2 9.2,16.5"/>
-              <polygon fill="#9e6846" points="6.6,16.6 8.8,17.8 8.8,19.2 6.6,18"/>
-              <polygon fill="#3ec2d1" points="14,17.5 19,14.8 19,17.2 14,19.9"/>
-            </svg>
+            <img class="nav-block-img" src="assets/nav/nav-skins.png" alt="">
           </span>
           <span class="nav-label">Aspectos</span>
         </button>
         <button class="nav-item" data-view="capturas" type="button">
           <span class="nav-icon nav-icon-shots" aria-hidden="true">
-            <!-- Bloque Cuadro / Galería 3D isométrico -->
-            <svg viewBox="0 0 24 24" width="24" height="24">
-              <polygon fill="#d99f4e" points="12,2 21,7 12,12 3,7"/>
-              <polygon fill="#b87d32" points="3,7 12,12 12,22 3,17"/>
-              <polygon fill="#87581f" points="12,12 21,7 21,17 12,22"/>
-              <polygon fill="#2563eb" points="4.5,9.3 10.6,12.7 10.6,19.6 4.5,16.2"/>
-              <polygon fill="#fde047" points="8,12.4 9.6,13.3 9.6,15 8,14.1"/>
-              <polygon fill="#4ade80" points="4.5,14 10.6,17.4 10.6,19.6 4.5,16.2"/>
-              <polygon fill="#1e3a8a" points="13.4,12.7 19.5,9.3 19.5,16.2 13.4,19.6"/>
-              <polygon fill="#22c55e" points="13.4,17.4 19.5,14 19.5,16.2 13.4,19.6"/>
-            </svg>
+            <img class="nav-block-img" src="assets/nav/nav-shots.png" alt="">
           </span>
           <span class="nav-label">Capturas</span>
         </button>
         <button class="nav-item" data-view="mods" type="button">
           <span class="nav-icon nav-icon-mods" aria-hidden="true">
-            <!-- Bloque Mesa de Trabajo 3D isométrico -->
-            <svg viewBox="0 0 24 24" width="24" height="24">
-              <polygon fill="#d89b52" points="12,2 21,7 12,12 3,7"/>
-              <polygon fill="#75451e" points="12,3.4 18.6,7 12,10.6 5.4,7"/>
-              <polygon fill="#e6b068" points="12,4.4 16.8,7 12,9.6 7.2,7"/>
-              <polygon fill="#b87638" points="3,7 12,12 12,22 3,17"/>
-              <polygon fill="#8a5422" points="12,12 21,7 21,17 12,22"/>
-              <polygon fill="#dc2626" points="3,7 12,12 12,14.5 3,9.5"/>
-              <polygon fill="#991b1b" points="12,12 21,7 21,9.5 12,14.5"/>
-              <polygon fill="#cbd5e1" points="5.5,12 8.5,13.7 8.5,18.2 5.5,16.5"/>
-              <polygon fill="#94a3b8" points="15.2,13.7 18.2,12 18.2,16.5 15.2,18.2"/>
-            </svg>
+            <img class="nav-block-img" src="assets/nav/nav-mods.png" alt="">
           </span>
           <span class="nav-label">Mods</span>
         </button>
         <button class="nav-item" data-view="ajustes" type="button">
           <span class="nav-icon nav-icon-settings" aria-hidden="true">
-            <!-- Bloque de Comandos / Redstone 3D isométrico -->
-            <svg viewBox="0 0 24 24" width="24" height="24">
-              <polygon fill="#c87d52" points="12,2 21,7 12,12 3,7"/>
-              <polygon fill="#9e5b36" points="3,7 12,12 12,22 3,17"/>
-              <polygon fill="#733f22" points="12,12 21,7 21,17 12,22"/>
-              <polygon fill="#fef08a" points="12,5.2 15.2,7 12,8.8 8.8,7"/>
-              <polygon fill="#ef4444" points="6,11.6 9.5,13.5 9.5,17.4 6,15.5"/>
-              <polygon fill="#fef08a" points="7,13 8.5,13.8 8.5,15.6 7,14.8"/>
-              <polygon fill="#dc2626" points="14.5,13.5 18,11.6 18,15.5 14.5,17.4"/>
-              <polygon fill="#fde047" points="15.5,13.8 17,13 17,14.8 15.5,15.6"/>
-            </svg>
+            <img class="nav-block-img" src="assets/nav/nav-settings.png" alt="">
           </span>
           <span class="nav-label">Ajustes</span>
         </button>
@@ -175,16 +151,53 @@
 
             <div class="hero-stage">
               <div class="hero-body">
-                <div class="server-live-pill" id="server-live-pill">
-                  <span class="server-dot" id="hero-server-dot"></span>
-                  <span id="hero-server-text">Servidor Oficial</span>
+                <div class="hero-badges-row">
+                  <div class="server-live-pill" id="server-live-pill">
+                    <span class="server-dot" id="hero-server-dot"></span>
+                    <span id="hero-server-text">Servidor Oficial · 26.2</span>
+                  </div>
+                  <p class="hero-kicker" id="hero-kicker">MINECRAFT 26.2 · FABRIC</p>
                 </div>
-                <p class="hero-kicker" id="hero-kicker">MINECRAFT 26.2 · FABRIC</p>
-                <h1 class="hero-title" id="hero-title">Reshem</h1>
+
+                <h1 class="hero-title" id="hero-title">
+                  <img class="hero-logo-img" src="assets/reshem_logo.png" alt="Reshem">
+                </h1>
+
                 <p class="hero-status" id="status" role="status" aria-live="polite">Listo para jugar.</p>
+
+                <div class="hero-feature-tags" aria-hidden="true">
+                  <span class="hero-tag is-gold">✦ Shaders BSL</span>
+                  <span class="hero-tag is-rose">✦ Chat de Voz 3D</span>
+                  <span class="hero-tag is-emerald">✦ Ruleta y Eventos</span>
+                </div>
+
                 <div class="server-players-chips" id="server-players-chips" hidden></div>
                 <div class="progress" id="progress" hidden>
                   <div class="progress-bar" id="progress-bar"></div>
+                </div>
+              </div>
+
+              <div class="hero-showcase-cards" aria-hidden="true">
+                <div class="hero-stat-card">
+                  <span class="hero-stat-icon is-gold"><img class="mc-pixel-icon" src="assets/items/blaze_powder.png" alt=""></span>
+                  <div class="hero-stat-text">
+                    <strong>Motor Optimizado</strong>
+                    <span>Fabric 26.2 · Sodium + Iris</span>
+                  </div>
+                </div>
+                <div class="hero-stat-card">
+                  <span class="hero-stat-icon is-rose"><img class="mc-pixel-icon" src="assets/items/pink_petals.png" alt=""></span>
+                  <div class="hero-stat-text">
+                    <strong>Gráficos BSL</strong>
+                    <span>Sombras y cielo dinámico</span>
+                  </div>
+                </div>
+                <div class="hero-stat-card">
+                  <span class="hero-stat-icon is-emerald"><img class="mc-pixel-icon" src="assets/items/totem_de_eon.png" alt=""></span>
+                  <div class="hero-stat-text">
+                    <strong>Modo Dedsafío</strong>
+                    <span>Ruleta, Haku y Nublado IA</span>
+                  </div>
                 </div>
               </div>
 
@@ -197,7 +210,9 @@
             <!-- Barra inferior de lanzamiento estilo Minecraft Launcher original -->
             <div class="hero-actions mc-playbar">
               <div class="mc-profile-box">
-                <span class="mc-profile-icon" aria-hidden="true">❖</span>
+                <span class="mc-profile-icon" aria-hidden="true">
+                  <img class="nav-block-img" src="assets/nav/nav-play.png" alt="">
+                </span>
                 <div class="mc-profile-meta">
                   <strong class="mc-profile-name">Reshem 26.2</strong>
                   <span class="mc-profile-ver" id="mc-profile-ver">Fabric + BSL</span>
@@ -213,6 +228,7 @@
                 <button class="link" id="toggle-log" type="button" hidden>Registro</button>
                 <button class="pill" id="update-pill" type="button" hidden></button>
                 <button class="button mc-quick-skin" id="hero-open-skins" type="button" hidden>Aspectos 3D</button>
+                <span class="mc-ready-pill" aria-hidden="true">✓ Pack sincronizado</span>
               </div>
             </div>
           </div>
@@ -226,19 +242,61 @@
           <pre class="log" id="log" hidden tabindex="0" aria-label="Detalles de la preparación"></pre>
 
           <div class="home-columns">
-            <div class="home-col">
+            <div class="home-col home-panel">
               <div class="section-bar">
                 <h2 class="section-title">Capturas Destacadas</h2>
-                <button class="link" id="home-see-gallery" type="button">Ver todas →</button>
+                <button class="button button-sm home-see-btn" id="home-see-gallery" type="button">Ver todas →</button>
               </div>
               <div class="home-gallery" id="home-gallery"></div>
             </div>
 
-            <div class="home-col">
+            <div class="home-col home-panel">
               <div class="section-bar">
                 <h2 class="section-title">Últimas Novedades</h2>
+                <span class="section-sub-pill">Temporada 26.2</span>
               </div>
               <div class="news" id="news"></div>
+              <div class="home-keys-strip" aria-hidden="true">
+                <span class="key-pill"><kbd>F2</kbd> Captura auto</span>
+                <span class="key-pill"><kbd>V</kbd> Chat de Voz</span>
+                <span class="key-pill"><kbd>M</kbd> Mapa</span>
+                <span class="key-pill"><kbd>F11</kbd> Pantalla completa</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="home-highlights" aria-hidden="true">
+            <div class="highlight-card">
+              <div class="highlight-head">
+                <img class="mc-pixel-icon" src="assets/items/inti_oro.png" alt="">
+                <span class="highlight-badge is-gold">TIENDA</span>
+              </div>
+              <strong>Puesto de Haku y Cajero</strong>
+              <span>Economía con Intis, vitrina diaria y objetos exclusivos.</span>
+            </div>
+            <div class="highlight-card">
+              <div class="highlight-head">
+                <img class="mc-pixel-icon" src="assets/items/totem_of_undying.png" alt="">
+                <span class="highlight-badge is-rose">RETOS</span>
+              </div>
+              <strong>Ruleta de Eventos</strong>
+              <span>Giros en vivo, jefes mutantes y drops en el mundo.</span>
+            </div>
+            <div class="highlight-card">
+              <div class="highlight-head">
+                <img class="mc-pixel-icon" src="assets/items/perla_de_miel.png" alt="">
+                <span class="highlight-badge is-emerald">IA + VOZ</span>
+              </div>
+              <strong>Nublado Compañero</strong>
+              <span>Gato con inteligencia artificial y voz dentro del servidor.</span>
+            </div>
+            <div class="highlight-card">
+              <div class="highlight-head">
+                <img class="mc-pixel-icon" src="assets/items/elytra.png" alt="">
+                <span class="highlight-badge is-violet">AVENTURA</span>
+              </div>
+              <strong>+40 Mods Integrados</strong>
+              <span>Mochilas, tumbas seguras, cuevas nuevas y muebles.</span>
             </div>
           </div>
         </section>
@@ -247,7 +305,6 @@
         <section class="view" id="view-skins" aria-labelledby="skins-page-title">
           <div class="page-head page-head-flex">
             <h1 class="page-title" id="skins-page-title">Aspectos</h1>
-            <span class="skin-drag-badge">Arrastra el personaje para girar 360°</span>
           </div>
 
           <div class="skins-studio">
@@ -255,7 +312,6 @@
             <div class="card skin-viewer-card">
               <div class="skin-3d-header">
                 <div class="skin-3d-title-group">
-                  <span class="card-kicker">VISOR 3D INTERACTIVO</span>
                   <h2 class="card-title" id="skin-3d-label">Tu personaje</h2>
                 </div>
                 <span class="skin-model-pill" id="skin-3d-model-pill">Steve</span>
@@ -263,7 +319,6 @@
 
               <div class="skin-3d-stage" id="skin-3d-stage">
                 <canvas class="skin-3d-canvas" id="skin-3d-canvas" width="280" height="350"></canvas>
-                <div class="skin-3d-floor" aria-hidden="true"></div>
                 <div class="skin-3d-controls" hidden>
                   <button class="button button-sm is-active" id="skin-3d-walk" type="button" hidden>Caminar</button>
                   <button class="button button-sm" id="skin-3d-spin" type="button" hidden>Girar</button>
@@ -368,13 +423,19 @@
 
           <div class="settings-grid">
             <div class="card">
-              <label class="card-title" for="ram">Memoria RAM</label>
+              <div>
+                <span class="card-kicker">RENDIMIENTO</span>
+                <label class="card-title" for="ram">Memoria RAM</label>
+              </div>
               <select class="select" id="ram"></select>
               <p class="card-hint" id="ram-hint">Se aplica al abrir el juego.</p>
             </div>
 
             <div class="card">
-              <span class="card-title">Gráficos y Mods</span>
+              <div>
+                <span class="card-kicker">VISUALES Y MODPACK</span>
+                <span class="card-title">Gráficos y Mods</span>
+              </div>
               <div class="row">
                 <button class="button is-primary" id="shaders-toggle" type="button">Shaders BSL: Activados</button>
                 <button class="button" id="repair-mods" type="button">Reparar mods</button>
@@ -384,7 +445,10 @@
 
             <div class="card">
               <div class="wardrobe-head">
-                <span class="card-title">Actualizaciones</span>
+                <div>
+                  <span class="card-kicker">SISTEMA</span>
+                  <span class="card-title">Actualizaciones</span>
+                </div>
                 <div class="row">
                   <button class="button" id="update-check" type="button">Buscar</button>
                   <button class="button is-primary" id="update-restart" type="button" hidden>Reiniciar</button>
@@ -396,7 +460,10 @@
 
             <div class="card">
               <div class="wardrobe-head">
-                <span class="card-title">Carpeta de Instalación</span>
+                <div>
+                  <span class="card-kicker">ARCHIVOS LOCALES</span>
+                  <span class="card-title">Carpeta de Instalación</span>
+                </div>
                 <button class="button" id="open-folder" type="button">Abrir carpeta</button>
               </div>
               <code class="path" id="game-dir"></code>

@@ -345,13 +345,28 @@ function appendLog(line) {
 function renderNews(news) {
   const box = $('news');
   box.replaceChildren();
-  for (const item of (news || []).slice(0, 2)) {
+  const iconFiles = ['assets/items/nether_star.png', 'assets/items/elytra.png', 'assets/items/totem_de_eon.png'];
+  const tags = ['LAUNCHER', 'NUEVO MOD', 'SERVIDOR'];
+  (news || []).slice(0, 2).forEach((item, idx) => {
     const card = el('article', 'news-card');
-    if (item.fecha) card.appendChild(el('div', 'news-date', item.fecha));
-    card.appendChild(el('h3', 'news-title', item.titulo));
-    card.appendChild(el('p', 'news-text', item.texto));
+    const icon = el('span', 'news-icon is-tone-' + (idx % 3));
+    icon.setAttribute('aria-hidden', 'true');
+    const iconImg = el('img', 'mc-pixel-icon');
+    iconImg.src = iconFiles[idx % iconFiles.length];
+    iconImg.alt = '';
+    icon.appendChild(iconImg);
+    card.appendChild(icon);
+
+    const content = el('div', 'news-content');
+    const head = el('div', 'news-head');
+    head.appendChild(el('span', 'news-tag is-tone-' + (idx % 3), tags[idx % tags.length]));
+    if (item.fecha) head.appendChild(el('span', 'news-date', item.fecha));
+    content.appendChild(head);
+    content.appendChild(el('h3', 'news-title', item.titulo));
+    content.appendChild(el('p', 'news-text', item.texto));
+    card.appendChild(content);
     box.appendChild(card);
-  }
+  });
   if (!news || news.length === 0) box.appendChild(el('p', 'page-lead', 'Sin novedades.'));
 }
 
@@ -362,12 +377,23 @@ const PREVIEW_PACK_MODS = [
   { name: 'Simple Voice Chat', category: 'Amigos', file: 'Voz por proximidad y con IA' },
   { name: 'Emotecraft (+1800 Emotes)', category: 'Amigos', file: 'Animaciones de jugador' },
   { name: 'Sodium + Lithium + Iris', category: 'Rendimiento', file: 'Máximos FPS y Shaders BSL' },
+  { name: 'FerriteCore & ImmediatelyFast', category: 'Rendimiento', file: 'Optimización de memoria RAM y GPU' },
+  { name: 'EntityCulling & MoreCulling', category: 'Rendimiento', file: 'Oculta entidades y caras no visibles' },
   { name: "Xaero's World Map & Minimap", category: 'Extras', file: 'Mapa del mundo y waypoints' },
   { name: "Alex's Caves & Better End", category: 'Extras', file: 'Dimensiones y cuevas nuevas' },
   { name: 'The Bumblezone (La Colmena)', category: 'Extras', file: 'Dimensión de la Perla de Miel' },
   { name: 'Mutant Monsters & Creeper', category: 'Extras', file: 'Criaturas del reto' },
-  { name: "Macaw's & Refurbished", category: 'Extras', file: 'Muebles y decoración' },
-  { name: 'Do a Barrel Roll & 3D Skins', category: 'Extras', file: 'Vuelo con elytra y capas 3D' },
+  { name: "Farmer's Delight & Handcrafted", category: 'Extras', file: 'Cocina, muebles y decoración' },
+  { name: "Traveler's Backpack & Lootr", category: 'Extras', file: 'Mochilas y cofres individuales' },
+  { name: 'Waystones & GraveStone', category: 'Extras', file: 'Teletransporte y tumbas seguras' },
+  { name: 'Sound Physics & AmbientSounds', category: 'Extras', file: 'Acústica realista y sonidos de biomas' },
+  { name: 'LambDynamicLights & Visuality', category: 'Extras', file: 'Antorchas en mano y partículas' },
+  { name: '3D Skin Layers & Animations', category: 'Extras', file: 'Capas 3D y animaciones en tercera persona' },
+  { name: 'Roughly Enough Items (REI)', category: 'Extras', file: 'Recetas y usos de todos los objetos' },
+  { name: 'Jade & AppleSkin', category: 'Extras', file: 'Información de bloques y saturación' },
+  { name: 'Supplementaries & Amendments', category: 'Extras', file: 'Bloques funcionales y decoración' },
+  { name: 'Carry On & RightClickHarvest', category: 'Extras', file: 'Cargar cofres y cosecha rápida' },
+  { name: 'Fabric API & Cloth Config', category: 'Base', file: 'Núcleo base de Fabric 26.2' },
 ];
 
 function renderMods(installed) {
@@ -895,9 +921,11 @@ function renderGallery() {
   const homeBox = $('home-gallery');
   if (homeBox) {
     homeBox.replaceChildren();
-    for (const item of shared.slice(0, 2)) {
-      homeBox.appendChild(buildPhotoCard(item, true));
-    }
+    const badges = ['EN VIVO', 'SHADERS BSL', 'EXPLORACIÓN'];
+    shared.slice(0, 3).forEach((item, idx) => {
+      const copy = Object.assign({ badge: item.badge || badges[idx % badges.length] }, item);
+      homeBox.appendChild(buildPhotoCard(copy, true));
+    });
   }
 
   const commBox = $('gallery-community');
@@ -1152,6 +1180,16 @@ function applyState(next) {
   refreshPlayButton();
 }
 
+function updateScrollParallax() {
+  const mainEl = document.querySelector('.main');
+  if (!mainEl) return;
+  const maxScroll = Math.max(1, mainEl.scrollHeight - mainEl.clientHeight);
+  const progress = maxScroll > 4
+    ? Math.min(1, Math.max(0, mainEl.scrollTop / Math.min(maxScroll, 520)))
+    : 0;
+  document.documentElement.style.setProperty('--scroll-p', progress.toFixed(4));
+}
+
 function showView(name) {
   for (const view of document.querySelectorAll('.view')) {
     view.classList.toggle('is-active', view.id === 'view-' + name);
@@ -1160,6 +1198,11 @@ function showView(name) {
     const active = item.dataset.view === name;
     item.classList.toggle('is-active', active);
     if (active) item.setAttribute('aria-current', 'page'); else item.removeAttribute('aria-current');
+  }
+  const mainEl = document.querySelector('.main');
+  if (mainEl) {
+    mainEl.scrollTop = 0;
+    updateScrollParallax();
   }
 }
 
@@ -1764,6 +1807,12 @@ async function init() {
 
   for (const item of document.querySelectorAll('.nav-item')) {
     item.addEventListener('click', () => showView(item.dataset.view));
+  }
+  const mainEl = document.querySelector('.main');
+  if (mainEl) {
+    mainEl.addEventListener('scroll', updateScrollParallax, { passive: true });
+    window.addEventListener('resize', updateScrollParallax, { passive: true });
+    updateScrollParallax();
   }
   $('hero-open-skins').addEventListener('click', () => showView('skins'));
   $('settings-open-skins').addEventListener('click', () => showView('skins'));
