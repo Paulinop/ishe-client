@@ -98,7 +98,7 @@ async function check(options) {
   if (paquete.compareVersions(manifest.version, options.currentVersion) <= 0) return { status: 'none' };
   const state = versiones.readState(options.updatesRoot);
   if (state.malas.includes(manifest.version)) return { status: 'none' };
-  if (manifest.motorMinimo && manifest.motorMinimo > options.engineMajor) return { status: 'needs-installer', version: manifest.version };
+  if (manifest.motorMinimo && manifest.motorMinimo > options.engineMajor) return { status: 'needs-installer', version: manifest.version, installer: manifest.instalador || null };
   if (state.version === manifest.version && paquete.verifyDir(path.join(options.updatesRoot, manifest.version), manifest.version, options.publicKey)) {
     return { status: 'ready', version: manifest.version, notes: manifest.notas || '' };
   }

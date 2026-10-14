@@ -231,6 +231,8 @@ function renderUpdateBanner(update) {
       ? 'Se está descargando, te avisamos cuando esté lista.'
       : 'Hay que instalar Reshem Client de nuevo con el instalador más reciente.';
   $('update-banner-restart').hidden = !ready;
+  $('update-banner-install').hidden = update.status !== 'needs-installer';
+  if (update.status === 'needs-installer') $('update-banner-detail').textContent = 'Se baja el instalador y se abre solo: Reshem Client se cierra un momento y vuelve a abrirse ya actualizado. Tus mundos y tu cuenta no se tocan.';
 }
 
 async function restartForUpdate() {
@@ -2111,6 +2113,25 @@ async function init() {
   $('update-restart').addEventListener('click', restartForUpdate);
   $('update-pill').addEventListener('click', restartForUpdate);
   $('update-banner-restart').addEventListener('click', restartForUpdate);
+  $('update-banner-install').addEventListener('click', async () => {
+    const button = $('update-banner-install');
+    button.disabled = true;
+    const before = button.textContent;
+    button.textContent = 'Descargando…';
+    try {
+      const result = await window.ishe.installUpdate();
+      if (!result || !result.ok) {
+        button.disabled = false;
+        button.textContent = before;
+        $('update-banner-detail').textContent = result && result.reason === 'running' ? 'Cierra Minecraft para actualizar.' : 'No se pudo bajar el instalador' + (result && result.detail ? ': ' + result.detail : '.') + ' Puedes bajarlo a mano de GitHub.';
+      } else {
+        button.textContent = 'Abriendo el instalador…';
+      }
+    } catch (_) {
+      button.disabled = false;
+      button.textContent = before;
+    }
+  });
   $('update-banner-later').addEventListener('click', () => {
     const update = state.update || {};
     bannerDismissed = update.status + ':' + update.version;

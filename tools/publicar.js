@@ -11,6 +11,7 @@
 //   --notas   texto que sale en Novedades. Si falta, se usa la tarjeta "Versión X" de
 //             app/noticias.json.
 //   --motor-minimo N  (raro) el aviso pide un motor N: los clientes viejos dicen "instala de nuevo" en vez de bajar el paquete (para cuando la ventana trae archivos que un paquete no puede llevar)
+//   --con-imagenes  el paquete lleva tambien las imagenes de renderer/assets (SOLO si todos tienen ya la 1.8.40 o mas: los clientes anteriores no entienden esos nombres y fallan al buscar actualizaciones)
 //   --subir   publica en GitHub con la herramienta "gh" (hay que haber hecho "gh auth login").
 //             Sin --subir solo deja los archivos en dist/actualizacion/ para revisarlos.
 
@@ -85,6 +86,13 @@ function main() {
     publicKeyPem,
     today: new Date().toISOString().slice(0, 10),
     motorMinimo: Number(argument('motor-minimo')) || undefined,
+    conImagenes: process.argv.includes('--con-imagenes'),
+    instalador: (() => {
+      const exe = path.join(construir.DIST, 'Instalar-Reshem-Client.exe');
+      if (!fs.existsSync(exe)) return undefined;
+      const body = fs.readFileSync(exe);
+      return { archivo: 'Instalar-Reshem-Client.exe', sha256: paquete.sha256(body), tamano: body.length };
+    })(),
   });
   fs.rmSync(copy, { recursive: true, force: true });
 
@@ -112,6 +120,10 @@ function main() {
     return;
   }
   const assets = result.upload.map((name) => path.join(out, name)).concat([built.winZip, built.macZip]);
+  for (const exe of ['Instalar-Reshem-Client.exe', 'Instalar-Mods-Reshem.exe']) {
+    const f = path.join(construir.DIST, exe);
+    if (fs.existsSync(f)) assets.push(f);
+  }
   execFileSync('gh', ['release', 'create', 'v' + version].concat(assets, [
     '--repo', REPO, '--title', 'Reshem Client ' + version, '--notes', notes, '--latest',
   ]), { stdio: 'inherit' });

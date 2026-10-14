@@ -18,7 +18,7 @@ function nextVersion(version) {
 }
 
 /** Archivos del client que hay en `codeDir`, tal como iran en el paquete. */
-function collect(codeDir) {
+function collect(codeDir, withImages) {
   const files = new Map();
   const add = (relative) => {
     if (!paquete.FILE_PATTERN.test(relative) || SKIP.has(relative)) return;
@@ -28,7 +28,17 @@ function collect(codeDir) {
   for (const name of fs.readdirSync(codeDir)) {
     const full = path.join(codeDir, name);
     if (['core', 'renderer', 'assets'].includes(name) && fs.statSync(full).isDirectory()) {
-      for (const inner of fs.readdirSync(full)) add(name + '/' + inner);
+      const walk = (dir, prefix) => {
+        for (const inner of fs.readdirSync(path.join(dir))) {
+          const innerFull = path.join(dir, inner);
+          if (fs.statSync(innerFull).isDirectory()) {
+            if (withImages && (prefix + '/' + inner).startsWith('renderer/assets')) walk(innerFull, prefix + '/' + inner);
+          } else {
+            if (withImages || !prefix.startsWith('renderer/assets')) add(prefix + '/' + inner);
+          }
+        }
+      };
+      walk(full, name);
     } else {
       add(name);
     }
@@ -87,7 +97,7 @@ function build(options) {
     throw new Error('Esa no es la clave de actualizaciones de Reshem Client.');
   }
 
-  const files = collect(codeDir);
+  const files = collect(codeDir, Boolean(options.conImagenes));
   const pkg = JSON.parse(files.get('package.json').toString('utf8'));
   pkg.version = version;
   files.set('package.json', Buffer.from(JSON.stringify(pkg, null, 2) + '\n'));
@@ -117,6 +127,7 @@ function build(options) {
   };
   // un aviso que pide reinstalar: los clientes viejos dicen "necesita instalar de nuevo" en vez de bajar un paquete que no pueden mostrar bien
   if (options.motorMinimo) manifest.motorMinimo = options.motorMinimo;
+  if (options.instalador) manifest.instalador = options.instalador;
   const envelope = paquete.sign(manifest, options.privateKeyPem);
   if (!paquete.verify(envelope, options.publicKeyPem)) throw new Error('No se pudo firmar la actualización.');
   out.set(paquete.MANIFEST_NAME, Buffer.from(envelope));

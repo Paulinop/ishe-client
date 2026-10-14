@@ -19,6 +19,7 @@ const sessionStore = require('./core/session');
 const tema = require('./core/tema');
 const paquete = require('./core/paquete');
 const updater = require('./core/updater');
+const instalador = require('./core/instalador');
 const amigos = require('./core/amigos');
 const estadoServidor = require('./core/estado-servidor');
 const skinCore = require('./core/skin');
@@ -354,7 +355,7 @@ async function checkForUpdates() {
       await updater.download(Object.assign({ manifest: found.manifest, envelope: found.envelope }, options));
       setUpdate({ status: 'ready', version: found.version, notes: found.notes });
     } else {
-      setUpdate({ status: found.status, version: found.version || '', notes: found.notes || '' });
+      setUpdate({ status: found.status, version: found.version || '', notes: found.notes || '', installer: found.installer || null });
     }
   } catch (error) {
     const reason = error instanceof updater.UpdateError ? error.reason : 'unexpected';
@@ -1077,6 +1078,29 @@ if (!app.requestSingleInstanceLock()) {
         return { ok: false, reason: 'error', detail: error && error.message ? String(error.message).slice(0, 200) : String(error) };
       } finally {
         busy = false;
+      }
+    });
+    // "Actualizar ahora" cuando la version nueva necesita el instalador: lo baja (comprobado con la firma), lo abre y cierra Reshem Client.
+    ipcMain.handle('ishe:install-update', async (event) => {
+      if (!fromOurWindow(event)) return { ok: false };
+      if (gameRunning) return { ok: false, reason: 'running' };
+      const info = update && update.status === 'needs-installer' ? update.installer : null;
+      if (!info) return { ok: false, reason: 'no-installer' };
+      if (process.platform !== 'win32') {
+        try { await shell.openExternal('https://github.com/Paulinop/ishe-client/releases/latest'); } catch (_) { /* nada */ }
+        return { ok: true, manual: true };
+      }
+      try {
+        const file = await instalador.download(info, {
+          base: TESTING ? TEST.updateBase : undefined,
+          allowLoopback: Boolean(TESTING && TEST.updateBase),
+        });
+        if (TESTING) return { ok: true, file };
+        require('child_process').spawn(file, [], { detached: true, stdio: 'ignore' }).unref();
+        setTimeout(quitForReal, 800);
+        return { ok: true };
+      } catch (error) {
+        return { ok: false, reason: 'error', detail: error && error.message ? String(error.message).slice(0, 200) : String(error) };
       }
     });
     ipcMain.handle('ishe:set-background', (event, enabled) => {

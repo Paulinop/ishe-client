@@ -66,7 +66,26 @@ const server = http.createServer((req, res) => {
   const zlib = require('zlib');
   const evilBundle = zlib.gzipSync(Buffer.from(JSON.stringify({ formato: 1, archivos: { 'main.js': 'eA==', '../../inicio.js': 'eA==' } })));
   check(throws(() => paquete.unpack(evilBundle)).includes('no permitido') && throws(() => paquete.unpack(Buffer.from('not gzip'))).includes('dañado'), 'desempaquetar rechaza rutas raras y paquetes dañados');
-  const bomb = zlib.gzipSync(Buffer.from(JSON.stringify({ formato: 1, archivos: { 'main.js': 'A'.repeat(70 * 1024 * 1024) } })));
+  // imagenes dentro de renderer/assets si, pero solo imagenes y sin salirse de esa carpeta
+  check(paquete.FILE_PATTERN.test('renderer/assets/mc-hero/BG_Near.png') && paquete.FILE_PATTERN.test('renderer/assets/items/recovery_compass_16.png'), 'un paquete puede llevar imagenes de renderer/assets');
+  check(!paquete.FILE_PATTERN.test('renderer/assets/../main.js') && !paquete.FILE_PATTERN.test('renderer/assets/x.js') && !paquete.FILE_PATTERN.test('assets/sub/x.png') && !paquete.FILE_PATTERN.test('renderer/assets/a/../../x.png'), 'pero no scripts ni rutas raras');
+  const instalador = require(path.join(APP, "core", "instalador.js"));
+  {
+    const exeBody = Buffer.from('MZ-instalador-de-prueba');
+    const http = require('http');
+    const srv = http.createServer((req, res) => { res.writeHead(200); res.end(req.url.includes('malo') ? Buffer.from('otra cosa') : exeBody); });
+    await new Promise((r) => srv.listen(0, '127.0.0.1', r));
+    const base = 'http://127.0.0.1:' + srv.address().port;
+    const info = { archivo: 'Instalar-Reshem-Client.exe', sha256: paquete.sha256(exeBody), tamano: exeBody.length };
+    const file = await instalador.download(info, { base, allowLoopback: true });
+    check(fs.readFileSync(file).equals(exeBody), 'baja el instalador y lo deja comprobado');
+    const mal = await instalador.download(Object.assign({}, info, { archivo: 'malo.exe' }), { base, allowLoopback: true }).then(() => '', (e) => e.message);
+    check(mal.includes('no coincide'), 'un instalador que no coincide con la firma se rechaza');
+    const fuera = await instalador.download(info, { base: 'https://evil.example/x' }).then(() => '', (e) => e.message);
+    check(fuera.includes('no permitido'), 'solo baja el instalador de GitHub');
+    srv.close();
+  }
+  const bomb = zlib.gzipSync(Buffer.from(JSON.stringify({ formato: 1, archivos: { 'main.js': 'A'.repeat(120 * 1024 * 1024) } })));
   check(throws(() => paquete.unpack(bomb)) !== '', 'desempaquetar rechaza un paquete que se infla demasiado');
   check(paquete.compareVersions('1.10.0', '1.9.9') === 1 && paquete.compareVersions('1.2.0', '1.2.0') === 0 && paquete.compareVersions('1.1.9', '1.2.0') === -1 && !paquete.validVersion('1.2') && !paquete.validVersion('1.2.0-beta') && !paquete.validVersion('01.2.0') && !paquete.validVersion('../1.2.0'), 'comparación y formato de versiones');
   check(paquete.sameKey(paquete.publicKeyOf(PRIVATE), PUBLIC) && !paquete.sameKey(paquete.publicKeyOf(OTHER_PRIVATE), PUBLIC) && paquete.publicKeyOf('hola') === '', 'la clave privada del creador corresponde a la clave pública incluida');

@@ -20,10 +20,10 @@ const FORMAT = 1;
 const MANIFEST_NAME = 'ishe-client-actualizacion.json';
 const VERSION_PATTERN = /^(0|[1-9]\d{0,3})\.(0|[1-9]\d{0,3})\.(0|[1-9]\d{0,3})$/;
 // Lo unico que puede venir en un paquete: los archivos del client, nunca el arranque.
-const FILE_PATTERN = /^(main\.js|preload\.js|package\.json|noticias\.json|tema\.json|core\/[A-Za-z0-9_-]+\.js|renderer\/[A-Za-z0-9_-]+\.(html|css|js)|assets\/[A-Za-z0-9_-]+\.(png|ico|icns))$/;
+const FILE_PATTERN = /^(main\.js|preload\.js|package\.json|noticias\.json|tema\.json|core\/[A-Za-z0-9_-]+\.js|renderer\/[A-Za-z0-9_-]+\.(html|css|js)|renderer\/assets\/(?:[A-Za-z0-9_-]+\/)*[A-Za-z0-9_.-]+\.(png|jpg|gif|webp)|assets\/[A-Za-z0-9_-]+\.(png|ico|icns))$/;
 const EXTRA_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._+-]{0,120}\.jar$/;
 const REQUIRED_FILES = ['main.js', 'preload.js', 'package.json', 'renderer/index.html'];
-const LIMITS = { manifestBytes: 256 * 1024, bundleBytes: 8 * 1024 * 1024, unpackedBytes: 24 * 1024 * 1024, extraBytes: 40 * 1024 * 1024, files: 200 };
+const LIMITS = { manifestBytes: 256 * 1024, bundleBytes: 40 * 1024 * 1024, unpackedBytes: 80 * 1024 * 1024, extraBytes: 40 * 1024 * 1024, installerBytes: 40 * 1024 * 1024, files: 300 };
 
 function sha256(buffer) {
   return crypto.createHash('sha256').update(buffer).digest('hex');
@@ -110,6 +110,11 @@ function checkManifest(manifest) {
     if (!Number.isInteger(extra.tamano) || extra.tamano <= 0 || extra.tamano > LIMITS.extraBytes) return false;
   }
   if (manifest.notas !== undefined && (typeof manifest.notas !== 'string' || manifest.notas.length > 600)) return false;
+  if (manifest.instalador !== undefined) {
+    const inst = manifest.instalador;
+    if (!inst || !/^[A-Za-z0-9._-]{1,80}\.exe$/.test(String(inst.archivo)) || !/^[0-9a-f]{64}$/.test(String(inst.sha256))) return false;
+    if (!Number.isInteger(inst.tamano) || inst.tamano <= 0 || inst.tamano > LIMITS.installerBytes) return false;
+  }
   if (manifest.motorMinimo !== undefined && !(Number.isInteger(manifest.motorMinimo) && manifest.motorMinimo > 0)) return false;
   return true;
 }

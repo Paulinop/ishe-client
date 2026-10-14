@@ -26,6 +26,7 @@ contextBridge.exposeInMainWorld('ishe', {
   setAutoScreenshots: (enabled) => ipcRenderer.invoke('ishe:set-auto-screenshots', enabled),
   setBackground: (enabled) => ipcRenderer.invoke('ishe:set-background', enabled),
   updateAll: () => ipcRenderer.invoke('ishe:update-all'),
+  installUpdate: () => ipcRenderer.invoke('ishe:install-update'),
   friendCodeSet: (code) => ipcRenderer.invoke('ishe:friend-code-set', code),
   friendCodeClear: () => ipcRenderer.invoke('ishe:friend-code-clear'),
   loginStart: () => ipcRenderer.invoke('ishe:login-start'),
