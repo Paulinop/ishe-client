@@ -172,6 +172,15 @@ function publish(text, jars) {
   await installer.install(installOptions(), () => {});
   check(fs.existsSync(manual), 'un mod que anadiste tu a mano nunca se borra');
 
+  // JUGAR rapido: tras una sincronizacion completa reciente no se vuelve a consultar cada mod; el boton Actualizar (force) si lo hace
+  await installer.install(installOptions(), () => {});
+  const rapido = [];
+  await installer.install(installOptions(), (e) => rapido.push(e));
+  check(rapido.some((e) => e.type === 'info' && /sincronizados hace poco/.test(e.text)) && !rapido.some((e) => e.type === 'info' && /^ya estaba/.test(e.text) && /.jar$/.test(e.text) && !/ishe/.test(e.text)), 'JUGAR no vuelve a revisar todos los mods si se sincronizaron hace poco');
+  const forzado = [];
+  await installer.install(Object.assign(installOptions(), { force: true }), (e) => forzado.push(e));
+  check(!forzado.some((e) => /sincronizados hace poco/.test(e.text)) && forzado.some((e) => e.type === 'info' && /^ya estaba/.test(e.text)), 'el boton Actualizar revisa todos los mods aunque sean recientes');
+
   modrinth.close();
   fabric.close();
   server.close();

@@ -239,6 +239,23 @@ function primaryFile(version) {
   return files.find((f) => f.primary) || files[0] || null;
 }
 
+// Cuando se hizo la ultima sincronizacion completa de mods (ms desde 1970; 0 si no hay o si hubo avisos).
+function readSyncedAt(manifestPath, requested) {
+  try {
+    const data = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    const value = Number(data.syncedAt);
+    // solo vale si la lista de mods pedida es la misma (si una version nueva del launcher cambia la lista, se revisa todo)
+    if (JSON.stringify(data.requested) !== JSON.stringify(requested)) return 0;
+    return Number.isFinite(value) && value > 0 ? value : 0;
+  } catch (_) {
+    return 0;
+  }
+}
+
+// Mientras la ultima sincronizacion completa sea reciente y no falte nada, JUGAR no vuelve a consultar los ~50 mods uno por uno
+// (eso tardaba unos 15 segundos cada vez). El boton "Actualizar" y las sincronizaciones de mas de 6 horas lo hacen completo.
+const FRESH_MS = 6 * 60 * 60 * 1000;
+
 function readManifest(manifestPath) {
   const previous = new Map();
   if (!isFile(manifestPath)) return previous;
@@ -354,7 +371,16 @@ async function install(options, onEvent) {
   const currentMods = new Map();
   const seenProjects = new Set();
   const seenRequests = new Set();
-  const queue = MOD_PROJECTS.slice();
+  const wantedKeys = MOD_PROJECTS.concat(EXTRA_MODS.map((e) => e.key));
+  const syncedAt = readSyncedAt(manifestPath, wantedKeys);
+  const fast = !options.force && syncedAt > 0 && Date.now() - syncedAt < FRESH_MS
+    && previousMods.size > 0
+    && Array.from(previousMods.values()).every((file) => isFile(path.join(modsDir, file)));
+  if (fast) {
+    for (const [key, file] of previousMods) currentMods.set(key, file);
+    info('mods sincronizados hace poco: no se vuelven a comprobar uno por uno');
+  }
+  const queue = fast ? [] : MOD_PROJECTS.slice();
   let done = 0;
 
   while (queue.length > 0) {
@@ -424,7 +450,7 @@ async function install(options, onEvent) {
     }
   }
 
-  for (const extra of EXTRA_MODS) {
+  for (const extra of (fast ? [] : EXTRA_MODS)) {
     const target = path.join(modsDir, extra.file);
     if (isFile(target) && sha(target, 'sha256') === extra.sha256) {
       info('ya estaba   ' + extra.file);
@@ -447,7 +473,7 @@ async function install(options, onEvent) {
     currentMods.set(extra.key, extra.file);
   }
 
-  await installShaders(modrinthApi, gameDir, info, problem);
+  if (!fast) await installShaders(modrinthApi, gameDir, info, problem);
 
   // El mod Ishe (Nublado, Haku, cajero...): se actualiza solo desde la release "mods" del proyecto.
   try {
@@ -512,7 +538,7 @@ async function install(options, onEvent) {
   }
   const mods = Array.from(currentMods.keys()).sort().map((key) => ({ project: key, file: currentMods.get(key) }));
   fs.writeFileSync(manifestPath, JSON.stringify(
-    { client: CLIENT_NAME, minecraft: MC_VERSION, fabric: versionId, mods }, null, 2));
+    { client: CLIENT_NAME, minecraft: MC_VERSION, fabric: versionId, requested: wantedKeys, syncedAt: fast ? syncedAt : (problems.length === 0 ? Date.now() : 0), mods }, null, 2));
   emit({ type: 'progress', done: 1, total: 1 });
 
   // ---- perfil en el launcher oficial ---------------------------------------

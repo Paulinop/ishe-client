@@ -1044,6 +1044,41 @@ if (!app.requestSingleInstanceLock()) {
       }
       return galeria.getAll({ communityDir: communityGalleryDir(), gameDir, minecraftDir });
     });
+    // Boton "Actualizar": busca una version nueva del launcher y vuelve a revisar TODOS los mods (sin abrir el juego).
+    ipcMain.handle('ishe:update-all', async (event) => {
+      if (!fromOurWindow(event)) return { ok: false };
+      if (gameRunning) return { ok: false, reason: 'running' };
+      if (busy) return { ok: false, reason: 'busy' };
+      busy = true;
+      try {
+        const launcher = await checkForUpdates();
+        const config = readConfig();
+        const icon = 'data:image/png;base64,' + fs.readFileSync(path.join(APP_DIR, 'assets', 'icon-64.png')).toString('base64');
+        let downloaded = 0;
+        const problems = [];
+        await installer.install({
+          modrinthApi: TESTING ? TEST.modrinthApi : undefined,
+          fabricMeta: TESTING ? TEST.fabricMeta : undefined,
+          minecraftDir,
+          gameDir,
+          bundledDir: extrasDir(),
+          icon,
+          javaArgs: config.ramGb > 0 ? '-Xmx' + config.ramGb + 'G' : '',
+          profileOptional: signedIn(),
+          force: true,
+          isLauncherRunning: () => (TESTING ? TEST.scenario === 'launcher-open' : platformTools.isLauncherRunning(process.platform)),
+        }, (e) => {
+          send(e);
+          if (e.type === 'info' && /^descargado/.test(e.text)) downloaded++;
+          if (e.type === 'problem') problems.push(e.text);
+        });
+        return { ok: true, downloaded, problems, launcher: launcher.status, version: launcher.version || '', state: getState() };
+      } catch (error) {
+        return { ok: false, reason: 'error', detail: error && error.message ? String(error.message).slice(0, 200) : String(error) };
+      } finally {
+        busy = false;
+      }
+    });
     ipcMain.handle('ishe:set-background', (event, enabled) => {
       if (!fromOurWindow(event)) return { ok: false };
       const on = Boolean(enabled);

@@ -1990,6 +1990,34 @@ async function init() {
   // ---- galeria de capturas
   $('home-see-gallery').addEventListener('click', () => showView('capturas'));
   $('gallery-folder-btn').addEventListener('click', () => window.ishe.galleryOpenFolder());
+  if ($('update-all')) {
+    $('update-all').addEventListener('click', async () => {
+      if (running) return;
+      const button = $('update-all');
+      button.disabled = true;
+      const before = button.textContent;
+      button.textContent = '↻ Actualizando…';
+      setStatus('Buscando actualizaciones del launcher y de los mods…');
+      try {
+        const result = await window.ishe.updateAll();
+        if (!result || !result.ok) {
+          setStatus(result && result.reason === 'running' ? 'Cierra Minecraft para actualizar.' : result && result.reason === 'busy' ? 'Ya hay algo en curso: espera un momento.' : 'No se pudo actualizar' + (result && result.detail ? ': ' + result.detail : '.'), 'bad');
+        } else {
+          if (result.state) applyState(result.state);
+          const partes = [];
+          partes.push(result.downloaded > 0 ? result.downloaded + ' mod(s) actualizado(s)' : 'Mods al día');
+          if (result.launcher === 'ready') partes.push('hay un launcher nuevo: reinicia para usarlo');
+          if (result.problems && result.problems.length) partes.push(result.problems.length + ' aviso(s), mira el Registro');
+          setStatus(partes.join(' · ') + '.', result.problems && result.problems.length ? 'bad' : undefined);
+        }
+      } catch (_) {
+        setStatus('No se pudo actualizar.', 'bad');
+      } finally {
+        button.disabled = false;
+        button.textContent = before;
+      }
+    });
+  }
   if ($('background-check')) {
     $('background-check').addEventListener('change', async (e) => {
       const enabled = Boolean(e.target.checked);

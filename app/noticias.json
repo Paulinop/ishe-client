@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.39: botón Actualizar y JUGAR mucho más rápido",
+    "fecha": "2026-10-13",
+    "texto": "Nuevo botón Actualizar en Inicio: busca una versión nueva del launcher y revisa todos los mods. Y JUGAR ya no vuelve a comprobar ~50 mods cada vez: pasa de unos 15 segundos a menos de 2 cuando todo está al día."
+  },
+  {
     "titulo": "Versión 1.8.38: segundo plano y cierre sin falsos errores",
     "fecha": "2026-10-13",
     "texto": "Al cerrar la ventana, Reshem Client queda en segundo plano (icono junto al reloj); en Ajustes puedes apagarlo. Y al cerrar Minecraft ya no sale el aviso de error cuando solo tardó en cerrarse."
