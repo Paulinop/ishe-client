@@ -20,6 +20,7 @@ const tema = require('./core/tema');
 const paquete = require('./core/paquete');
 const updater = require('./core/updater');
 const instalador = require('./core/instalador');
+const imagenes = require('./core/imagenes');
 const amigos = require('./core/amigos');
 const estadoServidor = require('./core/estado-servidor');
 const skinCore = require('./core/skin');
@@ -718,6 +719,18 @@ function refreshShortcutIcons() {
   } catch (_) { /* un acceso directo que no se puede cambiar no es grave */ }
 }
 
+// Si la actualizacion llego sin las imagenes de la ventana (launcher instalado con un instalador viejo), se bajan solas y se recarga la ventana.
+async function ensureImages() {
+  if (TESTING) return;
+  try {
+    const datos = require('./core/imagenes-datos');
+    const result = await imagenes.ensure(path.join(APP_DIR, 'renderer', 'assets'), datos);
+    if (result.descargado && mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.reloadIgnoringCache();
+  } catch (_) {
+    // sin internet o sin permiso: se vuelve a intentar al abrir otra vez
+  }
+}
+
 let quitting = false;
 let tray = null;
 
@@ -1231,6 +1244,7 @@ if (!app.requestSingleInstanceLock()) {
 
     refreshShortcutIcons();
     createWindow();
+    ensureImages();
     if (TESTING) require(path.join(ISHE.bundledDir, 'test-hooks.js')).run(() => mainWindow, TEST);
   });
 

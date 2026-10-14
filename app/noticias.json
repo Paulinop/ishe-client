@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.41: arreglo de los iconos que no se veían",
+    "fecha": "2026-10-13",
+    "texto": "Si los iconos del menú salían rotos, el launcher ahora baja solo las imágenes que le faltan al abrir. No hace falta reinstalar."
+  },
+  {
     "titulo": "Versión 1.8.40: actualizar el launcher con un botón",
     "fecha": "2026-10-13",
     "texto": "Cuando una versión nueva necesita el instalador, ahora sale el botón Actualizar ahora: baja el instalador, lo comprueba, se abre solo y Reshem Client vuelve ya actualizado. Esta es la última vez que hay que reinstalar a mano."

@@ -43,6 +43,8 @@ function main() {
   }
   const privateKeyPem = fs.readFileSync(keyFile, 'utf8');
 
+  // las imagenes de la ventana van aparte (no caben en un paquete de actualizacion de un cliente viejo): se arma su .bin y sus datos ANTES de armar la actualizacion
+  execFileSync(process.execPath, [path.join(__dirname, 'imagenes.js')], { stdio: 'inherit' });
   const built = construir.build();
   const version = built.version;
   const paquete = require(path.join(built.appDir, 'core', 'paquete.js'));
@@ -120,7 +122,7 @@ function main() {
     return;
   }
   const assets = result.upload.map((name) => path.join(out, name)).concat([built.winZip, built.macZip]);
-  for (const exe of ['Instalar-Reshem-Client.exe', 'Instalar-Mods-Reshem.exe']) {
+  for (const exe of ['Instalar-Reshem-Client.exe', 'Instalar-Mods-Reshem.exe', 'reshem-imagenes.bin']) {
     const f = path.join(construir.DIST, exe);
     if (fs.existsSync(f)) assets.push(f);
   }

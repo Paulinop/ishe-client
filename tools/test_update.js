@@ -85,6 +85,28 @@ const server = http.createServer((req, res) => {
     check(fuera.includes('no permitido'), 'solo baja el instalador de GitHub');
     srv.close();
   }
+  {
+    // imagenes que no llegaron con la actualizacion: se bajan, se comprueban y se escriben
+    const imagenes = require(path.join(APP, 'core', 'imagenes.js'));
+    const http = require('http');
+    const img = new Map([['nav/a.png', Buffer.from('uno')], ['items/b.png', Buffer.from('dos')]]);
+    const bin = imagenes.pack(img);
+    const datos = { archivo: 'reshem-imagenes.bin', sha256: imagenes.sha256(bin), tamano: bin.length, archivos: ['nav/a.png', 'items/b.png'] };
+    const srv = http.createServer((req, res) => { res.writeHead(200); res.end(req.url.includes('roto') ? Buffer.from('xx') : bin); });
+    await new Promise((r) => srv.listen(0, '127.0.0.1', r));
+    const base = 'http://127.0.0.1:' + srv.address().port;
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'img-'));
+    const r1 = await imagenes.ensure(dir, datos, { base, allowLoopback: true });
+    check(r1.descargado && fs.readFileSync(path.join(dir, 'nav', 'a.png')).toString() === 'uno' && fs.readFileSync(path.join(dir, 'items', 'b.png')).toString() === 'dos', 'las imagenes que faltan se bajan y se escriben');
+    const r2 = await imagenes.ensure(dir, datos, { base, allowLoopback: true });
+    check(!r2.descargado, 'si ya estan todas no baja nada');
+    const dir2 = fs.mkdtempSync(path.join(os.tmpdir(), 'img-'));
+    const mal = await imagenes.ensure(dir2, Object.assign({}, datos, { archivo: 'roto.bin' }), { base, allowLoopback: true }).then(() => '', (e) => e.message);
+    check(mal.includes('no coinciden') && !fs.existsSync(path.join(dir2, 'nav')), 'imagenes que no coinciden con el codigo de verificacion: no se escribe nada');
+    const malo = await imagenes.ensure(dir2, datos, { base: 'https://evil.example' }).then(() => '', (e) => e.message);
+    check(malo.includes('no permitido'), 'las imagenes solo se bajan de GitHub');
+    srv.close();
+  }
   const bomb = zlib.gzipSync(Buffer.from(JSON.stringify({ formato: 1, archivos: { 'main.js': 'A'.repeat(120 * 1024 * 1024) } })));
   check(throws(() => paquete.unpack(bomb)) !== '', 'desempaquetar rechaza un paquete que se infla demasiado');
   check(paquete.compareVersions('1.10.0', '1.9.9') === 1 && paquete.compareVersions('1.2.0', '1.2.0') === 0 && paquete.compareVersions('1.1.9', '1.2.0') === -1 && !paquete.validVersion('1.2') && !paquete.validVersion('1.2.0-beta') && !paquete.validVersion('01.2.0') && !paquete.validVersion('../1.2.0'), 'comparación y formato de versiones');
