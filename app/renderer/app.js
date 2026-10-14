@@ -913,6 +913,8 @@ function renderGallery() {
   const gallery = (state && state.gallery) || { community: [], local: [] };
   const shared = gallery.community || gallery.shared || [];
   const local = gallery.local || [];
+  const bgCheck = $('background-check');
+  if (bgCheck && state) bgCheck.checked = state.runInBackground !== false;
   const autoCheck = $('gallery-auto-check');
   if (autoCheck && state) {
     autoCheck.checked = state.autoUploadScreenshots !== false;
@@ -1988,6 +1990,16 @@ async function init() {
   // ---- galeria de capturas
   $('home-see-gallery').addEventListener('click', () => showView('capturas'));
   $('gallery-folder-btn').addEventListener('click', () => window.ishe.galleryOpenFolder());
+  if ($('background-check')) {
+    $('background-check').addEventListener('change', async (e) => {
+      const enabled = Boolean(e.target.checked);
+      if (state) state.runInBackground = enabled;
+      if (window.ishe.setBackground) await window.ishe.setBackground(enabled);
+      $('background-hint').textContent = enabled
+        ? 'Al cerrar con la X queda un icono junto al reloj; desde ahí lo abres o lo cierras del todo.'
+        : 'Al cerrar la ventana, Reshem Client se cierra del todo.';
+    });
+  }
   if ($('gallery-auto-check')) {
     $('gallery-auto-check').addEventListener('change', async (e) => {
       const enabled = Boolean(e.target.checked);

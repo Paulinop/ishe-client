@@ -6,7 +6,7 @@
 // aplicacion) deja el juego preparado y abre el launcher oficial.
 // No existe ningun modo de juego sin cuenta.
 
-const { app, BrowserWindow, Menu, clipboard, dialog, ipcMain, nativeImage, safeStorage, session, shell } = require('electron');
+const { app, BrowserWindow, Menu, Tray, clipboard, dialog, ipcMain, nativeImage, safeStorage, session, shell } = require('electron');
 const fs = require('fs');
 const { execFile } = require('child_process');
 const os = require('os');
@@ -234,9 +234,10 @@ function readConfig() {
       servidor: game.serverAddress(data.servidor) || DEFAULT_SERVER,
       entrar: data.entrar !== false,
       subirCapturas: data.subirCapturas !== false,
+      segundoPlano: data.segundoPlano !== false,
     };
   } catch (_) {
-    return { ramGb: 0, tema: {}, provisional: null, servidor: DEFAULT_SERVER, entrar: true, subirCapturas: true };
+    return { ramGb: 0, tema: {}, provisional: null, servidor: DEFAULT_SERVER, entrar: true, subirCapturas: true, segundoPlano: true };
   }
 }
 
@@ -310,6 +311,7 @@ function getState() {
     ramChoices: RAM_CHOICES,
     shadersEnabled: installer.getShadersEnabled(gameDir),
     autoUploadScreenshots: config.subirCapturas !== false,
+    runInBackground: config.segundoPlano !== false,
     wardrobe: skinCore.listWardrobe(wardrobeDir()),
     gallery: galeria.getAll({ communityDir: communityGalleryDir(), gameDir, minecraftDir }),
     friendCode: amigos.active(gameDir),
@@ -656,7 +658,8 @@ async function play() {
         const launchId = ++launchCount;
         running.exited.then((ended) => {
           gameRunning = false;
-          const failed = ended.code !== 0;
+          // Cerrar Minecraft a veces tarda (algun mod deja un hilo abierto) y su vigilante lo corta con un "crash" que no es un error de verdad.
+          const failed = ended.code !== 0 && !onlySlowShutdown(ended.tail);
           if (mainWindow && !mainWindow.isDestroyed() && mainWindow.isMinimized()) mainWindow.restore();
           send({
             type: 'game-exit',
@@ -714,6 +717,60 @@ function refreshShortcutIcons() {
   } catch (_) { /* un acceso directo que no se puede cambiar no es grave */ }
 }
 
+let quitting = false;
+let tray = null;
+
+function showMainWindow() {
+  if (!mainWindow || mainWindow.isDestroyed()) {
+    createWindow();
+    return;
+  }
+  if (mainWindow.isMinimized()) mainWindow.restore();
+  mainWindow.show();
+  mainWindow.focus();
+}
+
+function quitForReal() {
+  quitting = true;
+  if (tray) { tray.destroy(); tray = null; }
+  app.quit();
+}
+
+function ensureTray() {
+  if (tray || TESTING) return;
+  try {
+    const image = nativeImage.createFromPath(path.join(APP_DIR, 'assets', process.platform === 'win32' ? 'icon-64.png' : 'icon-64.png')).resize({ width: 16, height: 16 });
+    tray = new Tray(image);
+    tray.setToolTip('Reshem Client (en segundo plano)');
+    tray.setContextMenu(Menu.buildFromTemplate([
+      { label: 'Abrir Reshem Client', click: showMainWindow },
+      { type: 'separator' },
+      { label: 'Cerrar del todo', click: quitForReal },
+    ]));
+    tray.on('click', showMainWindow);
+  } catch (_) {
+    tray = null;   // sin icono no se puede volver: mejor no esconder la ventana
+    quitting = true;
+  }
+}
+
+function dropTray() {
+  if (tray) { tray.destroy(); tray = null; }
+}
+
+/** ¿La salida del juego fue solo el vigilante de cierre de Minecraft (no un error de verdad)? */
+function onlySlowShutdown(tail) {
+  try {
+    const text = (tail || []).join('\n');
+    const found = /Crash report saved to:\s*(?:#@!@#\s*)?(.+?\.txt)/.exec(text);
+    if (!found) return false;
+    const head = fs.readFileSync(found[1].trim(), 'utf8').slice(0, 1500);
+    return /Client shutdown from post-main|Watchdog \(Client shutdown/.test(head);
+  } catch (_) {
+    return false;
+  }
+}
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1000,
@@ -744,6 +801,13 @@ function createWindow() {
     }
   });
   mainWindow.once('ready-to-show', () => mainWindow.show());
+  mainWindow.on('close', (event) => {
+    // Con "seguir en segundo plano" la X solo esconde la ventana (queda el icono junto al reloj); sin eso, cierra todo.
+    if (quitting || TESTING || readConfig().segundoPlano === false) return;
+    event.preventDefault();
+    mainWindow.hide();
+    ensureTray();
+  });
   mainWindow.on('closed', () => { mainWindow = null; });
   mainWindow.loadFile(path.join(APP_DIR, 'renderer', 'index.html'));
 }
@@ -773,12 +837,7 @@ async function checkNewScreenshots() {
 if (!app.requestSingleInstanceLock()) {
   app.quit();
 } else {
-  app.on('second-instance', () => {
-    if (mainWindow) {
-      if (mainWindow.isMinimized()) mainWindow.restore();
-      mainWindow.focus();
-    }
-  });
+  app.on('second-instance', () => showMainWindow());
 
   app.whenReady().then(() => {
     if (process.platform !== 'darwin') Menu.setApplicationMenu(null);
@@ -985,6 +1044,13 @@ if (!app.requestSingleInstanceLock()) {
       }
       return galeria.getAll({ communityDir: communityGalleryDir(), gameDir, minecraftDir });
     });
+    ipcMain.handle('ishe:set-background', (event, enabled) => {
+      if (!fromOurWindow(event)) return { ok: false };
+      const on = Boolean(enabled);
+      writeConfig({ segundoPlano: on });
+      if (!on) dropTray();
+      return { ok: true, runInBackground: on };
+    });
     ipcMain.handle('ishe:set-auto-screenshots', async (event, enabled) => {
       if (!fromOurWindow(event)) return { ok: false };
       const on = Boolean(enabled);
@@ -1109,5 +1175,6 @@ if (!app.requestSingleInstanceLock()) {
     if (TESTING) require(path.join(ISHE.bundledDir, 'test-hooks.js')).run(() => mainWindow, TEST);
   });
 
-  app.on('window-all-closed', () => app.quit());
+  app.on('window-all-closed', () => { if (quitting || TESTING || readConfig().segundoPlano === false) app.quit(); });
+  app.on('before-quit', () => { quitting = true; });
 }

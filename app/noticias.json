@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.38: segundo plano y cierre sin falsos errores",
+    "fecha": "2026-10-13",
+    "texto": "Al cerrar la ventana, Reshem Client queda en segundo plano (icono junto al reloj); en Ajustes puedes apagarlo. Y al cerrar Minecraft ya no sale el aviso de error cuando solo tardó en cerrarse."
+  },
+  {
     "titulo": "Versión 1.8.37: Reshem Client con imágenes nuevas",
     "fecha": "2026-10-13",
     "texto": "Portada con paisaje animado, iconos nuevos en el menú y novedades renovadas. Esta versión se instala con el instalador nuevo (Instalar-Reshem-Client.exe): bájalo de GitHub y ábrelo, tus mundos y tu cuenta se quedan igual."

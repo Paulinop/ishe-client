@@ -24,6 +24,7 @@ contextBridge.exposeInMainWorld('ishe', {
   galleryUploadFile: (title) => ipcRenderer.invoke('ishe:gallery-upload-file', title),
   galleryOpenFolder: () => ipcRenderer.invoke('ishe:gallery-open-folder'),
   setAutoScreenshots: (enabled) => ipcRenderer.invoke('ishe:set-auto-screenshots', enabled),
+  setBackground: (enabled) => ipcRenderer.invoke('ishe:set-background', enabled),
   friendCodeSet: (code) => ipcRenderer.invoke('ishe:friend-code-set', code),
   friendCodeClear: () => ipcRenderer.invoke('ishe:friend-code-clear'),
   loginStart: () => ipcRenderer.invoke('ishe:login-start'),
