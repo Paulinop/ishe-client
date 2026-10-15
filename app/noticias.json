@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.43: prepara el mod con animaciones nuevas",
+    "fecha": "2026-10-15",
+    "texto": "El launcher ahora acepta mods más grandes (hasta 256 MB) para bajar las animaciones nuevas de la ruleta y los meteoritos de Dedsafío 4. Abre el launcher y reinícialo cuando lo pida antes de dar JUGAR."
+  },
+  {
     "titulo": "Versión 1.8.42: sin la pantalla de Immersive Portals",
     "fecha": "2026-10-15",
     "texto": "Ya no sale la pantalla larga en inglés de Immersive Portals (\"I know\") al entrar: el launcher la deja marcada como vista."
