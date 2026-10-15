@@ -26,5 +26,14 @@ check(/^narrator:0$/m.test(t) && !/narrator:1/.test(t) && /^onboardAccessibility
 check(/^fov:0.5$/m.test(t) && /^guiScale:3$/m.test(t) && /^version:4796$/m.test(t), 'el resto de tus opciones no se toca');
 check((t.match(/^narrator:/gm) || []).length === 1, 'no repite lineas');
 
+// pantalla de bienvenida de Immersive Portals
+const dirP = fs.mkdtempSync(path.join(os.tmpdir(), 'reshem-portals-'));
+check(game.fixPortalsScreen(dirP) === true && JSON.parse(fs.readFileSync(path.join(dirP, 'config', 'immersive_portals.json'), 'utf8')).initialScreenShown === true, 'Immersive Portals: sin config, la pantalla de bienvenida queda como vista');
+check(game.fixPortalsScreen(dirP) === false, 'si ya esta marcada no cambia nada');
+fs.writeFileSync(path.join(dirP, 'config', 'immersive_portals.json'), JSON.stringify({ maxPortalLayer: 3, initialScreenShown: false }));
+check(game.fixPortalsScreen(dirP) === true, 'si estaba sin ver, la marca');
+const cfgP = JSON.parse(fs.readFileSync(path.join(dirP, 'config', 'immersive_portals.json'), 'utf8'));
+check(cfgP.initialScreenShown === true && cfgP.maxPortalLayer === 3, 'y no toca el resto de su configuracion');
+
 console.log(failures === 0 ? checks + ' de ' + checks + ' comprobaciones bien' : failures + ' fallaron');
 process.exit(failures === 0 ? 0 : 1);

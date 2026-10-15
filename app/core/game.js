@@ -501,7 +501,22 @@ function fixOptions(gameDir) {
   return changed;
 }
 
+// Immersive Portals (iPortal) abre una pantalla larga en ingles ("I know", 4 paginas) la primera vez. Se deja ya marcada como vista
+// en config/immersive_portals.json; el resto de su configuracion no se toca.
+function fixPortalsScreen(gameDir) {
+  const file = path.join(gameDir, 'config', 'immersive_portals.json');
+  let data = {};
+  try { data = JSON.parse(fs.readFileSync(file, 'utf8')); } catch (_) { data = {}; }
+  if (!data || typeof data !== 'object' || Array.isArray(data)) data = {};
+  if (data.initialScreenShown === true) return false;
+  data.initialScreenShown = true;
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, JSON.stringify(data, null, 2) + '\n');
+  return true;
+}
+
 function launch(prepared, options, account) {
+  try { fixPortalsScreen(options.gameDir); } catch (_) { /* si no se puede escribir, el juego abre igual */ }
   try { fixOptions(options.gameDir); } catch (_) { /* si no se puede escribir, el juego abre igual */ }
   const args = buildArguments(prepared, options, account);
   return new Promise((resolve, reject) => {
@@ -550,5 +565,5 @@ module.exports = {
   SOURCES, GameError,
   prepare, buildArguments, launch, serverAddress,
   rulesAllow, mavenPath, collectLibraries, mergeVersions, expandArguments, javaPlatformKey, javaExecutable, checkUrl,
-  compareVersions, memoryArguments, fixOptions,
+  compareVersions, memoryArguments, fixOptions, fixPortalsScreen,
 };
