@@ -589,10 +589,12 @@ async function serverStatusNow(force) {
 async function play() {
   if (busy) return { status: 'busy' };
   if (gameRunning) return { status: 'running' };
+  // Si el servidor sale cerrado se actualiza todo igual (mods y arreglos) y el juego abre sin entrar al servidor: antes JUGAR se bloqueaba
+  // y los amigos se quedaban con un mod viejo (con sus errores) justo cuando mas hacia falta actualizarlo.
+  let serverClosed = false;
   if (signedIn()) {
-    // Con el juego directo, solo se abre si el servidor esta abierto: si no, no hay a donde entrar.
     const server = await serverStatusNow(true);
-    if (server.watching && !server.online) return { status: 'server-closed', state: getState() };
+    serverClosed = Boolean(server.watching && !server.online);
   }
   busy = true;
   try {
@@ -647,7 +649,7 @@ async function play() {
           env: { platform: process.platform, arch: process.arch, osVersion: os.release() },
           sources: GAME_SOURCES,
           ramGb: config.ramGb,
-          joinServer: config.entrar ? config.servidor : '',
+          joinServer: config.entrar && !serverClosed ? config.servidor : '',
         };
         let running;
         try {

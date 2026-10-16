@@ -1144,9 +1144,9 @@ async function pollServer() {
 function refreshPlayButton() {
   const button = $('play');
   const closed = serverClosed();
-  button.disabled = running || Boolean(state && state.gameRunning) || closed;
-  button.title = closed ? 'El servidor está apagado ahora mismo.' : '';
-  button.textContent = running ? 'PREPARANDO…' : (state && state.gameRunning ? 'JUGANDO' : (closed ? 'CERRADO' : 'JUGAR'));
+  button.disabled = running || Boolean(state && state.gameRunning);
+  button.title = closed ? 'El servidor está apagado ahora mismo: se actualiza todo y el juego abre sin entrar al servidor.' : '';
+  button.textContent = running ? 'PREPARANDO…' : (state && state.gameRunning ? 'JUGANDO' : 'JUGAR');
   $('account-button').disabled = running;
 }
 
@@ -1154,7 +1154,7 @@ function idleStatus() {
   if (state.gameRunning) {
     setStatus('Minecraft en ejecución.', 'good');
   } else if (serverClosed()) {
-    setStatus('Servidor cerrado. Se activará al abrir.', 'warn');
+    setStatus('Servidor cerrado ahora mismo. Puedes pulsar JUGAR para actualizar y abrir el juego.', 'warn');
   } else if (directToServer() && serverState.watching && serverState.online) {
     setStatus('Servidor abierto' + (serverState.players > 0 ? ' · ' + serverState.players + ' jugando' : '') + (state.playerName ? ' · ' + state.playerName : ''), 'good');
   } else if (state.signedIn && !state.pendingApproval) {

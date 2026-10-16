@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.45: JUGAR ya no se bloquea",
+    "fecha": "2026-10-15",
+    "texto": "Aunque el servidor salga cerrado, JUGAR actualiza los mods y abre el juego (sin entrar al servidor). Así siempre recibes los arreglos, como el del cierre al caer un meteorito."
+  },
+  {
     "titulo": "Versión 1.8.44: ya no dice \"cerrado\" por error",
     "fecha": "2026-10-15",
     "texto": "Si el servidor está abierto pero el túnel tarda en responder, el launcher ahora espera más y reintenta antes de mostrar \"cerrado\". Reinicia el launcher cuando lo pida."
