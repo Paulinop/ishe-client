@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.44: ya no dice \"cerrado\" por error",
+    "fecha": "2026-10-15",
+    "texto": "Si el servidor está abierto pero el túnel tarda en responder, el launcher ahora espera más y reintenta antes de mostrar \"cerrado\". Reinicia el launcher cuando lo pida."
+  },
+  {
     "titulo": "Versión 1.8.43: prepara el mod con animaciones nuevas",
     "fecha": "2026-10-15",
     "texto": "El launcher ahora acepta mods más grandes (hasta 256 MB) para bajar las animaciones nuevas de la ruleta y los meteoritos de Dedsafío 4. Abre el launcher y reinícialo cuando lo pida antes de dar JUGAR."

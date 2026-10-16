@@ -575,7 +575,12 @@ async function serverStatusNow(force) {
   const address = config.entrar ? config.servidor : '';
   if (!address) return { watching: false, online: true, players: 0, max: 0, sample: [], ms: 0 };
   if (!force && serverStatusCache.address === address && Date.now() - serverStatusCache.at < 5000) return serverStatusCache.value;
-  const result = await estadoServidor.query(address, { timeoutMs: 4000 });
+  // El tunel (playit) a veces tarda varios segundos en conectar la primera vez: antes de decir "cerrado" se prueba mas de una vez y con mas paciencia.
+  let result = { online: false };
+  const intentos = force ? 3 : 2;
+  for (let i = 0; i < intentos && !result.online; i++) {
+    result = await estadoServidor.query(address, { timeoutMs: force ? 10000 : 8000 });
+  }
   const value = { watching: true, online: result.online, players: result.players || 0, max: result.max || 0, sample: result.sample || [], ms: result.ms || 0, address };
   serverStatusCache = { at: Date.now(), address, value };
   return value;
