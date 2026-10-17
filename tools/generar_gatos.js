@@ -359,13 +359,17 @@ for (const [pose, [maker, frames, seconds]] of Object.entries(POSES)) {
   }
   css += '.corazon { background: ' + enc('<svg xmlns="http://www.w3.org/2000/svg" width="27" height="24" viewBox="0 0 9 8" shape-rendering="crispEdges">' + paths + '</svg>') + ' center / contain no-repeat; }\n';
 }
-// Textura de tierra para la pantalla de carga (16 x 16 celdas)
+// Textura de pizarra profunda (deepslate) para el fondo (16 x 16 celdas)
 {
-  let seed = 3; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
-  const tones = ['#6b4a2b', '#5e4026', '#765232', '#4f351d', '#6b4a2b', '#6b4a2b'];
+  let seed = 9; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  const tones = ['#101216', '#14171d', '#191c24', '#1f232d', '#272b37', '#121419', '#171921'];
   let cellsSvg = '';
-  for (let j = 0; j < 16; j++) for (let i = 0; i < 16; i++) cellsSvg += '<rect x="' + i + '" y="' + j + '" width="1" height="1" fill="' + tones[Math.floor(rnd() * tones.length)] + '"/>';
-  css += '.tierra { background-image: ' + enc('<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 16 16" shape-rendering="crispEdges">' + cellsSvg + '</svg>') + '; background-size: 96px 96px; image-rendering: pixelated; }\n';
+  for (let j = 0; j < 16; j++) for (let i = 0; i < 16; i++) {
+    const veta = (j % 4 === 0 || j % 4 === 1) ? 1 : 0;
+    const toneIdx = Math.min(tones.length - 1, Math.floor(rnd() * (tones.length - 2) + veta));
+    cellsSvg += '<rect x="' + i + '" y="' + j + '" width="1" height="1" fill="' + tones[toneIdx] + '"/>';
+  }
+  css += '.tierra, .pizarra { background-image: ' + enc('<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 16 16" shape-rendering="crispEdges">' + cellsSvg + '</svg>') + '; background-size: 80px 80px; image-rendering: pixelated; }\n';
 }
 css += `:root { --gato-w: ${(W + 2) * PX}px; --gato-h: ${(H + 2) * PX}px; }\n/* GATOS-FIN */`;
 

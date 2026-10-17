@@ -599,12 +599,17 @@
   <!-- ===================== PANTALLA DE CARGA (al pulsar Jugar) ===================== -->
   <div class="carga tierra" id="loading" role="status" aria-live="polite" hidden>
     <div class="carga-panel">
-      <img class="carga-logo" src="../assets/logo.png" alt="">
+      <img class="carga-logo" src="../assets/logo.png" alt="Reshem">
       <h2 class="carga-title" id="loading-title">Preparando el juego</h2>
-      <p class="carga-tip" id="loading-tip"></p>
-      <div class="xp" aria-hidden="true"><div class="xp-bar" id="loading-bar"></div></div>
-      <p class="carga-status" id="loading-status"></p>
-      <button class="button" id="loading-hide" type="button">Seguir en segundo plano</button>
+      <div class="carga-card">
+        <span class="carga-tip-pill">CONSEJO</span>
+        <p class="carga-tip" id="loading-tip"></p>
+      </div>
+      <div class="carga-progress-wrap">
+        <div class="xp" aria-hidden="true"><div class="xp-bar" id="loading-bar"></div></div>
+        <p class="carga-status" id="loading-status"></p>
+      </div>
+      <button class="button carga-btn" id="loading-hide" type="button">Seguir en segundo plano</button>
     </div>
   </div>
 

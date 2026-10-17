@@ -1,5 +1,10 @@
 [
   {
+    "titulo": "Versión 1.8.46: nueva pantalla de carga",
+    "fecha": "2026-10-17",
+    "texto": "Nueva pantalla de carga artesanal con fondo de pizarra profunda (deepslate), tarjeta modal estilo RPG, medallón para Nublado y barra de progreso pulida."
+  },
+  {
     "titulo": "Versión 1.8.45: JUGAR ya no se bloquea",
     "fecha": "2026-10-15",
     "texto": "Aunque el servidor salga cerrado, JUGAR actualiza los mods y abre el juego (sin entrar al servidor). Así siempre recibes los arreglos, como el del cierre al caer un meteorito."
